@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Buildr</title>
+
+	<link rel="stylesheet" type="text/css" href="css/app.css">
+</head>
+<body>
+	<div id="wrap">
+		<nav id="sidebar">
+			<div id="logo"></div>
+
+			<ul id="menu">
+				<li data-view="files" data-tip="Files" class="active">
+					<span class="icon"></span>
+				</li>
+				<li data-view="term" data-tip="Terminal">
+					<span class="icon"></span>
+				</li>
+				<li data-view="settings" data-tip="Settings">
+					<span class="icon"></span>
+				</li>
+			</ul>
+		</nav>
+
+		<div id="app"></div>
+
+		<!-- <header id="header">
+		</header>
+
+		<section id="content">
+		</section> -->
+	</div>
+
+	<script>require('./js/renderer.js');</script>
+	<!-- build:remove -->
+	<!-- Connect to server process -->
+	<script>require('electron-connect').client.create();</script>
+	<!-- end:build -->
+</body>
+</html>

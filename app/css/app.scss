@@ -1,0 +1,11 @@
+@import 'plugins/svg-encode';
+
+@import 'variables';
+
+@import '#{$path__res}/fonts/inter-ui.css';
+
+@import 'app/sidebar';
+@import 'app/header';
+@import 'app/content';
+
+@import 'app/views/views';

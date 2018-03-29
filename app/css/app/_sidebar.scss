@@ -1,0 +1,75 @@
+#sidebar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: $size__sidebar;
+	border-right: 1px solid $color__border;
+	background-color: $color__bg-alt;
+
+	#logo {
+		width: $size__logo;
+		height: $size__logo;
+		margin: ( $size__sidebar - $size__logo ) / 2;
+		background-image: url( '#{$path__res}/img/logo.svg' );
+		background-size: $size__logo;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		$item-height: $size__menu-icon + $size__sidebar - $size__logo;
+		$item-margin: ( $size__sidebar - $size__logo ) / 2;
+
+		li {
+			position: relative;
+			cursor: pointer;
+			border-top: 1px solid $color__border;
+			border-right: 1px solid $color__border;
+			background-color: transparent;
+			transition: background-color 0.2s;
+
+			&:hover,
+			&.active {
+				background-color: $color__bg;
+			}
+
+			&.active {
+				border-right-color: $color__bg;
+			}
+
+			&:last-child {
+				border-bottom: 1px solid $color__border;
+			}
+
+			&,
+			.icon {
+				width: $size__sidebar;
+				height: $item-height;
+			}
+
+			.icon {
+				display: block;
+				background-size: $size__menu-icon;
+				background-repeat: no-repeat;
+				background-position: center;
+			}
+
+			&[data-view="files"] .icon {
+				background-image: url( '#{$path__res}/img/files.svg' );
+			}
+
+			&[data-view="term"] .icon {
+				background-image: url( '#{$path__res}/img/term.svg' );
+			}
+
+			&[data-view="settings"] .icon {
+				background-image: url( '#{$path__res}/img/settings.svg' );
+			}
+		}
+	}
+}

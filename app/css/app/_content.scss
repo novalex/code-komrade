@@ -1,0 +1,25 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: 'Inter-UI', sans-serif;
+	box-sizing: border-box;
+}
+
+#wrap {
+	padding: $spacing__content;
+	padding-left: $size__sidebar + $spacing__content;
+}
+
+#sidebar,
+#content {
+	opacity: 1;
+	transition: opacity 0.2s;
+
+	.unfocus & {
+		opacity: 0.4;
+		pointer-events: none;
+	}
+}

@@ -5,7 +5,7 @@
 		[
 			[
 				"size_",
-				"size__logo"
+				"size__menu-icon"
 			],
 			[
 				"conta",
@@ -520,21 +520,85 @@
 	"buffers":
 	[
 		{
-			"file": "main.js",
+			"file": "index.html",
 			"settings":
 			{
-				"buffer_size": 785,
+				"buffer_size": 6362,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "index.html",
+			"file": "app/renderer.js",
 			"settings":
 			{
-				"buffer_size": 794,
+				"buffer_size": 608,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/main.js",
+			"settings":
+			{
+				"buffer_size": 1966,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "res/css/app.scss",
+			"settings":
+			{
+				"buffer_size": 182,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "res/css/app/views/_views.scss",
+			"settings":
+			{
+				"buffer_size": 17,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "res/css/_variables.scss",
+			"settings":
+			{
+				"buffer_size": 142,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "res/css/app/_sidebar.scss",
+			"settings":
+			{
+				"buffer_size": 1136,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "res/css/app/_content.scss",
+			"settings":
+			{
+				"buffer_size": 105,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "res/css/app/views/_files.scss",
+			"settings":
+			{
+				"buffer_size": 70,
+				"encoding": "UTF-8",
+				"line_ending": "Unix",
+				"name": "#files {"
 			}
 		}
 	],
@@ -561,10 +625,14 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 225.0,
-		"last_filter": "reinden",
+		"height": 188.0,
+		"last_filter": "install",
 		"selected_items":
 		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
 			[
 				"reinden",
 				"Indentation: Reindent Lines"
@@ -580,10 +648,6 @@
 			[
 				"remove",
 				"Package Control: Remove Package"
-			],
-			[
-				"install",
-				"Package Control: Install Package"
 			],
 			[
 				"word w",
@@ -739,15 +803,15 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/E/Apps/Buildr",
-		"/E/Apps/Buildr/css",
-		"/E/Apps/Buildr/css/app"
-	],
 	"file_history":
 	[
 		"/E/Apps/Buildr/package.json",
+		"/E/Apps/Buildr/main.js",
+		"/E/Apps/Buildr/renderer.js",
+		"/E/Apps/Buildr/res/css/app.css",
+		"/E/Apps/Buildr/res/css/app/views/_views.scss",
+		"/E/Apps/electron-quick-start/main.js",
+		"/E/Apps/electron-quick-start/index.html",
 		"/E/Apps/Buildr/css/_variables.scss",
 		"/E/Apps/Buildr/css/app/_sidebar.scss",
 		"/E/Apps/Buildr/css/app/_content.scss",
@@ -868,13 +932,7 @@
 		"/E/Sites/NTN/Install/app/public/wp-content/plugins/gravityforms-hubspot/vendor/ryanwinchester/hubspot-php/src/Http/Client.php",
 		"/E/Sites/NTN/Install/app/public/wp-content/plugins/wpr-api-integrations/inc/unit-testing/class-wpr-api-unit-test.php",
 		"/E/Sites/NTN/Install/app/public/wp-content/plugins/wpr-api-integrations/inc/class-WPR_API_Process.php",
-		"/E/Sites/WWW/cim/.htaccess",
-		"/E/Sites/NTN/Install/conf/php/7.1.4/etc/php-fpm.conf",
-		"/E/Sites/NTN/Install/conf/php/7.1.4/php.ini",
-		"/E/Sites/NTN/Install/logs/mysql/error.log",
-		"/E/Sites/NTN/Install/logs/apache/error.log",
-		"/E/Sites/NTN/Install/app/public/wp-content/plugins/wpr-api-integrations/inc/unit-testing/Faker/Provider/Internet.php",
-		"/E/Sites/NTN/Install/app/public/wp-content/plugins/wpr-api-integrations/inc/class-WP_Background_Process.php"
+		"/E/Sites/WWW/cim/.htaccess"
 	],
 	"find":
 	{
@@ -1025,34 +1083,81 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "main.js",
+					"file": "index.html",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 785,
+						"buffer_size": 6362,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								119,
-								119
+								6305,
+								6305
 							]
 						],
 						"settings":
 						{
-							"SL.185.region_keys":
+							"SL.116.region_keys":
+							[
+							],
+							"SL.190.region_keys":
 							[
 								"sublime_linter.protected_regions"
 							],
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"translate_tabs_to_spaces": false
+							"SL.31.region_keys":
+							[
+							],
+							"syntax": "Packages/HTML/HTML.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "app/renderer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 608,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								569,
+								569
+							]
+						],
+						"settings":
+						{
+							"SL.136.region_keys":
+							[
+								"SL.jshint.Gutter.region.redish markup.deleted.sublime_linter markup.error.sublime_linter.dot",
+								"SL.jshint.Highlights.|region.redish markup.deleted.sublime_linter markup.error.sublime_linter|32",
+								"sublime_linter.protected_regions",
+								"SL.jshint.Highlights.|region.yellowish markup.changed.sublime_linter markup.warning.sublime_linter|32"
+							],
+							"SL.15.region_keys":
+							[
+								"sublime_linter.protected_regions",
+								"SL.jshint.Highlights.|region.yellowish markup.changed.sublime_linter markup.warning.sublime_linter|32",
+								"SL.jshint.Highlights.|region.redish markup.deleted.sublime_linter markup.error.sublime_linter|32",
+								"SL.jshint.Gutter.region.redish markup.deleted.sublime_linter markup.error.sublime_linter.dot"
+							],
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1062,35 +1167,207 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "index.html",
+					"buffer": 2,
+					"file": "app/main.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 794,
+						"buffer_size": 1966,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								298,
-								298
+								728,
+								728
 							]
 						],
 						"settings":
 						{
-							"SL.190.region_keys":
+							"SL.135.region_keys":
 							[
 								"sublime_linter.protected_regions"
 							],
-							"syntax": "Packages/HTML/HTML.sublime-syntax"
+							"SL.16.region_keys":
+							[
+							],
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "res/css/app.scss",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 182,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								182,
+								182
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SCSS/SCSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "res/css/app/views/_views.scss",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 17,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SCSS/SCSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "res/css/_variables.scss",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 142,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								117,
+								117
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SCSS/SCSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "res/css/app/_sidebar.scss",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1136,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1025,
+								1025
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SCSS/SCSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "res/css/app/_content.scss",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 105,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								103,
+								103
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SCSS/SCSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "res/css/app/views/_files.scss",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 70,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								68,
+								68
+							]
+						],
+						"settings":
+						{
+							"auto_name": "#files {",
+							"syntax": "Packages/SCSS/SCSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
 					"type": "text"
 				}
 			]
