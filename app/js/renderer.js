@@ -8,12 +8,10 @@ const config = new Store({
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-// let projects = config.get('projects');
-
 const Projects = require('./components/Projects');
 
 ReactDOM.render(
-	<Projects />,
+	<Projects config={ config } />,
 	document.getElementById('app')
 );
 

@@ -23,11 +23,39 @@ class Projects extends React.Component {
 	_ProjectSelect: ProjectSelect;
 	_ProjectFileList: FileList;
 
-	constructor() {
-		super();
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			projects: [],
+			active: {
+				name: '',
+				path: '',
+			},
+		};
 	}
 
 	componentDidMount() {
+		if ( this.props.config ) {
+			let newState = {};
+
+			let projects = this.props.config.get('projects');
+
+			if ( projects ) {
+				newState.projects = projects;
+			}
+
+			let active = this.props.config.get('active-project');
+
+			if ( active ) {
+				newState.active = active;
+			}
+
+			if ( Object.keys( newState ).length > 0 ) {
+				this.setState( newState );
+			}
+		}
+
 		this._ProjectSelect.setFileList( this._ProjectFileList );
 	}
 
@@ -35,10 +63,10 @@ class Projects extends React.Component {
 		return (
 			<React.Fragment>
 			<div id="header">
-				<ProjectSelect projects={ projects } active={ active } ref={ ( child ) => { this._ProjectSelect = child; } } />
+				<ProjectSelect projects={ this.state.projects } active={ this.state.active } ref={ ( child ) => { this._ProjectSelect = child; } } />
 			</div>
 			<div id="content">
-				<FileList path={ active.path } ref={ ( child ) => { this._ProjectFileList = child; } } />
+				<FileList path={ this.state.active.path } ref={ ( child ) => { this._ProjectFileList = child; } } />
 			</div>
 			</React.Fragment>
 		);

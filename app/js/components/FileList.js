@@ -8,6 +8,11 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 
 function directoryTree( path, options = {}, depth = 0 ) {
+	// If current path is included, reset depth counter.
+	if ( options.include === path ) {
+		depth = 0;
+	}
+
 	// If max depth was reached, bail.
 	if ( options.depth && depth > options.depth ) {
 		return null;
@@ -21,12 +26,12 @@ function directoryTree( path, options = {}, depth = 0 ) {
 	try {
 		stats = fs.statSync(path);
 	} catch( err ) {
-		console.log( err );
+		// console.log( err );
 		return null;
 	}
 
 	// Skip if it matches the exclude regex.
-	if ( options && options.exclude && options.exclude.test( path ) ) {
+	if ( options && options.exclude && ( options.exclude.test( path ) || options.exclude.test( name ) ) ) {
 		return null;  
 	}
 
@@ -74,6 +79,23 @@ function directoryTree( path, options = {}, depth = 0 ) {
 	return item;
 }
 
+Object.resolve = function( path, obj ) {
+	let props = path.split('.'),
+		obpath = '';
+
+	for ( var i = 0; i < props.length; i++ ) {
+		if ( 0 === i ) {
+			obpath = 'children';
+		} else {
+			obpath += '.' + props[ i ] + '.children';
+		}
+	}
+
+	return obpath.split('.').reduce( function( prev, curr ) {
+		return ( prev ) ? prev[ curr ] : undefined
+	}, obj || self );
+};
+
 class FileList extends React.Component {
 	constructor( props ) {
 		super( props );
@@ -84,6 +106,7 @@ class FileList extends React.Component {
 			ignored: [
 				'.git',
 				'node_modules',
+				'.DS_Store',
 			]
 		};
 
@@ -153,11 +176,16 @@ class FileList extends React.Component {
 
 		this.setState({
 			path: path,
-			files: directoryTree( path, {
-				depth: 3,
-				exclude: new RegExp( this.state.ignored.join('|'), 'i' ),
-			} )
+			files: this.walkDirectory( path ),
 		});
+	}
+
+	walkDirectory( path, include = null ) {
+		return directoryTree( path, {
+			// depth: 2,
+			exclude: new RegExp( this.state.ignored.join('|'), 'i' ),
+			// include: include,
+		} );
 	}
 
 	dirClick( event ) {
@@ -170,12 +198,9 @@ class FileList extends React.Component {
 
 		if ( element.dataset.lazyload ) {
 			// Load the files in this directory.
-			let file = directoryTree( element.dataset.lazyload );
-
-			ReactDOM.render(
-				this.buildTree( file ),
-				element
-			);
+			this.setState({
+				files: this.walkDirectory( this.state.path, element.dataset.lazyload ),
+			});
 
 			delete element.dataset.lazyload;
 		}
@@ -185,7 +210,7 @@ class FileList extends React.Component {
 		event.persist();
 	}
 
-	buildTree( file, level ) {
+	buildTree( file, level = 0, index = null ) {
 		let type = file.type,
 			ext  = file.extension || null,
 			onClick,
@@ -197,14 +222,20 @@ class FileList extends React.Component {
 		// 	return null;
 		// }
 
-		level = level || 0;
-
 		if ( 'directory' === file.type ) {
 			if ( file.children.length > 0 ) {
 				let childrenItems = [];
 
 				for ( var child in file.children ) {
-					childrenItems.push( this.buildTree( file.children[ child ], level + 1 ) );
+					if ( index ) {
+						index += '.' + child;
+					} else {
+						index = child;
+					}
+
+					// console.log( Object.resolve( index, this.state.files ) );
+
+					childrenItems.push( this.buildTree( file.children[ child ], level + 1, index ) );
 				}
 
 				children = <ul className="children" key={ file.path + '-children' }>{ childrenItems }</ul>;
@@ -237,9 +268,9 @@ class FileList extends React.Component {
 			return <li className="empty">No files</li>;
 		}
 
-		console.log( this.state.files );
-
 		let filelist = [];
+
+		// console.log( this.state.files );
 
 		// Show only the contents of the directory.
 		if ( this.state.files.children ) {
