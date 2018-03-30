@@ -1,100 +1,12 @@
-/* jshint esversion:6 */
+/**
+ * @file Component for rendering a directory tree.
+ */
 
-const Promise = require("bluebird");
-const fs = Promise.promisifyAll( require('fs') );
-const PATH = require('path');
+const Promise = require('bluebird');
 
 const React = require('react');
-const ReactDOM = require('react-dom');
 
-function directoryTree( path, options = {}, depth = 0 ) {
-	// If current path is included, reset depth counter.
-	if ( options.include === path ) {
-		depth = 0;
-	}
-
-	// If max depth was reached, bail.
-	if ( options.depth && depth > options.depth ) {
-		return null;
-	}
-
-	const name = PATH.basename( path );
-	const item = { path, name };
-
-	let stats;
-
-	try {
-		stats = fs.statSync(path);
-	} catch( err ) {
-		// console.log( err );
-		return null;
-	}
-
-	// Skip if it matches the exclude regex.
-	if ( options && options.exclude && ( options.exclude.test( path ) || options.exclude.test( name ) ) ) {
-		return null;  
-	}
-
-	if ( stats.isFile() ) {
-		const ext = PATH.extname( path ).toLowerCase();
-		
-		// Skip if it does not match the extension regex.
-		if ( options && options.extensions && ! options.extensions.test( ext ) ) {
-			return null;
-		}
-
-		// item.size = stats.size; // File size in bytes.
-		item.extension = ext;
-		item.type = 'file';
-	} else if ( stats.isDirectory() ) {
-		let files = {};
-
-		try {
-			files = fs.readdirSync( path );
-		} catch( err ) {
-			if ( err.code === 'EACCES' ) {
-				// User does not have permissions, ignore directory.
-				return null;
-			} else {
-				throw err;
-			}
-		}
-
-		if ( files === null ) {
-			return null;
-		}
-
-		item.children = files
-			.map( child => directoryTree( PATH.join( path, child ), options, depth + 1 ) )
-			.filter( e => !!e );
-		// item.size = item.children.reduce( ( prev, cur ) => {
-		// 	console.log( prev, cur.size );
-		// 	return prev + cur.size;
-		// }, 0 );
-		item.type = 'directory';
-	} else {
-		return null; // Or set item.size = 0 for devices, FIFO and sockets ?
-	}
-
-	return item;
-}
-
-Object.resolve = function( path, obj ) {
-	let props = path.split('.'),
-		obpath = '';
-
-	for ( var i = 0; i < props.length; i++ ) {
-		if ( 0 === i ) {
-			obpath = 'children';
-		} else {
-			obpath += '.' + props[ i ] + '.children';
-		}
-	}
-
-	return obpath.split('.').reduce( function( prev, curr ) {
-		return ( prev ) ? prev[ curr ] : undefined
-	}, obj || self );
-};
+const directoryTree = require('../helpers/directoryTree.js');
 
 class FileList extends React.Component {
 	constructor( props ) {
@@ -106,7 +18,7 @@ class FileList extends React.Component {
 			ignored: [
 				'.git',
 				'node_modules',
-				'.DS_Store',
+				'.DS_Store'
 			]
 		};
 
@@ -133,7 +45,7 @@ class FileList extends React.Component {
 	getMimeType( ext ) {
 		let type;
 
-		if ( null !== ext ) {
+		if ( ext !== null ) {
 			ext = ext.replace( '.', '' );
 		}
 
@@ -169,23 +81,28 @@ class FileList extends React.Component {
 		return type;
 	}
 
+	walkDirectory( path ) {
+		let exclude = new RegExp( this.state.ignored.join('|'), 'i' );
+
+		return directoryTree( path, {
+			// depth: 2,
+			exclude
+		});
+	}
+
 	setPath( path ) {
 		if ( path === this.state.path ) {
 			return;
 		}
 
-		this.setState({
-			path: path,
-			files: this.walkDirectory( path ),
-		});
-	}
+		let files = this.walkDirectory( path );
 
-	walkDirectory( path, include = null ) {
-		return directoryTree( path, {
-			// depth: 2,
-			exclude: new RegExp( this.state.ignored.join('|'), 'i' ),
-			// include: include,
-		} );
+		console.log( files );
+
+		this.setState({
+			path,
+			files
+		});
 	}
 
 	dirClick( event ) {
@@ -199,7 +116,7 @@ class FileList extends React.Component {
 		if ( element.dataset.lazyload ) {
 			// Load the files in this directory.
 			this.setState({
-				files: this.walkDirectory( this.state.path, element.dataset.lazyload ),
+				files: this.walkDirectory( this.state.path, element.dataset.lazyload )
 			});
 
 			delete element.dataset.lazyload;
@@ -210,35 +127,27 @@ class FileList extends React.Component {
 		event.persist();
 	}
 
-	buildTree( file, level = 0, index = null ) {
-		let type = file.type,
-			ext  = file.extension || null,
-			onClick,
-			lazyload,
-			children;
+	buildTree( file, level = 0 ) {
+		let type = file.type;
+		let ext  = file.extension || null;
+		let onClick;
+		let lazyload;
+		let children;
 
 		// Skip ignored files.
 		// if ( this.isFileIgnored( file.name ) ) {
 		// 	return null;
 		// }
 
-		if ( 'directory' === file.type ) {
+		if ( file.type === 'directory' ) {
 			if ( file.children.length > 0 ) {
 				let childrenItems = [];
 
 				for ( var child in file.children ) {
-					if ( index ) {
-						index += '.' + child;
-					} else {
-						index = child;
-					}
-
-					// console.log( Object.resolve( index, this.state.files ) );
-
-					childrenItems.push( this.buildTree( file.children[ child ], level + 1, index ) );
+					childrenItems.push( this.buildTree( file.children[ child ], level + 1 ) );
 				}
 
-				children = <ul className="children" key={ file.path + '-children' }>{ childrenItems }</ul>;
+				children = <ul className='children' key={ file.path + '-children' }>{ childrenItems }</ul>;
 			} else {
 				lazyload = file.path;
 			}
