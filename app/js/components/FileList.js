@@ -2,8 +2,6 @@
  * @file Component for rendering a directory tree.
  */
 
-const Promise = require('bluebird');
-
 const React = require('react');
 
 const directoryTree = require('../helpers/directoryTree.js');
@@ -95,14 +93,12 @@ class FileList extends React.Component {
 			return;
 		}
 
-		let files = this.walkDirectory( path );
-
-		console.log( files );
-
-		this.setState({
-			path,
-			files
-		});
+		this.walkDirectory( path ).then( function( files ) {
+			this.setState({
+				path,
+				files
+			});
+		}.bind( this ));
 	}
 
 	dirClick( event ) {
