@@ -7,7 +7,9 @@
 		}
 	},
 	"rules":{
-		"indent": [ 1, "tab" ],
+		"indent": [ 1, "tab", {
+			"SwitchCase": 1
+		} ],
 		"no-tabs": 0,
 		"semi": 0,
 		"no-multi-spaces": 0,
