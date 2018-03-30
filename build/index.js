@@ -30,6 +30,8 @@ function createWindow() {
 
 	mainWindow.webContents.openDevTools();
 
+	mainWindow.webContents.executeJavaScript("require('electron-react-devtools').install()");
+
 	mainWindow.webContents.on('dom-ready', function () {
 		// renderFileList( 'res/img' );
 	});

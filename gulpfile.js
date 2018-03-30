@@ -30,13 +30,38 @@ const path = require( 'path' )
 
 const electronVersion = require( 'electron/package.json' ).version
 
+const paths = {
+	client: {
+		js: './app/js/*.js',
+		css: './app/css/*.scss',
+		html: './app/*.html',
+		res: './app/res/**/*'
+	},
+	server: {
+		js: './src/*.js'
+	},
+	watch: {
+		client: {
+			js: './app/js/**/*.js',
+			css: './app/css/**/*.scss',
+			html: './app/**/*.html',
+			res: './app/res/**/*'
+		},
+		server: {
+			js: './src/**/*.js'
+		}
+	},
+	dist: {
+		build: './build'
+	}
+}
+
 /* These are the building tasks! */
 
-gulp.task( 'build-client-bundles', ( done ) => {
-	glob( './app/js/*.js', ( err, files ) => {
+gulp.task( 'build-client-js', ( done ) => {
+	glob( paths.client.js, ( err, files ) => {
 		if ( err ) {
-			// done( err )
-			console.log( err );
+			done( err )
 		}
 
 		let tasks = files.map( ( entry ) => {
@@ -59,7 +84,7 @@ gulp.task( 'build-client-bundles', ( done ) => {
 				.pipe( rename( {
 					dirname: 'js'
 				} ) )
-				.pipe( gulp.dest( './build' ) )
+				.pipe( gulp.dest( paths.dist.build ) )
 		} )
 
 		es.merge( tasks ).on( 'end', done )
@@ -67,10 +92,9 @@ gulp.task( 'build-client-bundles', ( done ) => {
 } )
 
 gulp.task( 'build-client-css', ( done ) => {
-	glob( './app/css/*.scss', ( err, files ) => {
+	glob( paths.client.css, ( err, files ) => {
 		if ( err ) {
-			// done( err )
-			console.log( err );
+			done( err )
 		}
 
 		let tasks = files.map( ( entry ) => {
@@ -79,7 +103,7 @@ gulp.task( 'build-client-css', ( done ) => {
 				.pipe( rename( {
 					dirname: 'css'
 				} ) )
-				.pipe( gulp.dest( './build' ) )
+				.pipe( gulp.dest( paths.dist.build ) )
 		} )
 
 		es.merge( tasks ).on( 'end', done )
@@ -87,15 +111,14 @@ gulp.task( 'build-client-css', ( done ) => {
 } )
 
 gulp.task( 'build-client-html', ( done ) => {
-	glob( './app/*.html', ( err, files ) => {
+	glob( paths.client.html, ( err, files ) => {
 		if ( err ) {
-			// done( err )
-			console.log( err );
+			done( err )
 		}
 
 		let tasks = files.map( ( entry ) => {
 			return gulp.src( entry )
-				.pipe( gulp.dest( './build' ) )
+				.pipe( gulp.dest( paths.dist.build ) )
 		} )
 
 		es.merge( tasks ).on( 'end', done )
@@ -103,16 +126,15 @@ gulp.task( 'build-client-html', ( done ) => {
 } )
 
 gulp.task( 'build-client-html-production', ( done ) => {
-	glob( './app/*.html', ( err, files ) => {
+	glob( paths.client.html, ( err, files ) => {
 		if ( err ) {
-			// done( err )
-			console.log( err );
+			done( err )
 		}
 
 		let tasks = files.map( ( entry ) => {
 			return gulp.src( entry )
 				.pipe( useref() )
-				.pipe( gulp.dest( './build' ) )
+				.pipe( gulp.dest( paths.dist.build ) )
 		} )
 
 		es.merge( tasks ).on( 'end', done )
@@ -120,15 +142,14 @@ gulp.task( 'build-client-html-production', ( done ) => {
 } )
 
 gulp.task( 'build-client-res', ( done ) => {
-	glob( './app/res/**/*', ( err, files ) => {
+	glob( paths.client.res, ( err, files ) => {
 		if ( err ) {
-			// done( err )
-			console.log( err );
+			done( err )
 		}
 
 		let tasks = files.map( ( entry ) => {
 			return gulp.src( entry, { base: './app' } )
-				.pipe( gulp.dest( './build' ) )
+				.pipe( gulp.dest( paths.dist.build ) )
 		} )
 
 		es.merge( tasks ).on( 'end', done )
@@ -136,30 +157,29 @@ gulp.task( 'build-client-res', ( done ) => {
 } )
 
 gulp.task( 'build-client', [
-	'build-client-bundles',
 	'build-client-css',
 	'build-client-html',
-	'build-client-res'
+	'build-client-res',
+	'build-client-js'
 ] )
 
 gulp.task( 'build-client-production', [
-	'build-client-bundles',
 	'build-client-css',
 	'build-client-html-production',
-	'build-client-res'
+	'build-client-res',
+	'build-client-js'
 ] )
 
 gulp.task( 'build-server', ( done ) => {
-	glob( './src/*.js', ( err, files ) => {
+	glob( paths.server.js, ( err, files ) => {
 		if ( err ) {
-			// done( err )
-			console.log( err );
+			done( err )
 		}
 
 		let tasks = files.map( ( entry ) => {
 			return gulp.src( entry )
 				.pipe( babel( { presets: [ 'es2015' ] } ) )
-				.pipe( gulp.dest( './build' ) )
+				.pipe( gulp.dest( paths.dist.build ) )
 		} )
 
 		es.merge( tasks ).on( 'end', done )
@@ -174,19 +194,21 @@ gulp.task( 'build', [
 gulp.task( 'build-production', [ 'build-client-production', 'build-server' ], () => {
 	gulp.src( './package.json' )
 		.pipe( replace( 'build/index.js', 'index.js' ) )
-		.pipe( gulp.dest( './build' ) )
+		.pipe( gulp.dest( paths.dist.build ) )
 } )
 
 /* These are the watch tasks! */
 
 gulp.task( 'watch-client', () => {
-	gulp.watch( './app/**/*', [ 'build-client' ], ( e ) => {
-		console.log( 'Client file ' + e.path + ' was ' + e.type + ', rebuilding...' )
-	} )
+	for ( let type in paths.watch.client ) {
+		gulp.watch( paths.watch.client[ type ], [ 'build-client-' + type ], ( e ) => {
+			console.log( 'Client file ' + e.path + ' was ' + e.type + ', rebuilding...' )
+		} )
+	}
 } )
 
 gulp.task( 'watch-server', () => {
-	gulp.watch( './src/**/*', [ 'build-server' ], ( e ) => {
+	gulp.watch( paths.watch.server.js, [ 'build-server' ], ( e ) => {
 		console.log( 'Server file ' + e.path + ' was ' + e.type + ', rebuilding...' )
 	} )
 } )
@@ -196,7 +218,7 @@ gulp.task( 'watch', [ 'watch-client', 'watch-server' ] )
 /* These are the linting tasks! */
 
 gulp.task( 'lint-client', ( done ) => {
-	glob( './app/**/*.js', ( err, files ) => {
+	glob( paths.client.js, ( err, files ) => {
 		if ( err ) done( err )
 
 		let tasks = files.map( ( entry ) => {
@@ -210,7 +232,7 @@ gulp.task( 'lint-client', ( done ) => {
 } )
 
 gulp.task( 'lint-server', ( done ) => {
-	glob( './src/**/*.js', ( err, files ) => {
+	glob( paths.server.js, ( err, files ) => {
 		if ( err ) done( err )
 
 		let tasks = files.map( ( entry ) => {
@@ -229,26 +251,26 @@ gulp.task( 'lint', [ 'lint-client', 'lint-server' ] )
 
 gulp.task( 'serve', [ 'build', 'watch' ], () => {
 	electron.start()
-	gulp.watch( './build/index.js', electron.restart )
-	gulp.watch( [ './build/js/*.js', './build/css/*.css' ], electron.reload )
+	gulp.watch( paths.dist.build + '/index.js', electron.restart )
+	gulp.watch( [ paths.dist.build + '/js/*.js', paths.dist.build + '/css/*.css' ], electron.reload )
 } )
 
 /* These are the packaging tasks! */
 
 gulp.task( 'package-osx', [ 'build-production' ], () => {
-	return gulp.src( './build/**' )
+	return gulp.src( paths.dist.build + '/**' )
 		.pipe( electronPackager( { version: electronVersion, platform: 'darwin' } ) )
 		.pipe( symdest( 'release' ) )
 } )
 
 gulp.task( 'package-windows', [ 'build-production' ], () => {
-	return gulp.src( './build/**' )
+	return gulp.src( paths.dist.build + '/**' )
 		.pipe( electronPackager( { version: electronVersion, platform: 'win32' } ) )
 		.pipe( zip.dest( './release/windows.zip' ) )
 } )
 
 gulp.task( 'package-linux', [ 'build-production' ], () => {
-	return gulp.src( './build/**' )
+	return gulp.src( paths.dist.build + '/**' )
 		.pipe( electronPackager( { version: electronVersion, platform: 'linux' } ) )
 		.pipe( zip.dest( './release/linux.zip' ) )
 } )
