@@ -20,7 +20,7 @@
 	.filename {
 		padding: $spacing__content-s;
 		box-shadow: none;
-		transition: box-shadow 0.2s;
+		transition: box-shadow 0.1s;
 
 		span,
 		strong {
@@ -59,9 +59,6 @@
 	// }
 
 	.children {
-		max-height: 0;
-		transition: max-height 0.3s;
-
 		> li {
 			&:last-child {
 				border-bottom-color: transparent;
@@ -71,10 +68,6 @@
 				border-top-color: transparent;
 			}
 		}
-	}
-
-	li.expand > .children {
-		max-height: none;
 	}
 
 	// Icons.

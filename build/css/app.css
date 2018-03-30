@@ -79,7 +79,7 @@
   visibility: hidden;
   border: 1px solid #e6e6e6;
   background-color: #f4f4f4;
-  box-shadow: 0 1px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 30px rgba(0, 0, 0, 0.1);
   transform: translate(0, 0);
   transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
   z-index: 9; }
@@ -138,7 +138,7 @@ body {
   #files .filename {
     padding: 10px;
     box-shadow: none;
-    transition: box-shadow 0.2s; }
+    transition: box-shadow 0.1s; }
     #files .filename span,
     #files .filename strong {
       display: inline-block;
@@ -158,15 +158,10 @@ body {
       color: #555; }
   #files li:hover > .filename {
     box-shadow: inset 1px 0 0 #555; }
-  #files .children {
-    max-height: 0;
-    transition: max-height 0.3s; }
-    #files .children > li:last-child {
-      border-bottom-color: transparent; }
-    #files .children > li:not(:first-child) {
-      border-top-color: transparent; }
-  #files li.expand > .children {
-    max-height: none; }
+  #files .children > li:last-child {
+    border-bottom-color: transparent; }
+  #files .children > li:not(:first-child) {
+    border-top-color: transparent; }
   #files .zip > .filename .icon {
     background-image: url("../res/img/filetypes/file-zip.svg"); }
   #files .text > .filename .icon {

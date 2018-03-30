@@ -1,6 +1,8 @@
 'use strict';
 
-/* jshint esversion: 6 */
+/**
+ * @file Main application controller.
+ */
 
 var _require = require('electron'),
     app = _require.app,
@@ -17,8 +19,8 @@ var mainWindow = void 0;
 
 function createWindow() {
 	mainWindow = new BrowserWindow({
-		width: 1600,
-		height: 600,
+		width: 1200,
+		height: 2000,
 		autoHideMenuBar: true
 	});
 
@@ -28,8 +30,8 @@ function createWindow() {
 		slashes: true
 	}));
 
+	// Debugging.
 	mainWindow.webContents.openDevTools();
-
 	mainWindow.webContents.executeJavaScript("require('electron-react-devtools').install()");
 
 	mainWindow.webContents.on('dom-ready', function () {

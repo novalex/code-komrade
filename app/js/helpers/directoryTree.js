@@ -1,5 +1,5 @@
 /**
- * @file Walk a directory and return the files and folders as an object.
+ * @file Walk a directory and return an object of files and subfolders.
  */
 
 const Promise = require('bluebird');
@@ -53,7 +53,7 @@ function directoryTree( path, options = {}, depth = 0 ) {
 				if ( err ) {
 					if ( err.code === 'EACCES' ) {
 						// User does not have permissions, ignore directory.
-						return null;
+						resolve( null );
 					} else {
 						throw err;
 					}
