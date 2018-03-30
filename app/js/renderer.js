@@ -2,7 +2,7 @@
 
 const Store  = require('electron-store');
 const config = new Store({
-	name: 'buildr-config',
+	name: 'buildr-config'
 });
 
 const React = require('react');
@@ -18,17 +18,17 @@ ReactDOM.render(
 // require( './plugins/velocity.min.js' );
 
 // Context menu.
-const file_list = document.getElementById('files'),
-	  filenames = file_list.getElementsByTagName('li');
+const fileList = document.getElementById('files');
+// const filenames = fileList.getElementsByTagName('li');
 
-file_list.addEventListener( 'contextmenu', function( event ) {
-	let filename_cont = event.target;
+fileList.addEventListener( 'contextmenu', function( event ) {
+	let fileNameCont = event.target;
 
-	if ( 'li' !== filename_cont.tagName ) {
-		filename_cont = event.target.closest('li');
+	if ( fileNameCont.tagName !== 'li' ) {
+		fileNameCont = event.target.closest('li');
 	}
 
-	if ( filename_cont.dataset.file ) {
-		console.log( JSON.parse( decodeURIComponent( filename_cont.dataset.file ) ) );
+	if ( fileNameCont.dataset.file ) {
+		console.log( JSON.parse( decodeURIComponent( fileNameCont.dataset.file ) ) );
 	}
 });
