@@ -15,7 +15,7 @@ function createWindow() {
 	mainWindow = new BrowserWindow({
 		width: 1600,
 		height: 600,
-		autoHideMenuBar: true,
+		autoHideMenuBar: true
 	});
 
 	mainWindow.loadURL( url.format({
@@ -25,6 +25,8 @@ function createWindow() {
 	}));
 
 	mainWindow.webContents.openDevTools();
+
+	mainWindow.webContents.executeJavaScript( "require('electron-react-devtools').install()" );
 
 	mainWindow.webContents.on( 'dom-ready', function() {
 		// renderFileList( 'res/img' );
