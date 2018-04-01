@@ -8,20 +8,9 @@ const ProjectSelect = require('./ProjectSelect');
 
 const FileList = require('./FileList');
 
-// let projects = [
-// 	{ name: 'Buildr', path: 'E:/Apps/Buildr' },
-// 	{ name: 'NTN', path: 'E:/Sites/NTN' },
-// 	{ name: 'MSO', path: 'E:/Sites/MSO' },
-// ];
-
-// let active = {
-// 	name: 'Buildr',
-// 	path: 'E:/Apps/Buildr',
-// };
-
 class Projects extends React.Component {
-	_ProjectSelect: ProjectSelect;
-	_ProjectFileList: FileList;
+	_ProjectSelect: null;
+	_ProjectFileList: null;
 
 	constructor( props ) {
 		super( props );
@@ -32,10 +21,10 @@ class Projects extends React.Component {
 			path: ''
 		};
 
-		if ( this.props.config ) {
-			projects = this.props.config.get('projects');
+		if ( window.config ) {
+			projects = window.config.get('projects');
 
-			let activeIndex = this.props.config.get('active-project');
+			let activeIndex = window.config.get('active-project');
 
 			if ( projects[ activeIndex ] ) {
 				active = projects[ activeIndex ];
@@ -56,11 +45,11 @@ class Projects extends React.Component {
 	}
 
 	saveProjects( projects ) {
-		this.props.config.set( 'projects', projects );
+		window.config.set( 'projects', projects );
 	}
 
 	saveActiveProject( index ) {
-		this.props.config.set( 'active-project', index );
+		window.config.set( 'active-project', index );
 	}
 
 	render() {
@@ -68,11 +57,11 @@ class Projects extends React.Component {
 			<React.Fragment>
 				<div id='header'>
 					<ProjectSelect
-						projects={ this.state.projects }
 						active={ this.state.active }
-						ref={ ( child ) => { this._ProjectSelect = child; } }
+						projects={ this.state.projects }
 						saveProjects={ this.saveProjects }
 						saveActiveProject={ this.saveActiveProject }
+						ref={ ( child ) => { this._ProjectSelect = child; } }
 					/>
 				</div>
 				<div id='content'>

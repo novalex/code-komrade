@@ -32,7 +32,7 @@ const electronVersion = require( 'electron/package.json' ).version
 
 const paths = {
 	client: {
-		js: './app/js/*.js',
+		js: './app/js/*',
 		css: './app/css/*.scss',
 		html: './app/*.html',
 		res: './app/res/**/*'
@@ -42,7 +42,7 @@ const paths = {
 	},
 	watch: {
 		client: {
-			js: './app/js/**/*.js',
+			js: './app/js/**/*',
 			css: './app/css/**/*.scss',
 			html: './app/**/*.html',
 			res: './app/res/**/*'
@@ -51,6 +51,7 @@ const paths = {
 			js: './src/**/*.js'
 		}
 	},
+	browserify: [ './node_modules', './app/js/' ],
 	dist: {
 		build: './build'
 	}
@@ -59,7 +60,7 @@ const paths = {
 /* These are the building tasks! */
 
 gulp.task( 'build-client-js', ( done ) => {
-	glob( paths.client.js, ( err, files ) => {
+	glob( './app/js/renderer.js', ( err, files ) => {
 		if ( err ) {
 			done( err )
 		}
@@ -67,7 +68,8 @@ gulp.task( 'build-client-js', ( done ) => {
 		let tasks = files.map( ( entry ) => {
 			return browserify( {
 					entries: [ entry ],
-					extensions: ['.js'],
+					extensions: [ '.js', '.jsx' ],
+					paths: paths.browserify,
 					ignoreMissing: true,
 					detectGlobals: false,
 					bare: true,
@@ -252,7 +254,8 @@ gulp.task( 'lint', [ 'lint-client', 'lint-server' ] )
 gulp.task( 'serve', [ 'build', 'watch' ], () => {
 	electron.start()
 	gulp.watch( paths.dist.build + '/index.js', electron.restart )
-	gulp.watch( [ paths.dist.build + '/js/*.js', paths.dist.build + '/css/*.css' ], electron.reload )
+	gulp.watch( paths.dist.build + '/js/*.js', electron.reload )
+	gulp.watch( paths.dist.build + '/css/app.css', electron.reload )
 } )
 
 /* These are the packaging tasks! */

@@ -1,7 +1,8 @@
 /* jshint esversion: 6, multistr: true */
 
 const Store  = require('electron-store');
-const config = new Store({
+
+window.config = new Store({
 	name: 'buildr-config'
 });
 
@@ -11,7 +12,7 @@ const ReactDOM = require('react-dom');
 const Projects = require('./components/Projects');
 
 ReactDOM.render(
-	<Projects config={ config } />,
+	<Projects />,
 	document.getElementById('app')
 );
 

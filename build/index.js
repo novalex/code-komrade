@@ -8,21 +8,28 @@ var _require = require('electron'),
     app = _require.app,
     BrowserWindow = _require.BrowserWindow;
 
+var windowStateKeeper = require('electron-window-state');
+
 var path = require('path');
 var url = require('url');
-
-// require('electron-reload')( __dirname, {
-// 	electron: require( 'electron' )
-// });
 
 var mainWindow = void 0;
 
 function createWindow() {
+	var mainWindowState = windowStateKeeper({
+		defaultWidth: 1200,
+		defaultHeight: 1080
+	});
+
 	mainWindow = new BrowserWindow({
-		width: 1200,
-		height: 2000,
+		x: mainWindowState.x,
+		y: mainWindowState.y,
+		width: mainWindowState.width,
+		height: mainWindowState.height,
 		autoHideMenuBar: true
 	});
+
+	mainWindowState.manage(mainWindow);
 
 	mainWindow.loadURL(url.format({
 		pathname: path.join(__dirname, 'index.html'),
@@ -32,11 +39,9 @@ function createWindow() {
 
 	// Debugging.
 	mainWindow.webContents.openDevTools();
-	mainWindow.webContents.executeJavaScript("require('electron-react-devtools').install()");
 
-	mainWindow.webContents.on('dom-ready', function () {
-		// renderFileList( 'res/img' );
-	});
+	// mainWindow.webContents.on( 'dom-ready', function() {
+	// });
 
 	mainWindow.on('closed', function () {
 		mainWindow = null;

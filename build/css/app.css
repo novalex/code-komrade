@@ -1,4 +1,24 @@
 @import url(#{$path__res}/fonts/inter-ui.css);
+@-webkit-keyframes fade {
+  0% {
+    opacity: 1; }
+  50% {
+    opacity: 0.25; }
+  100% {
+    opacity: 1; } }
+
+@-webkit-keyframes bounce {
+  0% {
+    transform: translate(0, 0); }
+  50% {
+    transform: translate(0, 2px); }
+  70% {
+    transform: translate(0, 0); }
+  90% {
+    transform: translate(0, 2px); }
+  100% {
+    transform: translate(0, 0); } }
+
 #sidebar {
   position: fixed;
   top: 0;
@@ -56,7 +76,8 @@
 
 #project-active {
   cursor: pointer;
-  height: 48px; }
+  height: 48px;
+  user-select: none; }
   #project-active h1 {
     font-weight: 700;
     font-size: 1.1rem;
@@ -109,8 +130,9 @@ body {
   box-sizing: border-box; }
 
 #wrap {
-  padding: 20px;
-  padding-left: 104px; }
+  min-width: 800px;
+  padding: 20px 30px;
+  padding-left: 114px; }
 
 #sidebar,
 #content {
@@ -118,8 +140,29 @@ body {
   transition: opacity 0.2s; }
   .unfocus #sidebar, .unfocus
   #content {
-    opacity: 0.4;
+    opacity: 0.4; }
+  .unfocus #sidebar,
+  .loading #sidebar, .unfocus
+  #content,
+  .loading
+  #content {
+    user-select: none;
     pointer-events: none; }
+
+#off-canvas {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 320px;
+  color: #ddd;
+  background-color: #1e1e1e;
+  box-shadow: -1px 0 30px rgba(0, 0, 0, 0.15);
+  transform: translate(320px, 0);
+  transition: transform 0.3s; }
+
+body.off-canvas #off-canvas {
+  transform: translate(0, 0); }
 
 #files {
   border-left: 1px solid #e6e6e6;
@@ -135,6 +178,8 @@ body {
     overflow: hidden;
     border-top: 1px solid #e6e6e6;
     border-bottom: 1px solid #e6e6e6; }
+    #files li:hover > .filename {
+      box-shadow: inset 1px 0 0 #555; }
   #files .filename {
     padding: 10px;
     box-shadow: none;
@@ -156,8 +201,6 @@ body {
       font-size: 1.1em;
       font-weight: 500;
       color: #555; }
-  #files li:hover > .filename {
-    box-shadow: inset 1px 0 0 #555; }
   #files .children > li:last-child {
     border-bottom-color: transparent; }
   #files .children > li:not(:first-child) {
@@ -174,3 +217,20 @@ body {
     background-image: url("../res/img/filetypes/file-binary.svg"); }
   #files .directory > .filename .icon {
     background-image: url("../res/img/filetypes/file-directory.svg"); }
+  #files li.informative {
+    color: #777;
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 30px;
+    background-color: #f4f4f4; }
+    #files li.informative.loading .inner {
+      animation: bounce 1.2s ease-in;
+      animation-iteration-count: infinite; }
+
+#file-options .header {
+  text-align: center;
+  padding: 20px; }
+
+#file-options .body {
+  padding: 20px;
+  border-top: 1px solid #050505; }

@@ -8,6 +8,8 @@ const fspath = require('path');
 
 const React = require('react');
 
+const globalUI = require('../helpers/globalUI');
+
 class ProjectSelect extends React.Component {
 	_FileList: null;
 
@@ -25,17 +27,13 @@ class ProjectSelect extends React.Component {
 		this.selectProject = this.selectProject.bind( this );
 	}
 
-	componentDidMount() {
-		// this._FileList.setPath( this.state.active.path );
-	}
-
 	setFileList( FileList ) {
 		this._FileList = FileList;
 	}
 
 	toggleSelect() {
 		this.setState( function( prevState ) {
-			document.getElementById('wrap').classList.toggle( 'unfocus', ! prevState.isOpen );
+			globalUI.unfocus( ! prevState.isOpen );
 
 			return { isOpen: ! prevState.isOpen };
 		});

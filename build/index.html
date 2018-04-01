@@ -7,7 +7,7 @@
 	<link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 <body>
-	<div id="wrap">
+	<div id="wrap" class="off-canvas">
 		<nav id="sidebar">
 			<div id="logo"></div>
 
@@ -33,10 +33,16 @@
 		</section> -->
 	</div>
 
-	<script>require('./js/renderer.js');</script>
+	<div id="off-canvas"></div>
+
+	<div id="overlay"></div>
+
+	<script type="text/javascript" src="./js/renderer.js"></script>
 	<!-- build:remove -->
-	<!-- Connect to server process -->
-	<script>require('electron-connect').client.create();</script>
+	<script>
+		require('electron-connect').client.create();
+		require('electron-react-devtools').install();
+	</script>
 	<!-- end:build -->
 </body>
 </html>

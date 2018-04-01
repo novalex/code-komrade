@@ -4,21 +4,28 @@
 
 const { app, BrowserWindow } = require('electron');
 
+const windowStateKeeper = require('electron-window-state');
+
 const path = require('path');
-const url  = require('url');
+const url = require('url');
 
-// require('electron-reload')( __dirname, {
-// 	electron: require( 'electron' )
-// });
-
-let mainWindow;
+var mainWindow = void 0;
 
 function createWindow() {
+	let mainWindowState = windowStateKeeper({
+		defaultWidth: 1200,
+		defaultHeight: 1080
+	});
+
 	mainWindow = new BrowserWindow({
-		width: 1200,
-		height: 2000,
+		x: mainWindowState.x,
+		y: mainWindowState.y,
+		width: mainWindowState.width,
+		height: mainWindowState.height,
 		autoHideMenuBar: true
 	});
+
+	mainWindowState.manage( mainWindow );
 
 	mainWindow.loadURL( url.format({
 		pathname: path.join( __dirname, 'index.html' ),
@@ -28,27 +35,25 @@ function createWindow() {
 
 	// Debugging.
 	mainWindow.webContents.openDevTools();
-	mainWindow.webContents.executeJavaScript( "require('electron-react-devtools').install()" );
 
-	mainWindow.webContents.on( 'dom-ready', function() {
-		// renderFileList( 'res/img' );
-	});
+	// mainWindow.webContents.on( 'dom-ready', function() {
+	// });
 
-	mainWindow.on( 'closed', function() {
+	mainWindow.on( 'closed', function () {
 		mainWindow = null;
-	} );
+	});
 }
 
 app.on( 'ready', createWindow );
 
-app.on( 'window-all-closed', function() {
+app.on( 'window-all-closed', function () {
 	if ( process.platform !== 'darwin' ) {
 		app.quit();
 	}
-} );
+});
 
-app.on( 'activate', function() {
+app.on( 'activate', function () {
 	if ( mainWindow === null ) {
 		createWindow();
 	}
-} );
+});

@@ -15,6 +15,10 @@
 		overflow: hidden;
 		border-top: 1px solid $color__border;
 		border-bottom: 1px solid $color__border;
+
+		&:hover > .filename {
+			box-shadow: inset 1px 0 0 $color__bg-dark;
+		}
 	}
 
 	.filename {
@@ -46,18 +50,6 @@
 		}
 	}
 
-	li:hover > .filename {
-		box-shadow: inset 1px 0 0 $color__bg-dark;
-	}
-
-	// li:nth-child(odd) > .filename {
-	// 	background-color: $color__bg;
-	// }
-
-	// li:nth-child(even) > .filename {
-	// 	background-color: darken( $color__bg, 2 );
-	// }
-
 	.children {
 		> li {
 			&:last-child {
@@ -84,5 +76,34 @@
 		.#{$filetype} > .filename .icon {
 			background-image: url( '#{$path__res}/img/filetypes/file-#{$filetype}.svg' );
 		}
+	}
+
+	// Informative.
+	li.informative {
+		color: $color__text-light;
+		font-weight: 500;
+		font-size: 1.1rem;
+		padding: $spacing__content-l;
+		background-color: $color__bg-alt;
+
+		&.loading {
+			.inner {
+				animation: bounce 1.2s ease-in;
+				animation-iteration-count: infinite;
+			}
+		}
+	}
+}
+
+// File options.
+#file-options {
+	.header {
+		text-align: center;
+		padding: $spacing__content;
+	}
+
+	.body {
+		padding: $spacing__content;
+		border-top: 1px solid $color__border-darker;
 	}
 }

@@ -9,6 +9,7 @@
 #project-active {
 	cursor: pointer;
 	height: $size__logo;
+	user-select: none;
 
 	h1 {
 		font-weight: 700;

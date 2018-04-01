@@ -4,12 +4,63 @@
 
 const React = require('react');
 
-const directoryTree = require('../helpers/directoryTree.js');
+const ReactDOM = require('react-dom');
+
+const FileOptionsScript = require('./FileOptionsScript');
+
+const FileOptionsStylesheet = require('./FileOptionsStylesheet');
+
+const globalUI = require('../helpers/globalUI');
+
+const directoryTree = require('../helpers/directoryTree');
 
 class FileListFile extends React.Component {
+	constructor( props ) {
+		super( props );
+
+		this.onClick = this.onClick.bind( this );
+	}
+
+	getOptions( file ) {
+		if ( ! file.extension ) {
+			return null;
+		}
+
+		switch ( file.extension ) {
+			case '.scss':
+			case '.sass':
+			case '.less':
+				return <FileOptionsStylesheet file={ file } />;
+			case '.js':
+			case '.ts':
+			case '.jsx':
+				return <FileOptionsScript file={ file } />;
+			default:
+				return null;
+		}
+	}
+
+	onClick( event ) {
+		event.stopPropagation();
+
+		let _FileOptions = this.getOptions( this.props.file );
+
+		if ( ! _FileOptions ) {
+			globalUI.offCanvas( false );
+			return;
+		}
+
+		ReactDOM.render(
+			_FileOptions,
+			document.getElementById('off-canvas')
+		);
+
+		globalUI.offCanvas( true );
+	}
+
 	render() {
 		return (
-			<li className={ this.props.type }>
+			<li className={ this.props.type } onClick={ this.onClick }>
 				<div className='filename'>
 					{ String.fromCharCode('0x2003').repeat( this.props.level ) }
 					<span className='icon' />
@@ -22,10 +73,8 @@ class FileListFile extends React.Component {
 
 function FileListPlaceholder( props ) {
 	return (
-		<li className={ props.type }>
-			<div className='filename'>
-				{ props.children }
-			</div>
+		<li className={ props.type + ' informative' }>
+			<div className='inner'>{ props.children }</div>
 		</li>
 	);
 }
@@ -51,6 +100,8 @@ class FileListDirectory extends React.Component {
 
 	onClick( event ) {
 		event.stopPropagation();
+
+		globalUI.offCanvas( false );
 
 		this.setState( function( prevState ) {
 			return { expanded: ! prevState.expanded };
@@ -112,31 +163,31 @@ class FileList extends React.Component {
 	getMimeType( ext ) {
 		let type;
 
-		if ( ext !== null ) {
-			ext = ext.replace( '.', '' );
-		}
-
 		switch ( ext ) {
-			case 'svg':
-			case 'png':
-			case 'jpg':
+			case '.svg':
+			case '.png':
+			case '.jpg':
 				type = 'media';
 				break;
 
-			case 'php':
-			case 'html':
-			case 'css':
-			case 'scss':
-			case 'js':
-			case 'json':
+			case '.php':
+			case '.html':
+			case '.css':
+			case '.scss':
+			case '.sass':
+			case '.less':
+			case '.js':
+			case '.ts':
+			case '.jsx':
+			case '.json':
 				type = 'code';
 				break;
 
-			case 'zip':
-			case 'rar':
-			case 'tar':
-			case '7z':
-			case 'gz':
+			case '.zip':
+			case '.rar':
+			case '.tar':
+			case '.7z':
+			case '.gz':
 				type = 'zip';
 				break;
 
@@ -164,12 +215,16 @@ class FileList extends React.Component {
 
 		this.setState({ loading: true });
 
+		globalUI.loading();
+
 		this.walkDirectory( path ).then( function( files ) {
 			this.setState({
 				path,
 				files,
 				loading: false
 			});
+
+			globalUI.loading( false );
 		}.bind( this ));
 	}
 
@@ -211,13 +266,13 @@ class FileList extends React.Component {
 		if ( this.state.loading ) {
 			return (
 				<FileListPlaceholder type='loading'>
-					<strong>Loading...</strong>
+					Loading &hellip;
 				</FileListPlaceholder>
 			);
 		} else if ( ! this.state.path ) {
 			return (
 				<FileListPlaceholder type='empty'>
-					<strong>No folder selected.</strong>
+					No folder selected.
 				</FileListPlaceholder>
 			);
 		} else if ( ! this.state.files ) {
