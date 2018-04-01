@@ -57,7 +57,6 @@ class FileListFile extends React.Component {
 	}
 
 	onClick( event ) {
-		event.persist();
 		event.stopPropagation();
 
 		let _FileOptions = this.getOptions( this.props.file );
@@ -72,7 +71,7 @@ class FileListFile extends React.Component {
 			document.getElementById('off-canvas')
 		);
 
-		globalUI.offCanvas( true, event );
+		globalUI.offCanvas( true, document.getElementById('files') );
 	}
 
 	render() {

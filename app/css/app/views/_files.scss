@@ -105,5 +105,10 @@
 	.body {
 		padding: $spacing__content;
 		border-top: 1px solid $color__border-darker;
+
+		> p {
+			margin-top: 0;
+			margin-bottom: $spacing__content;
+		}
 	}
 }

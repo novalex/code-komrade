@@ -278,3 +278,6 @@ body.off-canvas #off-canvas {
 #file-options .body {
   padding: 20px;
   border-top: 1px solid #050505; }
+  #file-options .body > p {
+    margin-top: 0;
+    margin-bottom: 20px; }

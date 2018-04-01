@@ -10,11 +10,15 @@ function loading( toggle = true, args = {} ) {
 	document.body.classList.toggle( 'loading', toggle );
 }
 
-function offCanvas( toggle = true, event = null ) {
+function offCanvas( toggle = true, exclude = null ) {
 	document.body.classList.toggle( 'off-canvas', toggle );
 
 	if ( toggle ) {
-		removeFocus( document.getElementById('off-canvas'), 'off-canvas', event );
+		removeFocus(
+			document.getElementById('off-canvas'),
+			'off-canvas',
+			exclude
+		);
 	}
 }
 
@@ -23,7 +27,7 @@ function removeFocus( element, className, exclude = null ) {
 		if ( ! element.contains( event.target ) ) {
 			removeClickListener();
 
-			if ( ! exclude || exclude.target !== event.target ) {
+			if ( ! exclude || ! exclude.contains( event.target ) ) {
 				document.body.classList.remove( className );
 			}
 		}
