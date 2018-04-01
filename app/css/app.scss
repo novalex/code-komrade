@@ -6,6 +6,8 @@
 
 @import '#{$path__res}/fonts/inter-ui.css';
 
+@import 'app/fields';
+
 @import 'app/sidebar';
 @import 'app/header';
 @import 'app/content';

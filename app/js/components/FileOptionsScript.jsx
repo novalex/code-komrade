@@ -2,6 +2,8 @@ const React = require('react');
 
 const FileOptions = require('./FileOptions');
 
+const FieldSwitch = require('./fields/FieldSwitch');
+
 class FileOptionsScript extends React.Component {
 	render() {
 		return (
@@ -10,15 +12,21 @@ class FileOptionsScript extends React.Component {
 					<strong>{ this.props.file.name }</strong>
 				</div>
 				<div className='body'>
-					<div className='field'>
-						<label htmlFor='autocompile'>Auto-compile</label>
-						<input type='checkbox' name='autocompile' value='1' />
-					</div>
+					<FieldSwitch
+						value='1'
+						current='0'
+						name='autocompile'
+						label='Auto compile'
+						labelPos='left'
+					/>
 
-					<div className='field'>
-						<label htmlFor='babel'>Babel</label>
-						<input type='checkbox' name='babel' value='1' />
-					</div>
+					<FieldSwitch
+						value='1'
+						current='1'
+						name='babel'
+						label='Babel'
+						labelPos='left'
+					/>
 				</div>
 			</FileOptions>
 		);

@@ -45,7 +45,8 @@ const paths = {
 			js: './app/js/**/*',
 			css: './app/css/**/*.scss',
 			html: './app/**/*.html',
-			res: './app/res/**/*'
+			res: './app/res/**/*',
+			cwd: '.'
 		},
 		server: {
 			js: './src/**/*.js'
@@ -203,7 +204,7 @@ gulp.task( 'build-production', [ 'build-client-production', 'build-server' ], ()
 
 gulp.task( 'watch-client', () => {
 	for ( let type in paths.watch.client ) {
-		gulp.watch( paths.watch.client[ type ], [ 'build-client-' + type ], ( e ) => {
+		gulp.watch( paths.watch.client[ type ], { cwd: paths.watch.client.cwd }, [ 'build-client-' + type ], ( e ) => {
 			console.log( 'Client file ' + e.path + ' was ' + e.type + ', rebuilding...' )
 		} )
 	}

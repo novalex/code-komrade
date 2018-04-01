@@ -19,6 +19,22 @@ class FileListFile extends React.Component {
 		super( props );
 
 		this.onClick = this.onClick.bind( this );
+
+		if ( this.props.file.name === 'gulpfile.js' ) {
+			let _FileOptions = this.getOptions( this.props.file );
+
+			if ( ! _FileOptions ) {
+				globalUI.offCanvas( false );
+				return;
+			}
+
+			ReactDOM.render(
+				_FileOptions,
+				document.getElementById('off-canvas')
+			);
+
+			globalUI.offCanvas( true );
+		}
 	}
 
 	getOptions( file ) {
@@ -41,6 +57,7 @@ class FileListFile extends React.Component {
 	}
 
 	onClick( event ) {
+		event.persist();
 		event.stopPropagation();
 
 		let _FileOptions = this.getOptions( this.props.file );
@@ -55,7 +72,7 @@ class FileListFile extends React.Component {
 			document.getElementById('off-canvas')
 		);
 
-		globalUI.offCanvas( true );
+		globalUI.offCanvas( true, event );
 	}
 
 	render() {

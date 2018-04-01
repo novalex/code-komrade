@@ -19,6 +19,50 @@
   100% {
     transform: translate(0, 0); } }
 
+.field {
+  margin-bottom: 20px; }
+  .field.label-top .field-label {
+    display: block;
+    margin-bottom: 10px; }
+  .field.label-left {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; }
+
+.field-switch input[type="checkbox"] {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+  position: absolute;
+  top: 0; }
+  .field-switch input[type="checkbox"]:checked + label {
+    background: #61b914; }
+    .field-switch input[type="checkbox"]:checked + label:before {
+      left: calc(100% - 4px);
+      transform: translateX(-100%); }
+
+.field-switch label {
+  display: block;
+  width: 58px;
+  height: 36px;
+  position: relative;
+  cursor: pointer;
+  text-indent: -9999px;
+  background: #3c3c3c;
+  border-radius: 18px; }
+  .field-switch label:before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 28px;
+    height: 28px;
+    background: #fff;
+    border-radius: 14px;
+    transition: 0.3s; }
+  .field-switch label:active:before {
+    width: 32px; }
+
 #sidebar {
   position: fixed;
   top: 0;
