@@ -29,7 +29,6 @@ class FieldSwitch extends React.Component {
 		return (
 			<Field type='switch' label={ this.props.label } labelPos={ this.props.labelPos }>
 				<input
-					value='1'
 					type='checkbox'
 					name={ this.props.name }
 					onChange={ this.onChange }

@@ -4,7 +4,7 @@ const FileOptions = require('./FileOptions');
 
 const FieldSwitch = require('./fields/FieldSwitch');
 
-class FileOptionsStylesheet extends React.Component {
+class FileOptionsStylesheet extends FileOptions {
 	isPartial( file ) {
 		return file.name.startsWith('_');
 	}
@@ -12,22 +12,23 @@ class FileOptionsStylesheet extends React.Component {
 	render() {
 		if ( this.isPartial( this.props.file ) ) {
 			return (
-				<FileOptions>
+				<div id='file-options' className='file-options-style'>
 					<div className='header'>
 						<strong>{ this.props.file.name }</strong>
 					</div>
 					<div className='body'>
 						<p>This is a partial file, it cannot be compiled by itself.</p>
 					</div>
-				</FileOptions>
+				</div>
 			);
 		}
 
 		return (
-			<FileOptions>
+			<div id='file-options' className='file-options-style'>
 				<div className='header'>
 					<strong>{ this.props.file.name }</strong>
 				</div>
+
 				<div className='body'>
 					<FieldSwitch
 						value='1'
@@ -35,9 +36,11 @@ class FileOptionsStylesheet extends React.Component {
 						name='autocompile'
 						label='Auto compile'
 						labelPos='left'
+						onChange={ this.handleChange }
+						checked={ this.state.options.autocompile }
 					/>
 				</div>
-			</FileOptions>
+			</div>
 		);
 	}
 }

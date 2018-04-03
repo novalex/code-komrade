@@ -9,25 +9,31 @@ class FileOptions extends React.Component {
 		super( props );
 
 		this.state = {
-			options: {}
+			options: this.getOptionsFromConfig()
 		};
 
 		this.handleChange = this.handleChange.bind( this );
 	}
 
-	componentWillMount() {
+	static getDerivedStateFromProps() {
+		let options = this.getOptionsFromConfig();
+
+		return ( Object.keys( options ).length === 0 ) ? null : options;
+	}
+
+	getOptionsFromConfig() {
 		if ( window.projectConfig ) {
 			let files = window.projectConfig.get( 'files', [] );
 			let file  = files.find( file => file.path === this.props.file.path );
 
-			if ( ! file ) {
-				return;
-			}
+			console.log( file );
 
-			this.setState({
-				options: file.options
-			});
+			if ( file ) {
+				return file.options;
+			}
 		}
+
+		return {};
 	}
 
 	handleChange( event, value ) {

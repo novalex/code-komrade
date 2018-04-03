@@ -17,23 +17,9 @@ class Projects extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		this.state = {
-			projects: [],
-			active: {
-				name: '',
-				path: ''
-			},
-			config: null
-		};
-
-		this.setProjects      = this.setProjects.bind( this );
-		this.setActiveProject = this.setActiveProject.bind( this );
-	}
-
-	componentWillMount() {
-		let projects = this.state.projects;
-		let active   = this.state.active;
-		let config   = this.state.config;
+		let projects = props.projects;
+		let active   = props.active;
+		let config   = props.config;
 
 		if ( window.config ) {
 			projects = window.config.get('projects');
@@ -51,11 +37,14 @@ class Projects extends React.Component {
 
 		window.projectConfig = config;
 
-		this.setState({
+		this.state = {
 			projects,
 			active,
 			config
-		});
+		};
+
+		this.setProjects      = this.setProjects.bind( this );
+		this.setActiveProject = this.setActiveProject.bind( this );
 	}
 
 	componentDidMount() {
@@ -105,5 +94,14 @@ class Projects extends React.Component {
 		);
 	}
 }
+
+Projects.defaultProps = {
+	projects: [],
+	active: {
+		name: '',
+		path: ''
+	},
+	config: null
+};
 
 module.exports = Projects;

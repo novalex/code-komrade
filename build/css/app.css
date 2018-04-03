@@ -170,6 +170,7 @@
 
 body {
   margin: 0;
+  user-select: none;
   font-family: 'Inter-UI', sans-serif;
   box-sizing: border-box; }
 
@@ -190,7 +191,6 @@ body {
   #content,
   .loading
   #content {
-    user-select: none;
     pointer-events: none; }
 
 #off-canvas {
@@ -281,6 +281,7 @@ body.off-canvas #off-canvas {
   #files .directory > .filename .icon {
     background-image: url("../res/img/filetypes/file-directory.svg"); }
   #files li.informative {
+    cursor: default;
     color: #777;
     font-weight: 500;
     font-size: 1.1rem;

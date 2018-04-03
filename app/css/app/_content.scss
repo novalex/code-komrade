@@ -4,6 +4,7 @@
 
 body {
 	margin: 0;
+	user-select: none;
 	font-family: 'Inter-UI', sans-serif;
 	box-sizing: border-box;
 }
@@ -25,7 +26,6 @@ body {
 
 	.unfocus &,
 	.loading & {
-		user-select: none;
 		pointer-events: none;
 	}
 }

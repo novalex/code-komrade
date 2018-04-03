@@ -2,7 +2,7 @@
  * @file Main app script.
  */
 
-const Store  = require('electron-store');
+const Store = require('electron-store');
 
 window.config = new Store({
 	name: 'buildr-config'

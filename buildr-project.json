@@ -6,6 +6,12 @@
 				"autocompile": true,
 				"babel": true
 			}
+		},
+		{
+			"path": "E:\\Apps\\Buildr\\app\\css\\app.scss",
+			"options": {
+				"autocompile": true
+			}
 		}
 	]
 }
