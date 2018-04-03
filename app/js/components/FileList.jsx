@@ -59,12 +59,16 @@ class FileListFile extends React.Component {
 	onClick( event ) {
 		event.stopPropagation();
 
+		this.props.setActiveFile( event.currentTarget );
+
 		let _FileOptions = this.getOptions( this.props.file );
 
 		if ( ! _FileOptions ) {
 			globalUI.offCanvas( false );
 			return;
 		}
+
+		event.currentTarget.classList.add('has-options');
 
 		ReactDOM.render(
 			_FileOptions,
@@ -156,14 +160,21 @@ class FileList extends React.Component {
 				'node_modules',
 				'.DS_Store'
 			],
-			loading: false
+			loading: false,
+			activeFile: null
 		};
+
+		this.setActiveFile = this.setActiveFile.bind( this );
 	}
 
 	componentDidMount() {
 		if ( this.props.path ) {
 			this.setPath( this.props.path );
 		}
+
+		document.addEventListener( 'off-canvas-hide', function() {
+			this.setActiveFile( null );
+		}.bind( this ));
 	}
 
 	isFileIgnored( filename ) {
@@ -244,6 +255,24 @@ class FileList extends React.Component {
 		}.bind( this ));
 	}
 
+	setActiveFile( element ) {
+		if ( this.state.activeFile && this.state.activeFile === element ) {
+			return;
+		}
+
+		if ( element ) {
+			element.classList.add('active');
+		}
+
+		this.setState( function( prevState ) {
+			if ( prevState.activeFile ) {
+				prevState.activeFile.classList.remove('active', 'has-options');
+			}
+
+			return { activeFile: element };
+		})
+	}
+
 	buildTree( file, level = 0 ) {
 		let type = file.type;
 		let ext  = file.extension || null;
@@ -274,6 +303,7 @@ class FileList extends React.Component {
 				file={ file }
 				type={ type }
 				level={ level }
+				setActiveFile={ this.setActiveFile }
 			/>;
 		}
 	}

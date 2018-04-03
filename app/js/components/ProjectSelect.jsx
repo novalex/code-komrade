@@ -17,9 +17,7 @@ class ProjectSelect extends React.Component {
 		super( props );
 
 		this.state = {
-			isOpen:   false,
-			active:   props.active,
-			projects: props.projects
+			isOpen:   false
 		};
 
 		this.newProject    = this.newProject.bind( this );
@@ -53,11 +51,11 @@ class ProjectSelect extends React.Component {
 	}
 
 	changeProject( index ) {
-		this.props.saveActiveProject( index );
+		this.props.setActiveProject( index );
 
-		this._FileList.setPath( this.state.projects[ index ].path );
+		this._FileList.setPath( this.props.projects[ index ].path );
 
-		this.setState({ active: this.state.projects[ index ] });
+		this.setState({ active: this.props.projects[ index ] });
 	}
 
 	newProject() {
@@ -78,8 +76,8 @@ class ProjectSelect extends React.Component {
 
 				projects.push( project );
 
-				this.props.saveProjects( projects );
-				this.props.saveActiveProject( projects.length - 1 );
+				this.props.setProjects( projects );
+				this.props.setActiveProject( projects.length - 1 );
 
 				return {
 					active: project,
@@ -92,10 +90,10 @@ class ProjectSelect extends React.Component {
 	renderChoices() {
 		let choices = [];
 
-		for ( var index in this.state.projects ) {
+		for ( var index in this.props.projects ) {
 			choices.push(
 				<div key={ index } data-project={ index } onClick={ this.selectProject }>
-					{ this.state.projects[ index ].name }
+					{ this.props.projects[ index ].name }
 				</div>
 			);
 		}
@@ -110,7 +108,7 @@ class ProjectSelect extends React.Component {
 	}
 
 	render() {
-		if ( ! this.state.active.name || ! this.state.active.path ) {
+		if ( ! this.props.active.name || ! this.props.active.path ) {
 			return (
 				<div id='project-select'>
 					<div id='project-active' onClick={ this.newProject }>
@@ -124,8 +122,8 @@ class ProjectSelect extends React.Component {
 		return (
 			<div id='project-select'>
 				<div id='project-active' onClick={ this.toggleSelect }>
-					<h1>{ this.state.active.name }</h1>
-					<h2>{ this.state.active.path }</h2>
+					<h1>{ this.props.active.name }</h1>
+					<h2>{ this.props.active.path }</h2>
 				</div>
 				<div id='project-select-dropdown' className={ this.state.isOpen ? 'open' : '' }>
 					{ this.renderChoices() }

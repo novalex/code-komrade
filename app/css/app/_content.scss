@@ -42,7 +42,7 @@ body {
 	background-color: $color__bg-darker;
 	box-shadow: -1px 0 30px rgba(0,0,0,0.15);
 	transform: translate($size__off-canvas, 0);
-	transition: transform 0.3s;
+	transition: transform 0.2s;
 }
 
 body.off-canvas {

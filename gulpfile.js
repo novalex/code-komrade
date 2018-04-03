@@ -1,14 +1,9 @@
 'use strict'
 
 /*
-  Hello!
-  It is unlikely that you should touch this Gulpfile. If you want to, however, I can't stop you. I'm not there!
-  Here's some things you can do if you'd like:
-  - If you want to brand your app, you'll want to update the `gulp package-osx`, `gulp package-windows`, and
-    `gulp package-linux` tasks. You can find documentation for the electronPackager() function at the github repo
-    joaomoreno/gulp-atom-electron. There are a few basic branding things you can do there.
-  - If you want to contemplate the universe and just feel small and meaningless in general, listen to Neil DeGrasse
-    Tyson talk for an extended period of time!
+Update the `gulp package-osx`, `gulp package-windows`, and `gulp package-linux` tasks.
+You can find documentation for the electronPackager() function at the github repo joaomoreno/gulp-atom-electron.
+There are a few basic branding things you can do there.
 */
 
 const gulp = require( 'gulp' )
@@ -27,12 +22,13 @@ const electronPackager = require( 'gulp-atom-electron' )
 const symdest = require( 'gulp-symdest' )
 const zip = require( 'gulp-vinyl-zip' )
 const path = require( 'path' )
+const del = require('del')
 
 const electronVersion = require( 'electron/package.json' ).version
 
 const paths = {
 	client: {
-		js: './app/js/*',
+		js: './app/js/*.js',
 		css: './app/css/*.scss',
 		html: './app/*.html',
 		res: './app/res/**/*'
@@ -46,7 +42,7 @@ const paths = {
 			css: './app/css/**/*.scss',
 			html: './app/**/*.html',
 			res: './app/res/**/*',
-			cwd: '.'
+			cwd: './'
 		},
 		server: {
 			js: './src/**/*.js'
@@ -58,10 +54,13 @@ const paths = {
 	}
 }
 
-/* These are the building tasks! */
+// Clean the build folder.
+gulp.task( 'build-clean', function () {
+	return del( [ paths.dist.build + '/**/*' ] );
+} )
 
 gulp.task( 'build-client-js', ( done ) => {
-	glob( './app/js/renderer.js', ( err, files ) => {
+	glob( paths.client.js, ( err, files ) => {
 		if ( err ) {
 			done( err )
 		}
@@ -190,6 +189,7 @@ gulp.task( 'build-server', ( done ) => {
 } )
 
 gulp.task( 'build', [
+	'build-clean',
 	'build-client',
 	'build-server'
 ] )
@@ -199,8 +199,6 @@ gulp.task( 'build-production', [ 'build-client-production', 'build-server' ], ()
 		.pipe( replace( 'build/index.js', 'index.js' ) )
 		.pipe( gulp.dest( paths.dist.build ) )
 } )
-
-/* These are the watch tasks! */
 
 gulp.task( 'watch-client', () => {
 	for ( let type in paths.watch.client ) {
@@ -217,8 +215,6 @@ gulp.task( 'watch-server', () => {
 } )
 
 gulp.task( 'watch', [ 'watch-client', 'watch-server' ] )
-
-/* These are the linting tasks! */
 
 gulp.task( 'lint-client', ( done ) => {
 	glob( paths.client.js, ( err, files ) => {
@@ -250,16 +246,12 @@ gulp.task( 'lint-server', ( done ) => {
 
 gulp.task( 'lint', [ 'lint-client', 'lint-server' ] )
 
-/* This is the serve task! */
-
 gulp.task( 'serve', [ 'build', 'watch' ], () => {
 	electron.start()
 	gulp.watch( paths.dist.build + '/index.js', electron.restart )
 	gulp.watch( paths.dist.build + '/js/*.js', electron.reload )
 	gulp.watch( paths.dist.build + '/css/app.css', electron.reload )
 } )
-
-/* These are the packaging tasks! */
 
 gulp.task( 'package-osx', [ 'build-production' ], () => {
 	return gulp.src( paths.dist.build + '/**' )

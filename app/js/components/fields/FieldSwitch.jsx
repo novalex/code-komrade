@@ -7,15 +7,21 @@ class FieldSwitch extends React.Component {
 		super( props );
 
 		this.state = {
-			checked: ( this.props.current && this.props.current === this.props.value )
+			checked: this.props.checked
 		}
 
 		this.onChange = this.onChange.bind( this );
 	}
 
 	onChange( event ) {
+		event.persist();
+
 		this.setState( function( prevState ) {
 			return { checked: ! prevState.checked };
+		}, function() {
+			if ( this.props.onChange ) {
+				this.props.onChange( event, this.state.checked );
+			}
 		});
 	}
 
@@ -23,10 +29,10 @@ class FieldSwitch extends React.Component {
 		return (
 			<Field type='switch' label={ this.props.label } labelPos={ this.props.labelPos }>
 				<input
+					value='1'
 					type='checkbox'
-					onChange={ this.onChange }
 					name={ this.props.name }
-					value={ this.props.value}
+					onChange={ this.onChange }
 					checked={ this.state.checked }
 					id={ 'field_' + this.props.name }
 				/>

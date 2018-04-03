@@ -1,4 +1,6 @@
-/* jshint esversion: 6, multistr: true */
+/**
+ * @file Main app script.
+ */
 
 const Store  = require('electron-store');
 

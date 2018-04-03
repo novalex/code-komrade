@@ -4,6 +4,8 @@
 
 const React = require('react');
 
+const Store  = require('electron-store');
+
 const ProjectSelect = require('./ProjectSelect');
 
 const FileList = require('./FileList');
@@ -15,11 +17,23 @@ class Projects extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		let projects = [];
-		let active   = {
-			name: '',
-			path: ''
+		this.state = {
+			projects: [],
+			active: {
+				name: '',
+				path: ''
+			},
+			config: null
 		};
+
+		this.setProjects      = this.setProjects.bind( this );
+		this.setActiveProject = this.setActiveProject.bind( this );
+	}
+
+	componentWillMount() {
+		let projects = this.state.projects;
+		let active   = this.state.active;
+		let config   = this.state.config;
 
 		if ( window.config ) {
 			projects = window.config.get('projects');
@@ -28,28 +42,44 @@ class Projects extends React.Component {
 
 			if ( projects[ activeIndex ] ) {
 				active = projects[ activeIndex ];
+				config = new Store({
+					name: 'buildr-project',
+					cwd: active.path
+				});
 			}
 		}
 
-		this.state = {
-			projects,
-			active
-		};
+		window.projectConfig = config;
 
-		this.saveProjects      = this.saveProjects.bind( this );
-		this.saveActiveProject = this.saveActiveProject.bind( this );
+		this.setState({
+			projects,
+			active,
+			config
+		});
 	}
 
 	componentDidMount() {
 		this._ProjectSelect.setFileList( this._ProjectFileList );
 	}
 
-	saveProjects( projects ) {
+	setProjects( projects ) {
+		this.setState({
+			projects
+		});
+
 		window.config.set( 'projects', projects );
 	}
 
-	saveActiveProject( index ) {
-		window.config.set( 'active-project', index );
+	setActiveProject( index ) {
+		let active = this.state.projects[ index ];
+
+		if ( active ) {
+			this.setState({
+				active
+			});
+
+			window.config.set( 'active-project', index );
+		}
 	}
 
 	render() {
@@ -59,14 +89,15 @@ class Projects extends React.Component {
 					<ProjectSelect
 						active={ this.state.active }
 						projects={ this.state.projects }
-						saveProjects={ this.saveProjects }
-						saveActiveProject={ this.saveActiveProject }
+						setProjects={ this.setProjects }
+						setActiveProject={ this.setActiveProject }
 						ref={ ( child ) => { this._ProjectSelect = child; } }
 					/>
 				</div>
 				<div id='content'>
 					<FileList
 						path={ this.state.active.path }
+						config={ this.state.config }
 						ref={ ( child ) => { this._ProjectFileList = child; } }
 					/>
 				</div>

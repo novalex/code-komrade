@@ -4,31 +4,32 @@ const FileOptions = require('./FileOptions');
 
 const FieldSwitch = require('./fields/FieldSwitch');
 
-class FileOptionsScript extends React.Component {
+class FileOptionsScript extends FileOptions {
 	render() {
 		return (
-			<FileOptions>
+			<div id='file-options' className='file-options-script'>
 				<div className='header'>
 					<strong>{ this.props.file.name }</strong>
 				</div>
+
 				<div className='body'>
 					<FieldSwitch
-						value='1'
-						current='0'
 						name='autocompile'
 						label='Auto compile'
 						labelPos='left'
+						onChange={ this.handleChange }
+						checked={ this.state.options.autocompile }
 					/>
 
 					<FieldSwitch
-						value='1'
-						current='1'
 						name='babel'
 						label='Babel'
 						labelPos='left'
+						onChange={ this.handleChange }
+						checked={ this.state.options.babel }
 					/>
 				</div>
-			</FileOptions>
+			</div>
 		);
 	}
 }

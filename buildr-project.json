@@ -1,0 +1,11 @@
+{
+	"files": [
+		{
+			"path": "E:\\Apps\\Buildr\\gulpfile.js",
+			"options": {
+				"autocompile": true,
+				"babel": true
+			}
+		}
+	]
+}

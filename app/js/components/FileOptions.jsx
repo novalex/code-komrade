@@ -5,12 +5,62 @@
 const React = require('react');
 
 class FileOptions extends React.Component {
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			options: {}
+		};
+
+		this.handleChange = this.handleChange.bind( this );
+	}
+
+	componentWillMount() {
+		if ( window.projectConfig ) {
+			let files = window.projectConfig.get( 'files', [] );
+			let file  = files.find( file => file.path === this.props.file.path );
+
+			if ( ! file ) {
+				return;
+			}
+
+			this.setState({
+				options: file.options
+			});
+		}
+	}
+
+	handleChange( event, value ) {
+		this.setState( function( prevState ) {
+			let options = prevState.options;
+			options[ event.target.name ] = value;
+
+			return options;
+		}, function() {
+			this.updateFileOptions( this.state.options );
+		});
+	}
+
+	updateFileOptions( options ) {
+		if ( window.projectConfig ) {
+			let files = window.projectConfig.get( 'files', [] );
+			let fileIndex = files.findIndex( file => file.path === this.props.file.path );
+
+			if ( fileIndex === -1 ) {
+				files.push({
+					path: this.props.file.path,
+					options: options
+				});
+			} else {
+				files[ fileIndex ].options = options;
+			}
+
+			window.projectConfig.set( 'files', files );
+		}
+	}
+
 	render() {
-		return (
-			<div id='file-options'>
-				{ this.props.children }
-			</div>
-		);
+		return null;
 	}
 }
 
