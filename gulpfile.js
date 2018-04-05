@@ -41,8 +41,7 @@ const paths = {
 			js: './app/js/**/*',
 			css: './app/css/**/*.scss',
 			html: './app/**/*.html',
-			res: './app/res/**/*',
-			cwd: './'
+			res: './app/res/**/*'
 		},
 		server: {
 			js: './src/**/*.js'
@@ -51,11 +50,12 @@ const paths = {
 	browserify: [ './node_modules', './app/js/' ],
 	dist: {
 		build: './build'
-	}
+	},
+	cwd: './'
 }
 
 // Clean the build folder.
-gulp.task( 'build-clean', function () {
+gulp.task( 'build-clean', () => {
 	return del( [ paths.dist.build + '/**/*' ] );
 } )
 
@@ -158,19 +158,19 @@ gulp.task( 'build-client-res', ( done ) => {
 	} )
 } )
 
-gulp.task( 'build-client', [
+gulp.task( 'build-client', gulp.parallel(
 	'build-client-css',
 	'build-client-html',
 	'build-client-res',
 	'build-client-js'
-] )
+) )
 
-gulp.task( 'build-client-production', [
+gulp.task( 'build-client-production', gulp.parallel(
 	'build-client-css',
 	'build-client-html-production',
 	'build-client-res',
 	'build-client-js'
-] )
+) )
 
 gulp.task( 'build-server', ( done ) => {
 	glob( paths.server.js, ( err, files ) => {
@@ -188,13 +188,17 @@ gulp.task( 'build-server', ( done ) => {
 	} )
 } )
 
-gulp.task( 'build', [
-	'build-clean',
-	'build-client',
-	'build-server'
-] )
+gulp.task( 'build',
+	gulp.series(
+		'build-clean',
+		gulp.parallel(
+			'build-client',
+			'build-server'
+		)
+	)
+)
 
-gulp.task( 'build-production', [ 'build-client-production', 'build-server' ], () => {
+gulp.task( 'build-production', gulp.parallel( 'build-client-production', 'build-server' ), () => {
 	gulp.src( './package.json' )
 		.pipe( replace( 'build/index.js', 'index.js' ) )
 		.pipe( gulp.dest( paths.dist.build ) )
@@ -202,19 +206,61 @@ gulp.task( 'build-production', [ 'build-client-production', 'build-server' ], ()
 
 gulp.task( 'watch-client', () => {
 	for ( let type in paths.watch.client ) {
-		gulp.watch( paths.watch.client[ type ], { cwd: paths.watch.client.cwd }, [ 'build-client-' + type ], ( e ) => {
+		gulp.watch( paths.watch.client[ type ], gulp.parallel( 'build-client-' + type ), ( e ) => {
 			console.log( 'Client file ' + e.path + ' was ' + e.type + ', rebuilding...' )
 		} )
 	}
 } )
 
 gulp.task( 'watch-server', () => {
-	gulp.watch( paths.watch.server.js, [ 'build-server' ], ( e ) => {
+	gulp.watch( paths.watch.server.js, gulp.parallel( 'build-server' ), ( e ) => {
 		console.log( 'Server file ' + e.path + ' was ' + e.type + ', rebuilding...' )
 	} )
 } )
 
-gulp.task( 'watch', [ 'watch-client', 'watch-server' ] )
+gulp.task( 'watch', gulp.parallel( 'watch-client', 'watch-server' ) )
+
+gulp.task( 'serve', gulp.series( 'build', gulp.parallel( 'watch', () => {
+	electron.start( () => {
+		gulp.watch( paths.dist.build + '/index.js', restart )
+		gulp.watch( [ paths.dist.build + '/js/*.js', paths.dist.build + '/css/app.css' ], reload )
+	})
+} ) ) )
+
+function restart( done ) {
+	electron.restart( '--enable-logging', function( state ) {
+		if ( state === 'restarted' || state === 'restarting' ) {
+			done( null );
+		} else {
+			done( 'Unexpected state while restarting electron-connect server. State ' + state );
+		}
+	});
+}
+
+function reload( done ) {
+	electron.reload();
+	done( null );
+}
+
+gulp.task( 'package-osx', gulp.parallel( 'build-production' ), () => {
+	return gulp.src( paths.dist.build + '/**' )
+		.pipe( electronPackager( { version: electronVersion, platform: 'darwin' } ) )
+		.pipe( symdest( 'release' ) )
+} )
+
+gulp.task( 'package-windows', gulp.parallel( 'build-production' ), () => {
+	return gulp.src( paths.dist.build + '/**' )
+		.pipe( electronPackager( { version: electronVersion, platform: 'win32' } ) )
+		.pipe( zip.dest( './release/windows.zip' ) )
+} )
+
+gulp.task( 'package-linux', gulp.parallel( 'build-production' ), () => {
+	return gulp.src( paths.dist.build + '/**' )
+		.pipe( electronPackager( { version: electronVersion, platform: 'linux' } ) )
+		.pipe( zip.dest( './release/linux.zip' ) )
+} )
+
+gulp.task( 'package', gulp.series( 'build-production', 'package-windows', 'package-osx', 'package-linux' ) )
 
 gulp.task( 'lint-client', ( done ) => {
 	glob( paths.client.js, ( err, files ) => {
@@ -244,31 +290,4 @@ gulp.task( 'lint-server', ( done ) => {
 	} )
 } )
 
-gulp.task( 'lint', [ 'lint-client', 'lint-server' ] )
-
-gulp.task( 'serve', [ 'build', 'watch' ], () => {
-	electron.start()
-	gulp.watch( paths.dist.build + '/index.js', electron.restart )
-	gulp.watch( paths.dist.build + '/js/*.js', electron.reload )
-	gulp.watch( paths.dist.build + '/css/app.css', electron.reload )
-} )
-
-gulp.task( 'package-osx', [ 'build-production' ], () => {
-	return gulp.src( paths.dist.build + '/**' )
-		.pipe( electronPackager( { version: electronVersion, platform: 'darwin' } ) )
-		.pipe( symdest( 'release' ) )
-} )
-
-gulp.task( 'package-windows', [ 'build-production' ], () => {
-	return gulp.src( paths.dist.build + '/**' )
-		.pipe( electronPackager( { version: electronVersion, platform: 'win32' } ) )
-		.pipe( zip.dest( './release/windows.zip' ) )
-} )
-
-gulp.task( 'package-linux', [ 'build-production' ], () => {
-	return gulp.src( paths.dist.build + '/**' )
-		.pipe( electronPackager( { version: electronVersion, platform: 'linux' } ) )
-		.pipe( zip.dest( './release/linux.zip' ) )
-} )
-
-gulp.task( 'package', [ 'build-production', 'package-windows', 'package-osx', 'package-linux' ] )
+gulp.task( 'lint', gulp.parallel( 'lint-client', 'lint-server' ) )

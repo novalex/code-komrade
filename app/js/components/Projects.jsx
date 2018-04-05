@@ -1,10 +1,12 @@
 /**
- * @file Component for the project view (project selector and filetree).
+ * @file Component for the projects view.
  */
 
 const React = require('react');
 
-const Store  = require('electron-store');
+const PropTypes = require('prop-types');
+
+const Store = require('electron-store');
 
 const ProjectSelect = require('./ProjectSelect');
 
@@ -102,6 +104,20 @@ Projects.defaultProps = {
 		path: ''
 	},
 	config: null
+};
+
+Projects.propTypes = {
+	projects: PropTypes.arrayOf(
+		PropTypes.shape({
+			name: PropTypes.string.isRequired,
+			path: PropTypes.string.isRequired
+		})
+	),
+	active: PropTypes.shape({
+		name: PropTypes.string.isRequired,
+		path: PropTypes.string.isRequired
+	}),
+	config: PropTypes.instanceOf(Store)
 };
 
 module.exports = Projects;

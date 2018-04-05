@@ -37,7 +37,7 @@ class FileOptionsStylesheet extends FileOptions {
 						label='Auto compile'
 						labelPos='left'
 						onChange={ this.handleChange }
-						checked={ this.state.options.autocompile }
+						checked={ this.getOption( 'autocompile', false ) }
 					/>
 				</div>
 			</div>

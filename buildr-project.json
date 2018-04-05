@@ -4,13 +4,21 @@
 			"path": "E:\\Apps\\Buildr\\gulpfile.js",
 			"options": {
 				"autocompile": true,
-				"babel": true
+				"babel": false,
+				"compress": false
 			}
 		},
 		{
 			"path": "E:\\Apps\\Buildr\\app\\css\\app.scss",
 			"options": {
 				"autocompile": true
+			}
+		},
+		{
+			"path": "E:\\Apps\\Buildr\\app\\js\\app.js",
+			"options": {
+				"compress": true,
+				"sourcemap": true
 			}
 		}
 	]

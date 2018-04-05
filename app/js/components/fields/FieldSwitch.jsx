@@ -13,6 +13,12 @@ class FieldSwitch extends React.Component {
 		this.onChange = this.onChange.bind( this );
 	}
 
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		let checked = ( nextProps.checked === null ) ? false : nextProps.checked;
+
+		return { checked };
+	}
+
 	onChange( event ) {
 		event.persist();
 

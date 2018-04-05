@@ -18,7 +18,15 @@ class FileOptionsScript extends FileOptions {
 						label='Auto compile'
 						labelPos='left'
 						onChange={ this.handleChange }
-						checked={ this.state.options.autocompile }
+						checked={ this.getOption( 'autocompile', false ) }
+					/>
+
+					<FieldSwitch
+						name='compress'
+						label='Compress'
+						labelPos='left'
+						onChange={ this.handleChange }
+						checked={ this.getOption( 'compress', false ) }
 					/>
 
 					<FieldSwitch
@@ -26,7 +34,15 @@ class FileOptionsScript extends FileOptions {
 						label='Babel'
 						labelPos='left'
 						onChange={ this.handleChange }
-						checked={ this.state.options.babel }
+						checked={ this.getOption( 'babel', false ) }
+					/>
+
+					<FieldSwitch
+						name='sourcemap'
+						label='Sourcemap'
+						labelPos='left'
+						onChange={ this.handleChange }
+						checked={ this.getOption( 'sourcemap', false ) }
 					/>
 				</div>
 			</div>
