@@ -1,4 +1,10 @@
+/**
+ * @file Component for a toggle switch.
+ */
+
 const React = require('react');
+
+const PropTypes = require('prop-types');
 
 const Field = require('./Field');
 
@@ -7,14 +13,14 @@ class FieldSwitch extends React.Component {
 		super( props );
 
 		this.state = {
-			checked: this.props.checked
+			checked: this.props.value
 		}
 
 		this.onChange = this.onChange.bind( this );
 	}
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		let checked = ( nextProps.checked === null ) ? false : nextProps.checked;
+		let checked = ( nextProps.value === null ) ? false : nextProps.value;
 
 		return { checked };
 	}
@@ -46,5 +52,13 @@ class FieldSwitch extends React.Component {
 		);
 	}
 }
+
+FieldSwitch.propTypes = {
+	name: PropTypes.string.isRequired,
+	label: PropTypes.string.isRequired,
+	labelPos: PropTypes.string,
+	onChange: PropTypes.func.isRequired,
+	value: PropTypes.bool
+};
 
 module.exports = FieldSwitch;

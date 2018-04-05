@@ -1,3 +1,7 @@
+/**
+ * @file Component for displaying file options for a script.
+ */
+
 const React = require('react');
 
 const FileOptions = require('./FileOptions');
@@ -18,7 +22,17 @@ class FileOptionsScript extends FileOptions {
 						label='Auto compile'
 						labelPos='left'
 						onChange={ this.handleChange }
-						checked={ this.getOption( 'autocompile', false ) }
+						value={ this.getOption( 'autocompile', false ) }
+					/>
+
+					<hr />
+
+					<FieldSwitch
+						name='babel'
+						label='Babel'
+						labelPos='left'
+						onChange={ this.handleChange }
+						value={ this.getOption( 'babel', false ) }
 					/>
 
 					<FieldSwitch
@@ -26,15 +40,7 @@ class FileOptionsScript extends FileOptions {
 						label='Compress'
 						labelPos='left'
 						onChange={ this.handleChange }
-						checked={ this.getOption( 'compress', false ) }
-					/>
-
-					<FieldSwitch
-						name='babel'
-						label='Babel'
-						labelPos='left'
-						onChange={ this.handleChange }
-						checked={ this.getOption( 'babel', false ) }
+						value={ this.getOption( 'compress', false ) }
 					/>
 
 					<FieldSwitch
@@ -42,7 +48,7 @@ class FileOptionsScript extends FileOptions {
 						label='Sourcemap'
 						labelPos='left'
 						onChange={ this.handleChange }
-						checked={ this.getOption( 'sourcemap', false ) }
+						value={ this.getOption( 'sourcemap', false ) }
 					/>
 				</div>
 			</div>

@@ -130,12 +130,18 @@
 	}
 
 	.body {
-		padding: $spacing__content;
 		border-top: 1px solid $color__border-darker;
 
-		> p {
-			margin-top: 0;
-			margin-bottom: $spacing__content;
+		> p,
+		> .field {
+			margin-bottom: 0;
+			padding: $spacing__content;
+		}
+
+		hr {
+			margin: 0;
+			border-color: $color__border-darker;
+			border-bottom-width: 0;
 		}
 	}
 }

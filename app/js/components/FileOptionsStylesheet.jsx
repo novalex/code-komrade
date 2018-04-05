@@ -1,12 +1,26 @@
+/**
+ * @file Component for displaying file options for a stylesheet.
+ */
+
 const React = require('react');
 
 const FileOptions = require('./FileOptions');
 
 const FieldSwitch = require('./fields/FieldSwitch');
 
+const FieldSelect = require('./fields/FieldSelect');
+
 class FileOptionsStylesheet extends FileOptions {
 	isPartial( file ) {
 		return file.name.startsWith('_');
+	}
+
+	styleOptions() {
+		return {
+			nested: 'Nested',
+			compact: 'Compact',
+			expanded: 'Expanded'
+		};
 	}
 
 	render() {
@@ -31,13 +45,22 @@ class FileOptionsStylesheet extends FileOptions {
 
 				<div className='body'>
 					<FieldSwitch
-						value='1'
-						current='0'
 						name='autocompile'
 						label='Auto compile'
 						labelPos='left'
 						onChange={ this.handleChange }
-						checked={ this.getOption( 'autocompile', false ) }
+						value={ this.getOption( 'autocompile', false ) }
+					/>
+
+					<hr />
+
+					<FieldSelect
+						name='style'
+						label='Output style'
+						labelPos='left'
+						onChange={ this.handleChange }
+						value={ this.getOption( 'style', 'nested' ) }
+						options={ this.styleOptions() }
 					/>
 				</div>
 			</div>

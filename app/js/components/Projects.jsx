@@ -28,7 +28,7 @@ class Projects extends React.Component {
 
 			let activeIndex = window.config.get('active-project');
 
-			if ( projects[ activeIndex ] ) {
+			if ( Array.isArray( projects ) && projects[ activeIndex ] ) {
 				active = projects[ activeIndex ];
 				config = new Store({
 					name: 'buildr-project',

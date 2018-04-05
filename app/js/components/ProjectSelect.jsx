@@ -74,15 +74,19 @@ class ProjectSelect extends React.Component {
 			this.setState( function( prevState ) {
 				let projects = prevState.projects;
 
-				projects.push( project );
+				if ( ! Array.isArray( projects ) ) {
+					projects = [];
+				}
 
-				this.props.setProjects( projects );
-				this.props.setActiveProject( projects.length - 1 );
+				projects.push( project );
 
 				return {
 					active: project,
 					projects
 				};
+			}, function() {
+				this.props.setProjects( this.state.projects );
+				this.props.setActiveProject( this.state.projects.length - 1 );
 			});
 		}
 	}
