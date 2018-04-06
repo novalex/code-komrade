@@ -54,6 +54,11 @@ class FieldSelect extends React.Component {
 	render() {
 		return (
 			<Field type='select' label={ this.props.label } labelPos={ this.props.labelPos }>
+				<label
+					htmlFor={ 'field_' + this.props.name }
+				>
+					{ this.state.selected ? this.props.options[ this.state.selected ] : '' }
+				</label>
 				<select
 					name={ this.props.name }
 					onChange={ this.onChange }

@@ -6,9 +6,9 @@ const React = require('react');
 
 const FileOptions = require('./FileOptions');
 
-const FieldSwitch = require('./fields/FieldSwitch');
+const FieldSwitch = require('../fields/FieldSwitch');
 
-const FieldSelect = require('./fields/FieldSelect');
+const FieldSelect = require('../fields/FieldSelect');
 
 class FileOptionsStylesheet extends FileOptions {
 	isPartial( file ) {
@@ -59,7 +59,7 @@ class FileOptionsStylesheet extends FileOptions {
 						label='Output style'
 						labelPos='left'
 						onChange={ this.handleChange }
-						value={ this.getOption( 'style', 'nested' ) }
+						value={ this.getOption( 'style' ) }
 						options={ this.styleOptions() }
 					/>
 				</div>

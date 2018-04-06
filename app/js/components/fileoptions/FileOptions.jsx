@@ -41,8 +41,8 @@ class FileOptions extends React.Component {
 	}
 
 	static getOptionsFromConfig( file ) {
-		if ( file && window.projectConfig ) {
-			let files = window.projectConfig.get( 'files', [] );
+		if ( file && global.projectConfig ) {
+			let files = global.projectConfig.get( 'files', [] );
 			let cfile = files.find( cfile => cfile.path === file.path );
 
 			if ( cfile ) {
@@ -65,8 +65,8 @@ class FileOptions extends React.Component {
 	}
 
 	updateFileOptions( options ) {
-		if ( window.projectConfig ) {
-			let files = window.projectConfig.get( 'files', [] );
+		if ( global.projectConfig ) {
+			let files = global.projectConfig.get( 'files', [] );
 			let fileIndex = files.findIndex( file => file.path === this.props.file.path );
 
 			if ( fileIndex === -1 ) {
@@ -78,7 +78,7 @@ class FileOptions extends React.Component {
 				files[ fileIndex ].options = options;
 			}
 
-			window.projectConfig.set( 'files', files );
+			global.projectConfig.set( 'files', files );
 		}
 	}
 

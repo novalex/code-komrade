@@ -12,7 +12,6 @@
 		} ],
 		"no-tabs": 0,
 		"semi": 0,
-		"no-multi-spaces": 0,
 		"space-before-function-paren": 0,
 		"space-in-parens": 0,
 		"key-spacing": 0,

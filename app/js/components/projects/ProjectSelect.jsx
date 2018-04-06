@@ -8,30 +8,22 @@ const fspath = require('path');
 
 const React = require('react');
 
-const globalUI = require('../helpers/globalUI');
-
 class ProjectSelect extends React.Component {
-	_FileList: null;
-
 	constructor( props ) {
 		super( props );
 
 		this.state = {
-			isOpen:   false
+			isOpen: false
 		};
 
-		this.newProject    = this.newProject.bind( this );
-		this.toggleSelect  = this.toggleSelect.bind( this );
+		this.newProject = this.newProject.bind( this );
+		this.toggleSelect = this.toggleSelect.bind( this );
 		this.selectProject = this.selectProject.bind( this );
-	}
-
-	setFileList( FileList ) {
-		this._FileList = FileList;
 	}
 
 	toggleSelect() {
 		this.setState( function( prevState ) {
-			globalUI.unfocus( ! prevState.isOpen );
+			global.ui.unfocus( ! prevState.isOpen );
 
 			return { isOpen: ! prevState.isOpen };
 		});
@@ -52,10 +44,6 @@ class ProjectSelect extends React.Component {
 
 	changeProject( index ) {
 		this.props.setActiveProject( index );
-
-		this._FileList.setPath( this.props.projects[ index ].path );
-
-		this.setState({ active: this.props.projects[ index ] });
 	}
 
 	newProject() {
@@ -64,30 +52,28 @@ class ProjectSelect extends React.Component {
 		});
 
 		if ( path ) {
-			this._FileList.setPath( path[0] );
+			let projects = this.props.projects;
 
-			let project = {
+			let newProject = {
 				name: fspath.basename( path[0] ),
 				path: path[0]
 			};
 
-			this.setState( function( prevState ) {
-				let projects = prevState.projects;
+			if ( projects.findIndex( project => project.path === newProject.path ) !== -1 ) {
+				return;
+			}
 
-				if ( ! Array.isArray( projects ) ) {
-					projects = [];
-				}
+			projects.push( newProject );
 
-				projects.push( project );
+			this.props.setProjects( projects );
 
-				return {
-					active: project,
-					projects
-				};
-			}, function() {
-				this.props.setProjects( this.state.projects );
-				this.props.setActiveProject( this.state.projects.length - 1 );
-			});
+			let activeIndex = projects.length - 1;
+
+			if ( projects[ activeIndex ] ) {
+				this.props.setActiveProject( activeIndex );
+			} else {
+				window.alert( 'There was a problem changing the active project.' );
+			}
 		}
 	}
 

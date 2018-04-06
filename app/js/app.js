@@ -2,23 +2,24 @@
  * @file Main app script.
  */
 
+const React = require('react');
+
+const ReactDOM = require('react-dom');
+
 const Store = require('electron-store');
 
-window.config = new Store({
+global.config = new Store({
 	name: 'buildr-config'
 });
 
-const React = require('react');
-const ReactDOM = require('react-dom');
+global.ui = require('./helpers/globalUI');
 
-const Projects = require('./components/Projects');
+const Projects = require('./components/projects/Projects');
 
 ReactDOM.render(
 	<Projects />,
 	document.getElementById('app')
 );
-
-// require( './plugins/velocity.min.js' );
 
 // Context menu.
 const fileList = document.getElementById('files');

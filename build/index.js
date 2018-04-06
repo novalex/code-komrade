@@ -4,9 +4,11 @@
  * @file Main application controller.
  */
 
-var _require = require('electron'),
-    app = _require.app,
-    BrowserWindow = _require.BrowserWindow;
+var electron = require('electron');
+
+var app = electron.app,
+    BrowserWindow = electron.BrowserWindow;
+
 
 var windowStateKeeper = require('electron-window-state');
 
@@ -37,18 +39,24 @@ function createWindow() {
 		slashes: true
 	}));
 
+	mainWindow.on('closed', function () {
+		mainWindow = null;
+	});
+}
+
+app.on('ready', function () {
+	createWindow();
+
 	// Debugging.
 	mainWindow.webContents.openDevTools();
 
 	// mainWindow.webContents.on( 'dom-ready', function() {
 	// });
 
-	mainWindow.on('closed', function () {
-		mainWindow = null;
-	});
-}
+	// let scaleFactor = electron.screen.getPrimaryDisplay();
 
-app.on('ready', createWindow);
+	// mainWindow.webContents.executeJavaScript(`console.log( ${ JSON.stringify(scaleFactor) } )`);
+});
 
 app.on('window-all-closed', function () {
 	if (process.platform !== 'darwin') {
@@ -61,3 +69,6 @@ app.on('activate', function () {
 		createWindow();
 	}
 });
+
+app.commandLine.appendSwitch('high-dpi-support', 1);
+app.commandLine.appendSwitch('force-device-scale-factor', 1);

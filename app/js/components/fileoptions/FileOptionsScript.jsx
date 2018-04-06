@@ -6,7 +6,7 @@ const React = require('react');
 
 const FileOptions = require('./FileOptions');
 
-const FieldSwitch = require('./fields/FieldSwitch');
+const FieldSwitch = require('../fields/FieldSwitch');
 
 class FileOptionsScript extends FileOptions {
 	render() {
