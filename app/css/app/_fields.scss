@@ -25,7 +25,7 @@
 		input[type="text"] {
 			width: 100%;
 			height: $size__input;
-			padding: 0 $spacing__content;
+			padding: 0 $spacing__content-s;
 			font-size: 1rem;
 			color: $color__text-lighter;
 			line-height: $size__input;
@@ -72,6 +72,7 @@
 		text-indent: -9999px;
 		background: $color__border-dark;
 		border-radius: $size__input / 2;
+		transition: background-color 0.2s;
 
 		&:before {
 			content: '';
@@ -119,7 +120,7 @@
 		height: $size__input;
 		text-align: center;
 		line-height: $size__input;
-		padding: 0 $spacing__content;
+		padding: 0 $spacing__content-s;
 		border-radius: $border-radius;
 	}
 

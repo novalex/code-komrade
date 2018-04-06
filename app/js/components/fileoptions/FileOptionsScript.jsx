@@ -10,11 +10,20 @@ const FieldSwitch = require('../fields/FieldSwitch');
 
 const FieldSaveFile = require('../fields/FieldSaveFile');
 
+const { fileRelativePath, fileOutputPath } = require('../../utils/pathHelpers');
+
 class FileOptionsScript extends FileOptions {
 	saveDialogFilters() {
 		return [
 			{ name: 'JavaScript', extensions: [ 'js' ] }
 		];
+	}
+
+	defaultOutputPath() {
+		let suffix = ( this.getOption( 'compress', false ) ) ? '.min' : '-dist';
+		let extension = '.js';
+
+		return fileRelativePath( this.props.base, fileOutputPath( this.props.file, suffix, extension ) );
 	}
 
 	render() {
@@ -31,7 +40,7 @@ class FileOptionsScript extends FileOptions {
 						onChange={ this.handleChange }
 						value={ this.getOption( 'output', this.defaultOutputPath() ) }
 						sourceFile={ this.props.file }
-						relativeTo={ this.props.base }
+						sourceBase={ this.props.base }
 						dialogFilters={ this.saveDialogFilters() }
 					/>
 
@@ -39,7 +48,7 @@ class FileOptionsScript extends FileOptions {
 
 					<FieldSwitch
 						name='autocompile'
-						label='Auto compile'
+						label='Auto Compile'
 						labelPos='left'
 						onChange={ this.handleChange }
 						value={ this.getOption( 'autocompile', false ) }

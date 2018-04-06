@@ -23,9 +23,7 @@
   margin-bottom: 20px; }
   .field.label-top .field-label {
     display: block;
-    margin-bottom: 10px;
-    /* font-weight: 500; */
-    }
+    margin-bottom: 10px; }
   .field.label-left {
     display: flex;
     align-items: center;
@@ -35,7 +33,7 @@
   .field .field-cont input[type="text"] {
     width: 100%;
     height: 36px;
-    padding: 0 20px;
+    padding: 0 10px;
     font-size: 1rem;
     color: #ddd;
     line-height: 36px;
@@ -63,7 +61,8 @@
   cursor: pointer;
   text-indent: -9999px;
   background: #3c3c3c;
-  border-radius: 18px; }
+  border-radius: 18px;
+  transition: background-color 0.2s; }
   .field-switch label:before {
     content: '';
     position: absolute;
@@ -87,7 +86,7 @@
   height: 36px;
   text-align: center;
   line-height: 36px;
-  padding: 0 20px;
+  padding: 0 10px;
   border-radius: 4px; }
 
 .field-select label {

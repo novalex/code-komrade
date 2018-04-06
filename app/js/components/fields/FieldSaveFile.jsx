@@ -4,7 +4,7 @@
 
 const { dialog } = require('electron').remote;
 
-const { fileRelativePath } = require('../../utils/pathHelpers');
+const { slash, fileRelativePath, fileAbsolutePath } = require('../../utils/pathHelpers');
 
 const React = require('react');
 
@@ -40,10 +40,12 @@ class FieldSaveFile extends React.Component {
 		}
 
 		if ( ! this.state.path && this.props.sourceFile ) {
-			fileSaveOptions.defaultPath = this.props.sourceFile.path;
-		} else if ( this.state.path ) {
-			fileSaveOptions.defaultPath = this.state.path;
+			fileSaveOptions.defaultPath = fileAbsolutePath( this.props.sourceFile.path );
+		} else if ( this.state.path && this.props.sourceBase ) {
+			fileSaveOptions.defaultPath = fileAbsolutePath( this.props.sourceBase, this.state.path );
 		}
+
+		console.log( fileSaveOptions.defaultPath );
 
 		if ( this.props.dialogFilters ) {
 			fileSaveOptions.filters = this.props.dialogFilters;
@@ -52,10 +54,10 @@ class FieldSaveFile extends React.Component {
 		let filename = dialog.showSaveDialog( fileSaveOptions );
 
 		if ( filename ) {
-			let savePath = filename;
+			let savePath = slash( filename );
 
-			if ( this.props.relativeTo ) {
-				savePath = fileRelativePath( this.props.relativeTo, filename );
+			if ( this.props.sourceBase ) {
+				savePath = slash( fileRelativePath( this.props.sourceBase, filename ) );
 			}
 
 			this.setState({ path: savePath }, function() {

@@ -16,16 +16,29 @@ function slash( input ) {
 	return input.replace(/\\/g, '/');
 }
 
-function fileOutputPath( file, suffix = '-dist' ) {
-	return file.name.replace(/\.[^/.]+$/, '') + suffix + file.extension;
+function fileOutputPath( file, suffix = '-dist', extension = file.extension ) {
+	let basedir = path.parse( file.path ).dir;
+	let filename = file.name.replace(/\.[^/.]+$/, '') + suffix + extension;
+
+	return path.join( basedir, filename );
 }
 
 function fileRelativePath( from, to ) {
-	return slash( path.relative( from, to ) );
+	return path.relative( from, to );
+}
+
+function fileAbsolutePath( base, filename ) {
+	return ( path.isAbsolute( filename ) ) ? filename : path.join( base, filename );
+}
+
+function dirAbsolutePath( base, filename ) {
+	return path.parse( fileAbsolutePath( base, filename ) ).dir;
 }
 
 module.exports = {
 	slash,
 	fileOutputPath,
-	fileRelativePath
+	fileRelativePath,
+	fileAbsolutePath,
+	dirAbsolutePath
 };

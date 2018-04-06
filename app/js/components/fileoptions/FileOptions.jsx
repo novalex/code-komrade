@@ -2,7 +2,7 @@
  * @file Component for rendering build options for a file.
  */
 
-const { fileRelativePath, fileOutputPath } = require('../../utils/pathHelpers');
+const { slash, fileRelativePath } = require('../../utils/pathHelpers');
 
 const React = require('react');
 
@@ -36,7 +36,7 @@ class FileOptions extends React.Component {
 
 	static getOptionsFromConfig( base, file ) {
 		if ( file && global.projectConfig ) {
-			let filePath = fileRelativePath( base, file.path );
+			let filePath = slash( fileRelativePath( base, file.path ) );
 
 			let files = global.projectConfig.get( 'files', [] );
 			let cfile = files.find( cfile => cfile.path === filePath );
@@ -74,7 +74,7 @@ class FileOptions extends React.Component {
 			return;
 		}
 
-		let filePath = fileRelativePath( this.props.base, this.props.file.path );
+		let filePath = slash( fileRelativePath( this.props.base, this.props.file.path ) );
 
 		let files = global.projectConfig.get( 'files', [] );
 		let fileIndex = files.findIndex( file => file.path === filePath );
@@ -89,10 +89,6 @@ class FileOptions extends React.Component {
 		}
 
 		global.projectConfig.set( 'files', files );
-	}
-
-	defaultOutputPath() {
-		return fileOutputPath( this.props.file );
 	}
 
 	render() {
