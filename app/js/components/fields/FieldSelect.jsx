@@ -76,7 +76,7 @@ FieldSelect.propTypes = {
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string.isRequired,
 	labelPos: PropTypes.string,
-	onChange: PropTypes.func.isRequired,
+	onChange: PropTypes.func,
 	value: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
 	options: PropTypes.object.isRequired
 };

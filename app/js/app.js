@@ -12,7 +12,7 @@ global.config = new Store({
 	name: 'buildr-config'
 });
 
-global.ui = require('./helpers/globalUI');
+global.ui = require('./utils/globalUI');
 
 const Projects = require('./components/projects/Projects');
 

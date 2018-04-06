@@ -8,7 +8,15 @@ const FileOptions = require('./FileOptions');
 
 const FieldSwitch = require('../fields/FieldSwitch');
 
+const FieldSaveFile = require('../fields/FieldSaveFile');
+
 class FileOptionsScript extends FileOptions {
+	saveDialogFilters() {
+		return [
+			{ name: 'JavaScript', extensions: [ 'js' ] }
+		];
+	}
+
 	render() {
 		return (
 			<div id='file-options' className='file-options-script'>
@@ -17,6 +25,18 @@ class FileOptionsScript extends FileOptions {
 				</div>
 
 				<div className='body'>
+					<FieldSaveFile
+						name='output'
+						label='Output Path'
+						onChange={ this.handleChange }
+						value={ this.getOption( 'output', this.defaultOutputPath() ) }
+						sourceFile={ this.props.file }
+						relativeTo={ this.props.base }
+						dialogFilters={ this.saveDialogFilters() }
+					/>
+
+					<hr />
+
 					<FieldSwitch
 						name='autocompile'
 						label='Auto compile'

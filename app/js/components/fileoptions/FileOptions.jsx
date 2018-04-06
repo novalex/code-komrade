@@ -2,6 +2,8 @@
  * @file Component for rendering build options for a file.
  */
 
+const { fileRelativePath, fileOutputPath } = require('../../utils/pathHelpers');
+
 const React = require('react');
 
 class FileOptions extends React.Component {
@@ -9,7 +11,7 @@ class FileOptions extends React.Component {
 		super( props );
 
 		this.state = {
-			options: this.constructor.getOptionsFromConfig( props.file )
+			options: this.constructor.getOptionsFromConfig( props.base, props.file )
 		};
 
 		this.handleChange = this.handleChange.bind( this );
@@ -26,24 +28,18 @@ class FileOptions extends React.Component {
 		return true;
 	}
 
-	getOption( option, defaultValue = null ) {
-		if ( this.state.options[ option ] ) {
-			return this.state.options[ option ];
-		}
-
-		return defaultValue;
-	}
-
 	static getDerivedStateFromProps( nextProps ) {
-		let options = FileOptions.getOptionsFromConfig( nextProps.file );
+		let options = FileOptions.getOptionsFromConfig( nextProps.base, nextProps.file );
 
 		return { options: options };
 	}
 
-	static getOptionsFromConfig( file ) {
+	static getOptionsFromConfig( base, file ) {
 		if ( file && global.projectConfig ) {
+			let filePath = fileRelativePath( base, file.path );
+
 			let files = global.projectConfig.get( 'files', [] );
-			let cfile = files.find( cfile => cfile.path === file.path );
+			let cfile = files.find( cfile => cfile.path === filePath );
 
 			if ( cfile ) {
 				return cfile.options;
@@ -51,6 +47,14 @@ class FileOptions extends React.Component {
 		}
 
 		return {};
+	}
+
+	getOption( option, defaultValue = null ) {
+		if ( this.state.options[ option ] ) {
+			return this.state.options[ option ];
+		}
+
+		return defaultValue;
 	}
 
 	handleChange( event, value ) {
@@ -64,22 +68,31 @@ class FileOptions extends React.Component {
 		});
 	}
 
-	updateFileOptions( options ) {
-		if ( global.projectConfig ) {
-			let files = global.projectConfig.get( 'files', [] );
-			let fileIndex = files.findIndex( file => file.path === this.props.file.path );
-
-			if ( fileIndex === -1 ) {
-				files.push({
-					path: this.props.file.path,
-					options: options
-				});
-			} else {
-				files[ fileIndex ].options = options;
-			}
-
-			global.projectConfig.set( 'files', files );
+	updateFileOptions( options = null ) {
+		if ( ! global.projectConfig || ! options ) {
+			window.alert( 'There was a problem saving the project configuration.' );
+			return;
 		}
+
+		let filePath = fileRelativePath( this.props.base, this.props.file.path );
+
+		let files = global.projectConfig.get( 'files', [] );
+		let fileIndex = files.findIndex( file => file.path === filePath );
+
+		if ( fileIndex === -1 ) {
+			files.push({
+				path: filePath,
+				options: options
+			});
+		} else {
+			files[ fileIndex ].options = options;
+		}
+
+		global.projectConfig.set( 'files', files );
+	}
+
+	defaultOutputPath() {
+		return fileOutputPath( this.props.file );
 	}
 
 	render() {

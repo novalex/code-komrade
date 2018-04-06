@@ -19,6 +19,21 @@
 			flex-grow: 1;
 		}
 	}
+
+	// General styling.
+	.field-cont {
+		input[type="text"] {
+			width: 100%;
+			height: $size__input;
+			padding: 0 $spacing__content;
+			font-size: 1rem;
+			color: $color__text-lighter;
+			line-height: $size__input;
+			border-radius: $border-radius;
+			border: 1px solid $color__border-darker;
+			background-color: $color__border-dark;
+		}
+	}
 }
 
 // Switch.
@@ -102,9 +117,10 @@
 		display: block;
 		width: 100%;
 		height: $size__input;
-		border-radius: $border-radius;
+		text-align: center;
 		line-height: $size__input;
 		padding: 0 $spacing__content;
+		border-radius: $border-radius;
 	}
 
 	label {
@@ -112,7 +128,6 @@
 		top: 0;
 		left: 0;
 		font-size: 1rem;
-		text-align: center;
 		background-color: $color__border-dark;
 		border: 1px solid $color__border-darker;
 		z-index: 0;
@@ -131,7 +146,9 @@
 		z-index: 1;
 
 		option {
-			color: $color__border-dark;
+			outline: none;
+			color: $color__text-lighter;
+			background-color: $color__border-dark;
 		}
 	}
 }

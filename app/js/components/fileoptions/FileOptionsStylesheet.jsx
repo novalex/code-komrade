@@ -59,7 +59,7 @@ class FileOptionsStylesheet extends FileOptions {
 						label='Output style'
 						labelPos='left'
 						onChange={ this.handleChange }
-						value={ this.getOption( 'style' ) }
+						value={ this.getOption( 'style', 'nested' ) }
 						options={ this.styleOptions() }
 					/>
 				</div>

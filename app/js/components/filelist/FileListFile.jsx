@@ -27,11 +27,11 @@ class FileListFile extends React.Component {
 			case '.scss':
 			case '.sass':
 			case '.less':
-				return <FileOptionsStylesheet file={ file } />;
+				return <FileOptionsStylesheet base={ this.props.base } file={ file } />;
 			case '.js':
 			case '.ts':
 			case '.jsx':
-				return <FileOptionsScript file={ file } />;
+				return <FileOptionsScript base={ this.props.base } file={ file } />;
 			default:
 				return null;
 		}

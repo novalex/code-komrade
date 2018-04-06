@@ -10,7 +10,7 @@ const ProjectSelect = require('./ProjectSelect');
 
 const FileList = require('../filelist/FileList');
 
-const directoryTree = require('../../helpers/directoryTree');
+const directoryTree = require('../../utils/directoryTree');
 
 class Projects extends React.Component {
 	constructor( props ) {

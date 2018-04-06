@@ -112,6 +112,7 @@ class FileList extends React.Component {
 				file={ file }
 				type={ type }
 				level={ level }
+				base={ this.props.path }
 				setActiveFile={ this.setActiveFile }
 			/>;
 		}
