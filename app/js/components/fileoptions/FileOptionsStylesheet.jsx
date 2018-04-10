@@ -12,9 +12,18 @@ const FieldSelect = require('../fields/FieldSelect');
 
 const FieldSaveFile = require('../fields/FieldSaveFile');
 
-const { fileRelativePath, fileOutputPath } = require('../../utils/pathHelpers');
-
 class FileOptionsStylesheet extends FileOptions {
+	constructor( props ) {
+		super( props );
+
+		this.buildTaskName = 'build-css';
+		this.outputSuffix = '-dist';
+		this.outputExtension = '.css';
+		this.saveDialogFilters = [
+			{ name: 'CSS', extensions: [ 'css' ] }
+		];
+	}
+
 	isPartial( file ) {
 		return file.name.startsWith('_');
 	}
@@ -25,19 +34,6 @@ class FileOptionsStylesheet extends FileOptions {
 			compact: 'Compact',
 			expanded: 'Expanded'
 		};
-	}
-
-	saveDialogFilters() {
-		return [
-			{ name: 'CSS', extensions: [ 'css' ] }
-		];
-	}
-
-	defaultOutputPath() {
-		let suffix = '-dist';
-		let extension = '.css';
-
-		return fileRelativePath( this.props.base, fileOutputPath( this.props.file, suffix, extension ) );
 	}
 
 	render() {
@@ -65,10 +61,10 @@ class FileOptionsStylesheet extends FileOptions {
 						name='output'
 						label='Output Path'
 						onChange={ this.handleChange }
-						value={ this.getOption( 'output', this.defaultOutputPath() ) }
+						value={ this.getOutputPath( 'display' ) }
 						sourceFile={ this.props.file }
 						sourceBase={ this.props.base }
-						dialogFilters={ this.saveDialogFilters() }
+						dialogFilters={ this.saveDialogFilters }
 					/>
 
 					<hr />
@@ -91,6 +87,15 @@ class FileOptionsStylesheet extends FileOptions {
 						value={ this.getOption( 'style', 'nested' ) }
 						options={ this.styleOptions() }
 					/>
+				</div>
+
+				<div className='footer'>
+					<button
+						className='compile'
+						onClick={ this.handleCompile }
+					>
+						Compile
+					</button>
 				</div>
 			</div>
 		);

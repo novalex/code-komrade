@@ -2,7 +2,11 @@
  * @file Component for rendering build options for a file.
  */
 
-const { slash, fileRelativePath } = require('../../utils/pathHelpers');
+const path = require('path');
+
+const { slash, fileRelativePath, fileAbsolutePath, fileOutputPath } = require('../../utils/pathHelpers');
+
+const { runTask } = require('../../gulp/interface');
 
 const React = require('react');
 
@@ -15,6 +19,7 @@ class FileOptions extends React.Component {
 		};
 
 		this.handleChange = this.handleChange.bind( this );
+		this.handleCompile = this.handleCompile.bind( this );
 	}
 
 	shouldComponentUpdate( nextProps ) {
@@ -66,6 +71,32 @@ class FileOptions extends React.Component {
 		}, function() {
 			this.updateFileOptions( this.state.options );
 		});
+	}
+
+	defaultOutputPath( relative = true ) {
+		let outputPath = fileOutputPath( this.props.file, this.outputSuffix, this.outputExtension );
+
+		return relative ? fileRelativePath( this.props.base, outputPath ) : fileAbsolutePath( this.props.base, outputPath );
+	}
+
+	getOutputPath( type = 'relative' ) {
+		let slashPath = ( type === 'display' );
+		let relativePath = ( type === 'relative' || type === 'display' );
+		let defaultPath = this.defaultOutputPath( relativePath );
+		let outputPath = this.getOption( 'output', defaultPath );
+
+		return slashPath ? slash( outputPath ) : outputPath;
+	}
+
+	handleCompile() {
+		let outputPath = this.getOutputPath( 'absolute' );
+
+		runTask(
+			this.buildTaskName, // Task name.
+			this.props.file.path, // Input file path.
+			path.basename( outputPath ), // Ouput file name.
+			path.parse( outputPath ).dir // Output directory path.
+		);
 	}
 
 	updateFileOptions( options = null ) {

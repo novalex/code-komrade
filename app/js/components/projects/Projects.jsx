@@ -107,6 +107,10 @@ class Projects extends React.Component {
 		}.bind( this ));
 
 		this.setProjectConfig( path );
+
+		// Change process cwd.
+		process.chdir( path );
+		// console.log(`Current directory: ${process.cwd()}`);
 	}
 
 	render() {

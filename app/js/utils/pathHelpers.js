@@ -16,7 +16,7 @@ function slash( input ) {
 	return input.replace(/\\/g, '/');
 }
 
-function fileOutputPath( file, suffix = '-dist', extension = file.extension ) {
+function fileOutputPath( file, suffix = '', extension = file.extension ) {
 	let basedir = path.parse( file.path ).dir;
 	let filename = file.name.replace(/\.[^/.]+$/, '') + suffix + extension;
 

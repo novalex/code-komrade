@@ -45,8 +45,6 @@ class FieldSaveFile extends React.Component {
 			fileSaveOptions.defaultPath = fileAbsolutePath( this.props.sourceBase, this.state.path );
 		}
 
-		console.log( fileSaveOptions.defaultPath );
-
 		if ( this.props.dialogFilters ) {
 			fileSaveOptions.filters = this.props.dialogFilters;
 		}
