@@ -48,7 +48,9 @@
 	}
 
 	.filename {
-		padding: $spacing__content-s;
+		height: $size__list-item;
+		line-height: $size__list-item;
+		padding: 0 $spacing__content-s;
 		box-shadow: none;
 		transition: box-shadow 0.1s;
 
@@ -70,8 +72,7 @@
 		}
 
 		strong {
-			font-size: 1.1em;
-			font-weight: 500;
+			font-weight: normal;
 			color: $color__text;
 		}
 	}
@@ -106,9 +107,10 @@
 
 	// Informative.
 	li.informative {
+		height: auto;
 		cursor: default;
 		color: $color__text-light;
-		font-weight: 500;
+		font-weight: normal;
 		font-size: 1.1rem;
 		padding: $spacing__content-l;
 		background-color: $color__bg-alt;
@@ -124,18 +126,17 @@
 
 // File options.
 #file-options {
+	height: 100%;
+	position: relative;
+
 	.header {
 		text-align: center;
-		padding: $spacing__content;
 	}
 
 	.body {
-		border-top: 1px solid $color__border-darker;
-
 		> p,
 		> .field {
 			margin-bottom: 0;
-			padding: $spacing__content;
 		}
 
 		hr {
@@ -143,5 +144,30 @@
 			border-color: $color__border-darker;
 			border-bottom-width: 0;
 		}
+	}
+
+	.footer {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		padding-right: $spacing__content;
+
+		button {
+			width: 100%;
+		}
+	}
+
+	.header,
+	.body > p,
+	.body > .field,
+	.footer {
+		padding: $spacing__content;
+		padding-left: 0;
+	}
+
+	.body,
+	.footer {
+		border-top: 1px solid $color__border-darker;
 	}
 }

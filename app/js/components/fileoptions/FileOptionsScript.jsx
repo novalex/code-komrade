@@ -76,6 +76,15 @@ class FileOptionsScript extends FileOptions {
 						value={ this.getOption( 'sourcemap', false ) }
 					/>
 				</div>
+
+				<div className='footer'>
+					<button
+						className='compile outline green'
+						onClick={ this.handleCompile }
+					>
+						Compile
+					</button>
+				</div>
 			</div>
 		);
 	}

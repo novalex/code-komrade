@@ -91,7 +91,7 @@ class FileOptionsStylesheet extends FileOptions {
 
 				<div className='footer'>
 					<button
-						className='compile'
+						className='compile outline green'
 						onClick={ this.handleCompile }
 					>
 						Compile

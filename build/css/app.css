@@ -1,4 +1,54 @@
 @import url(#{$path__res}/fonts/inter-ui.css);
+* {
+  box-sizing: border-box; }
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
+body {
+  line-height: 1;
+  user-select: none;
+  font-family: 'Inter UI', sans-serif; }
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+input, textarea, select, button {
+  font-family: inherit; }
+
 @-webkit-keyframes fade {
   0% {
     opacity: 1; }
@@ -48,7 +98,7 @@
   position: absolute;
   top: 0; }
   .field-switch input[type="checkbox"]:checked + label {
-    background: #61b914; }
+    background: #479206; }
     .field-switch input[type="checkbox"]:checked + label:before {
       left: calc(100% - 4px);
       transform: translateX(-100%); }
@@ -114,6 +164,62 @@
     color: #ddd;
     background-color: #3c3c3c; }
 
+button,
+.button,
+input[type="button"],
+input[type="submit"] {
+  cursor: pointer;
+  height: 36px;
+  font-size: 1rem;
+  line-height: 36px;
+  color: #ddd;
+  padding: 0 10px;
+  background-color: #3c3c3c;
+  border: 1px solid #050505;
+  border-radius: 4px;
+  -webkit-appearance: none; }
+  button.outline,
+  .button.outline,
+  input[type="button"].outline,
+  input[type="submit"].outline {
+    background-color: transparent !important; }
+  button.red,
+  .button.red,
+  input[type="button"].red,
+  input[type="submit"].red {
+    background-color: #dc3130;
+    border-color: #ba201f; }
+    button.red.outline,
+    .button.red.outline,
+    input[type="button"].red.outline,
+    input[type="submit"].red.outline {
+      color: #dc3130;
+      border-color: #dc3130; }
+  button.green,
+  .button.green,
+  input[type="button"].green,
+  input[type="submit"].green {
+    background-color: #479206;
+    border-color: #2f6104; }
+    button.green.outline,
+    .button.green.outline,
+    input[type="button"].green.outline,
+    input[type="submit"].green.outline {
+      color: #479206;
+      border-color: #479206; }
+  button.blue,
+  .button.blue,
+  input[type="button"].blue,
+  input[type="submit"].blue {
+    background-color: #1d6ed6;
+    border-color: #1757a9; }
+    button.blue.outline,
+    .button.blue.outline,
+    input[type="button"].blue.outline,
+    input[type="submit"].blue.outline {
+      color: #1d6ed6;
+      border-color: #1d6ed6; }
+
 #sidebar {
   position: fixed;
   top: 0;
@@ -174,13 +280,13 @@
   height: 48px;
   user-select: none; }
   #project-active h1 {
-    font-weight: 700;
+    font-weight: bold;
     font-size: 1.1rem;
     color: #555;
     line-height: 28.8px; }
   #project-active h2 {
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: normal;
     color: #777;
     line-height: 19.2px; }
   #project-active h1,
@@ -205,9 +311,10 @@
     transform: translate(0, 17px); }
   #project-select-dropdown > div {
     cursor: pointer;
+    height: 42px;
+    line-height: 42px;
     color: #555;
-    font-size: 1.1em;
-    padding: 10px;
+    padding: 0 10px;
     border-bottom: 1px solid #e6e6e6;
     background-color: #f4f4f4;
     transition: background-color 0.2s; }
@@ -215,15 +322,6 @@
       background-color: #fff; }
     #project-select-dropdown > div:last-child {
       border-bottom-width: 0; }
-
-* {
-  box-sizing: border-box; }
-
-body {
-  margin: 0;
-  user-select: none;
-  font-family: 'Inter-UI', sans-serif;
-  box-sizing: border-box; }
 
 #wrap {
   min-width: 800px;
@@ -296,7 +394,9 @@ body.off-canvas #off-canvas {
       transform: translate(0, 0);
       transition-delay: 0; }
   #files .filename {
-    padding: 10px;
+    height: 42px;
+    line-height: 42px;
+    padding: 0 10px;
     box-shadow: none;
     transition: box-shadow 0.1s; }
     #files .filename span,
@@ -313,8 +413,7 @@ body.off-canvas #off-canvas {
       background-position: center;
       transition: opacity 0.2s; }
     #files .filename strong {
-      font-size: 1.1em;
-      font-weight: 500;
+      font-weight: normal;
       color: #555; }
   #files .children > li:last-child {
     border-bottom-color: transparent; }
@@ -333,9 +432,10 @@ body.off-canvas #off-canvas {
   #files .directory > .filename .icon {
     background-image: url("../res/img/filetypes/file-directory.svg"); }
   #files li.informative {
+    height: auto;
     cursor: default;
     color: #777;
-    font-weight: 500;
+    font-weight: normal;
     font-size: 1.1rem;
     padding: 30px;
     background-color: #f4f4f4; }
@@ -343,17 +443,32 @@ body.off-canvas #off-canvas {
       animation: bounce 1.2s ease-in;
       animation-iteration-count: infinite; }
 
-#file-options .header {
-  text-align: center;
-  padding: 20px; }
-
-#file-options .body {
-  border-top: 1px solid #050505; }
+#file-options {
+  height: 100%;
+  position: relative; }
+  #file-options .header {
+    text-align: center; }
   #file-options .body > p,
   #file-options .body > .field {
-    margin-bottom: 0;
-    padding: 20px; }
+    margin-bottom: 0; }
   #file-options .body hr {
     margin: 0;
     border-color: #050505;
     border-bottom-width: 0; }
+  #file-options .footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding-right: 20px; }
+    #file-options .footer button {
+      width: 100%; }
+  #file-options .header,
+  #file-options .body > p,
+  #file-options .body > .field,
+  #file-options .footer {
+    padding: 20px;
+    padding-left: 0; }
+  #file-options .body,
+  #file-options .footer {
+    border-top: 1px solid #050505; }

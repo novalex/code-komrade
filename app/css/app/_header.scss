@@ -12,7 +12,7 @@
 	user-select: none;
 
 	h1 {
-		font-weight: 700;
+		font-weight: bold;
 		font-size: 1.1rem;
 		color: $color__text;
 		line-height: 3 / 5 * $size__logo;
@@ -20,7 +20,7 @@
 
 	h2 {
 		font-size: 1rem;
-		font-weight: 500;
+		font-weight: normal;
 		color: $color__text-light;
 		line-height: 2 / 5 * $size__logo;
 	}
@@ -52,9 +52,10 @@
 
 	> div {
 		cursor: pointer;
+		height: $size__list-item;
+		line-height: $size__list-item;
 		color: $color__text;
-		font-size: 1.1em;
-		padding: $spacing__content-s;
+		padding: 0 $spacing__content-s;
 		border-bottom: 1px solid $color__border;
 		background-color: $color__bg-alt;
 		transition: background-color 0.2s;

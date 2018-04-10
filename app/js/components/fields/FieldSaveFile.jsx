@@ -40,7 +40,7 @@ class FieldSaveFile extends React.Component {
 		}
 
 		if ( ! this.state.path && this.props.sourceFile ) {
-			fileSaveOptions.defaultPath = fileAbsolutePath( this.props.sourceFile.path );
+			fileSaveOptions.defaultPath = this.props.sourceFile.path;
 		} else if ( this.state.path && this.props.sourceBase ) {
 			fileSaveOptions.defaultPath = fileAbsolutePath( this.props.sourceBase, this.state.path );
 		}

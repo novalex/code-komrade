@@ -1,4 +1,3 @@
-
 // Field.
 .field {
 	margin-bottom: $spacing__content;
@@ -150,6 +149,40 @@
 			outline: none;
 			color: $color__text-lighter;
 			background-color: $color__border-dark;
+		}
+	}
+}
+
+// Buttons.
+button,
+.button,
+input[type="button"],
+input[type="submit"] {
+	cursor: pointer;
+	height: $size__input;
+	font-size: 1rem;
+	line-height: $size__input;
+	color: $color__text-lighter;
+	padding: 0 $spacing__content-s;
+	background-color: $color__border-dark;
+	border: 1px solid $color__border-darker;
+	border-radius: $border-radius;
+	-webkit-appearance: none;
+
+	&.outline {
+		background-color: transparent !important;
+	}
+
+	// Colors.
+	@each $color_name, $color in ( 'red': $color__red, 'green': $color__green, 'blue': $color__blue ) {
+		&.#{$color_name} {
+			background-color: $color;
+			border-color: darken( $color, 10 );
+
+			&.outline {
+				color: $color;
+				border-color: $color;
+			}
 		}
 	}
 }

@@ -73,19 +73,27 @@ class FileOptions extends React.Component {
 		});
 	}
 
-	defaultOutputPath( relative = true ) {
-		let outputPath = fileOutputPath( this.props.file, this.outputSuffix, this.outputExtension );
-
-		return relative ? fileRelativePath( this.props.base, outputPath ) : fileAbsolutePath( this.props.base, outputPath );
+	defaultOutputPath() {
+		return fileOutputPath( this.props.file, this.outputSuffix, this.outputExtension );
 	}
 
 	getOutputPath( type = 'relative' ) {
 		let slashPath = ( type === 'display' );
 		let relativePath = ( type === 'relative' || type === 'display' );
-		let defaultPath = this.defaultOutputPath( relativePath );
+		let defaultPath = this.defaultOutputPath();
 		let outputPath = this.getOption( 'output', defaultPath );
 
-		return slashPath ? slash( outputPath ) : outputPath;
+		if ( relativePath ) {
+			outputPath = fileRelativePath( this.props.base, outputPath );
+		} else {
+			outputPath = fileAbsolutePath( this.props.base, outputPath );
+		}
+
+		if ( slashPath ) {
+			outputPath = slash( outputPath );
+		}
+
+		return outputPath;
 	}
 
 	handleCompile() {
