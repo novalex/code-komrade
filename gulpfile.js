@@ -24,7 +24,7 @@ const zip = require( 'gulp-vinyl-zip' )
 const path = require( 'path' )
 const del = require('del')
 
-const electronVersion = require( 'electron/package.json' ).version
+const appVersion = require( 'electron/package.json' ).version
 
 const paths = {
 	client: {
@@ -49,7 +49,8 @@ const paths = {
 	},
 	browserify: [ './node_modules', './app/js/' ],
 	dist: {
-		build: './build'
+		build: './build',
+		release: './release'
 	},
 	cwd: './'
 }
@@ -198,11 +199,20 @@ gulp.task( 'build',
 	)
 )
 
-gulp.task( 'build-production', gulp.parallel( 'build-client-production', 'build-server' ), () => {
-	gulp.src( './package.json' )
-		.pipe( replace( 'build/index.js', 'index.js' ) )
-		.pipe( gulp.dest( paths.dist.build ) )
-} )
+gulp.task( 'build-production',
+	gulp.series(
+		'build-clean',
+		gulp.parallel(
+			'build-client-production',
+			'build-server'
+		),
+		() => {
+			return gulp.src( './package.json' )
+				.pipe( replace( 'build/index.js', 'index.js' ) )
+				.pipe( gulp.dest( paths.dist.build ) )
+		}
+	)
+)
 
 gulp.task( 'watch-client', () => {
 	for ( let type in paths.watch.client ) {
@@ -229,7 +239,7 @@ gulp.task( 'serve', gulp.series( 'build', gulp.parallel( 'watch', () => {
 
 function restart( done ) {
 	electron.restart( '--enable-logging', function( state ) {
-		if ( state === 'restarted' || state === 'restarting' ) {
+		if ( state === 'restarted' || state === 'restarting' || state === 'reloading' ) {
 			done( null );
 		} else {
 			done( 'Unexpected state while restarting electron-connect server. State ' + state );
@@ -242,23 +252,24 @@ function reload( done ) {
 	done( null );
 }
 
-gulp.task( 'package-osx', gulp.parallel( 'build-production' ), () => {
+gulp.task( 'package-osx', gulp.series( 'build-production', () => {
 	return gulp.src( paths.dist.build + '/**' )
-		.pipe( electronPackager( { version: electronVersion, platform: 'darwin' } ) )
+		.pipe( electronPackager( { version: appVersion, platform: 'darwin' } ) )
 		.pipe( symdest( 'release' ) )
-} )
+} ) )
 
-gulp.task( 'package-windows', gulp.parallel( 'build-production' ), () => {
+gulp.task( 'package-windows', gulp.series( 'build-production', () => {
 	return gulp.src( paths.dist.build + '/**' )
-		.pipe( electronPackager( { version: electronVersion, platform: 'win32' } ) )
-		.pipe( zip.dest( './release/windows.zip' ) )
-} )
+		.pipe( electronPackager( { version: appVersion, platform: 'win32' } ) )
+		.pipe( symdest( paths.dist.release ) )
+		// .pipe( zip.dest( paths.dist.release + '/windows.zip' ) )
+} ) )
 
-gulp.task( 'package-linux', gulp.parallel( 'build-production' ), () => {
+gulp.task( 'package-linux', gulp.series( 'build-production', () => {
 	return gulp.src( paths.dist.build + '/**' )
-		.pipe( electronPackager( { version: electronVersion, platform: 'linux' } ) )
-		.pipe( zip.dest( './release/linux.zip' ) )
-} )
+		.pipe( electronPackager( { version: appVersion, platform: 'linux' } ) )
+		.pipe( zip.dest( paths.dist.release + '/linux.zip' ) )
+} ) )
 
 gulp.task( 'package', gulp.series( 'build-production', 'package-windows', 'package-osx', 'package-linux' ) )
 

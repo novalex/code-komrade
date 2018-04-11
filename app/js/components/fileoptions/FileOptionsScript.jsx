@@ -78,12 +78,7 @@ class FileOptionsScript extends FileOptions {
 				</div>
 
 				<div className='footer'>
-					<button
-						className='compile outline green'
-						onClick={ this.handleCompile }
-					>
-						Compile
-					</button>
+					{ this.renderButton() }
 				</div>
 			</div>
 		);

@@ -11,18 +11,26 @@ let OSCmd = process.platform === 'win32' ? '.cmd' : '';
 let gulpPath = path.join( __dirname, '..', 'node_modules', '.bin', 'gulp' + OSCmd );
 let gulpFilePath = path.join( __dirname, '..', 'app', 'js', 'gulp', 'gulpfile.js' );
 
-function runTask( taskName, input, filename, output ) {
+function runTask( taskName, options = {}, callback = null ) {
 	let args = [
 		taskName,
 		'--gulpfile', gulpFilePath,
-		'--input', input,
-		'--filename', filename,
-		'--output', output,
 		'--no-color'
 	];
+
+	for ( var option in options ) {
+		if ( ! options.hasOwnProperty( option ) ) {
+			continue;
+		}
+
+		args.push( '--' + option );
+		args.push( options[ option ] );
+	}
+
 	const cp = spawn( gulpPath, args );
 
 	cp.stdout.setEncoding('utf8');
+
 	cp.stdout.on( 'data', data => {
 		console.log( data );
 	});
@@ -34,25 +42,27 @@ function runTask( taskName, input, filename, output ) {
 
 	cp.stderr.on( 'data', data => {
 		console.error( data );
-		let gulpNotification = new Notification( 'Buildr compile error', {
+		new Notification( 'Buildr compile error', {
 			body: `[error] ${data}`
 		});
 	});
 
 	cp.on( 'exit', code => {
-		let gulpNotification;
-
 		if ( code === 0 ) {
-			gulpNotification = new Notification('Buildr', {
+			new Notification('Buildr', {
 				body: 'Finished running tasks'
 			});
 		} else {
 			console.error(`Exited with error code ${code}`);
 
-			gulpNotification = new Notification( 'Buildr compile error', {
+			new Notification( 'Buildr compile error', {
 				body: `Exited with error code ${code}`,
 				sound: 'Basso'
 			});
+		}
+
+		if ( callback ) {
+			callback( code );
 		}
 	});
 }

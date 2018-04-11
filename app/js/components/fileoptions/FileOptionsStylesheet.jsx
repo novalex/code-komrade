@@ -22,18 +22,16 @@ class FileOptionsStylesheet extends FileOptions {
 		this.saveDialogFilters = [
 			{ name: 'CSS', extensions: [ 'css' ] }
 		];
+		this.styleOptions = {
+			nested: 'Nested',
+			compact: 'Compact',
+			expanded: 'Expanded',
+			compressed: 'Compressed'
+		};
 	}
 
 	isPartial( file ) {
 		return file.name.startsWith('_');
-	}
-
-	styleOptions() {
-		return {
-			nested: 'Nested',
-			compact: 'Compact',
-			expanded: 'Expanded'
-		};
 	}
 
 	render() {
@@ -85,17 +83,12 @@ class FileOptionsStylesheet extends FileOptions {
 						labelPos='left'
 						onChange={ this.handleChange }
 						value={ this.getOption( 'style', 'nested' ) }
-						options={ this.styleOptions() }
+						options={ this.styleOptions }
 					/>
 				</div>
 
 				<div className='footer'>
-					<button
-						className='compile outline green'
-						onClick={ this.handleCompile }
-					>
-						Compile
-					</button>
+					{ this.renderButton() }
 				</div>
 			</div>
 		);

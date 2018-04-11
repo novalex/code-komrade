@@ -47,6 +47,7 @@ table {
   border-spacing: 0; }
 
 input, textarea, select, button {
+  outline: none;
   font-family: inherit; }
 
 @-webkit-keyframes fade {
@@ -98,7 +99,7 @@ input, textarea, select, button {
   position: absolute;
   top: 0; }
   .field-switch input[type="checkbox"]:checked + label {
-    background: #479206; }
+    background: #5d9a0b; }
     .field-switch input[type="checkbox"]:checked + label:before {
       left: calc(100% - 4px);
       transform: translateX(-100%); }
@@ -156,11 +157,9 @@ input, textarea, select, button {
   appearance: none;
   -webkit-appearance: none;
   border: 0;
-  outline: none;
   background-color: transparent;
   z-index: 1; }
   .field-select select option {
-    outline: none;
     color: #ddd;
     background-color: #3c3c3c; }
 
@@ -173,16 +172,24 @@ input[type="submit"] {
   font-size: 1rem;
   line-height: 36px;
   color: #ddd;
+  opacity: 1;
   padding: 0 10px;
   background-color: #3c3c3c;
   border: 1px solid #050505;
   border-radius: 4px;
+  transition: background-color 0.2s, border-color 0.2s, opacity 0.2s;
   -webkit-appearance: none; }
   button.outline,
   .button.outline,
   input[type="button"].outline,
   input[type="submit"].outline {
     background-color: transparent !important; }
+  button:disabled,
+  .button:disabled,
+  input[type="button"]:disabled,
+  input[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: wait; }
   button.red,
   .button.red,
   input[type="button"].red,
@@ -199,14 +206,14 @@ input[type="submit"] {
   .button.green,
   input[type="button"].green,
   input[type="submit"].green {
-    background-color: #479206;
-    border-color: #2f6104; }
+    background-color: #5d9a0b;
+    border-color: #406a08; }
     button.green.outline,
     .button.green.outline,
     input[type="button"].green.outline,
     input[type="submit"].green.outline {
-      color: #479206;
-      border-color: #479206; }
+      color: #5d9a0b;
+      border-color: #5d9a0b; }
   button.blue,
   .button.blue,
   input[type="button"].blue,
@@ -462,7 +469,8 @@ body.off-canvas #off-canvas {
     width: 100%;
     padding-right: 20px; }
     #file-options .footer button {
-      width: 100%; }
+      width: 100%;
+      border-width: 0; }
   #file-options .header,
   #file-options .body > p,
   #file-options .body > .field,

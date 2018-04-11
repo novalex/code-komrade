@@ -15,22 +15,12 @@ class FileOptions extends React.Component {
 		super( props );
 
 		this.state = {
+			loading: false,
 			options: this.constructor.getOptionsFromConfig( props.base, props.file )
 		};
 
 		this.handleChange = this.handleChange.bind( this );
 		this.handleCompile = this.handleCompile.bind( this );
-	}
-
-	shouldComponentUpdate( nextProps ) {
-		if (
-			! nextProps.file ||
-			( this.props.file && nextProps.file.path === this.props.file.path )
-		) {
-			return false;
-		}
-
-		return true;
 	}
 
 	static getDerivedStateFromProps( nextProps ) {
@@ -98,13 +88,18 @@ class FileOptions extends React.Component {
 
 	handleCompile() {
 		let outputPath = this.getOutputPath( 'absolute' );
+		let taskOptions = {
+			input: this.props.file.path,
+			filename: path.basename( outputPath ),
+			output: path.parse( outputPath ).dir,
+			outputStyle: this.getOption( 'style', 'nested' )
+		};
 
-		runTask(
-			this.buildTaskName, // Task name.
-			this.props.file.path, // Input file path.
-			path.basename( outputPath ), // Ouput file name.
-			path.parse( outputPath ).dir // Output directory path.
-		);
+		this.setState({ loading: true });
+
+		runTask( this.buildTaskName, taskOptions, function( code ) {
+			this.setState({ loading: false });
+		}.bind( this ));
 	}
 
 	updateFileOptions( options = null ) {
@@ -128,6 +123,18 @@ class FileOptions extends React.Component {
 		}
 
 		global.projectConfig.set( 'files', files );
+	}
+
+	renderButton() {
+		return (
+			<button
+				className='compile green'
+				onClick={ this.handleCompile }
+				disabled={ this.state.loading }
+			>
+				{ this.state.loading ? 'Compiling...' : 'Compile' }
+			</button>
+		);
 	}
 
 	render() {

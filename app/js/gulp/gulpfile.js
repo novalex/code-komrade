@@ -42,7 +42,9 @@ console.log( arg );
 
 gulp.task( 'build-css', ( done ) => {
 	return gulp.src( arg.input )
-		.pipe( sass() )
+		.pipe( sass({
+			outputStyle: arg.outputStyle
+		}) )
 		.pipe( rename( arg.filename ) )
 		.pipe( gulp.dest( arg.output ) )
 } )
