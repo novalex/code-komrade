@@ -44,6 +44,17 @@ class FileOptions extends React.Component {
 		return {};
 	}
 
+	setOption( option, value ) {
+		this.setState( function( prevState ) {
+			let options = prevState.options;
+			options[ option ] = value;
+
+			return options;
+		}, function() {
+			this.updateFileOptions( this.state.options );
+		});
+	}
+
 	getOption( option, defaultValue = null ) {
 		if ( this.state.options[ option ] ) {
 			return this.state.options[ option ];
@@ -53,14 +64,7 @@ class FileOptions extends React.Component {
 	}
 
 	handleChange( event, value ) {
-		this.setState( function( prevState ) {
-			let options = prevState.options;
-			options[ event.target.name ] = value;
-
-			return options;
-		}, function() {
-			this.updateFileOptions( this.state.options );
-		});
+		this.setOption( event.target.name, value );
 	}
 
 	defaultOutputPath() {
@@ -84,6 +88,12 @@ class FileOptions extends React.Component {
 		}
 
 		return outputPath;
+	}
+
+	setFileImports( imports ) {
+		let relativeImports = imports.map( path => fileRelativePath( this.props.base, path ) );
+
+		this.setOption( 'imports', relativeImports );
 	}
 
 	handleCompile() {

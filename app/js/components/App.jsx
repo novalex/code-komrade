@@ -36,7 +36,7 @@ class App extends React.Component {
 			<div id='app'>
 				<Sidebar active={ this.state.view } changeView={ this.changeView } />
 
-				<div id='content'>
+				<div id='content-wrap'>
 					{ this.renderContent() }
 				</div>
 			</div>

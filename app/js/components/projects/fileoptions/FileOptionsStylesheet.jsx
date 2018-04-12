@@ -12,6 +12,8 @@ const FieldSelect = require('../../fields/FieldSelect');
 
 const FieldSaveFile = require('../../fields/FieldSaveFile');
 
+const sassGraph = require('sass-graph');
+
 class FileOptionsStylesheet extends FileOptions {
 	constructor( props ) {
 		super( props );
@@ -28,10 +30,30 @@ class FileOptionsStylesheet extends FileOptions {
 			expanded: 'Expanded',
 			compressed: 'Compressed'
 		};
+
+		this.handleAutoCompile = this.handleAutoCompile.bind( this );
 	}
 
 	isPartial( file ) {
 		return file.name.startsWith('_');
+	}
+
+	getFileDependencies() {
+		let graph = sassGraph.parseFile( this.props.file.path );
+
+		if ( graph && graph.index && graph.index[ this.props.file.path ] ) {
+			return graph.index[ this.props.file.path ].imports;
+		}
+
+		return [];
+	}
+
+	handleAutoCompile( event, value ) {
+		let imports = ( value ) ? this.getFileDependencies() : [];
+
+		this.setFileImports( imports );
+
+		this.handleChange( event, value );
 	}
 
 	render() {
@@ -71,7 +93,7 @@ class FileOptionsStylesheet extends FileOptions {
 						name='autocompile'
 						label='Auto Compile'
 						labelPos='left'
-						onChange={ this.handleChange }
+						onChange={ this.handleAutoCompile }
 						value={ this.getOption( 'autocompile', false ) }
 					/>
 

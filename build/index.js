@@ -71,6 +71,3 @@ app.on('activate', function () {
 });
 
 app.setAppUserModelId('Buildr');
-
-app.commandLine.appendSwitch('high-dpi-support', 1);
-app.commandLine.appendSwitch('force-device-scale-factor', 1);
