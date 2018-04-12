@@ -38,8 +38,6 @@ const arg = ( argList => {
 	return arg;
 })( process.argv );
 
-console.log( arg );
-
 gulp.task( 'build-css', ( done ) => {
 	return gulp.src( arg.input )
 		.pipe( sass({

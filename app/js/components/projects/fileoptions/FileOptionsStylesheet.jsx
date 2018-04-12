@@ -6,11 +6,11 @@ const React = require('react');
 
 const FileOptions = require('./FileOptions');
 
-const FieldSwitch = require('../fields/FieldSwitch');
+const FieldSwitch = require('../../fields/FieldSwitch');
 
-const FieldSelect = require('../fields/FieldSelect');
+const FieldSelect = require('../../fields/FieldSelect');
 
-const FieldSaveFile = require('../fields/FieldSaveFile');
+const FieldSaveFile = require('../../fields/FieldSaveFile');
 
 class FileOptionsStylesheet extends FileOptions {
 	constructor( props ) {

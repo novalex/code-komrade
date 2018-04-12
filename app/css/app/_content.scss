@@ -1,11 +1,12 @@
-#wrap {
+#root {
 	min-width: $size__min-width;
 	padding: $spacing__content $spacing__content-l;
 	padding-left: $size__sidebar + $spacing__content-l;
 }
 
 #sidebar,
-#content {
+#content,
+#off-canvas {
 	opacity: 1;
 	transition: opacity 0.2s;
 

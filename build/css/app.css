@@ -330,23 +330,28 @@ input[type="submit"] {
     #project-select-dropdown > div:last-child {
       border-bottom-width: 0; }
 
-#wrap {
+#root {
   min-width: 800px;
   padding: 20px 30px;
   padding-left: 114px; }
 
 #sidebar,
-#content {
+#content,
+#off-canvas {
   opacity: 1;
   transition: opacity 0.2s; }
   .unfocus #sidebar, .unfocus
-  #content {
+  #content, .unfocus
+  #off-canvas {
     opacity: 0.4; }
   .unfocus #sidebar,
   .loading #sidebar, .unfocus
   #content,
   .loading
-  #content {
+  #content, .unfocus
+  #off-canvas,
+  .loading
+  #off-canvas {
     pointer-events: none; }
 
 #off-canvas {

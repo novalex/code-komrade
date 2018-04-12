@@ -8,7 +8,7 @@ const Store = require('electron-store');
 
 const ProjectSelect = require('./ProjectSelect');
 
-const FileList = require('../filelist/FileList');
+const FileList = require('./filelist/FileList');
 
 const directoryTree = require('../../utils/directoryTree');
 

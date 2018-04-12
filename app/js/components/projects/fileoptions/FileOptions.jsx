@@ -4,9 +4,9 @@
 
 const path = require('path');
 
-const { slash, fileRelativePath, fileAbsolutePath, fileOutputPath } = require('../../utils/pathHelpers');
+const { slash, fileRelativePath, fileAbsolutePath, fileOutputPath } = require('../../../utils/pathHelpers');
 
-const { runTask } = require('../../gulp/interface');
+const { runTask } = require('../../../gulp/interface');
 
 const React = require('react');
 
@@ -95,9 +95,11 @@ class FileOptions extends React.Component {
 			outputStyle: this.getOption( 'style', 'nested' )
 		};
 
+		global.ui.loading( true );
 		this.setState({ loading: true });
 
 		runTask( this.buildTaskName, taskOptions, function( code ) {
+			global.ui.loading( false );
 			this.setState({ loading: false });
 		}.bind( this ));
 	}

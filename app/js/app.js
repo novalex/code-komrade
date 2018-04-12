@@ -2,10 +2,6 @@
  * @file Main app script.
  */
 
-const React = require('react');
-
-const ReactDOM = require('react-dom');
-
 const Store = require('electron-store');
 
 global.config = new Store({
@@ -14,11 +10,25 @@ global.config = new Store({
 
 global.ui = require('./utils/globalUI');
 
-const Projects = require('./components/projects/Projects');
+const React = require('react');
+
+const ReactDOM = require('react-dom');
+
+const { Provider } = require('react-redux');
+
+const { createStore } = require('redux');
+
+const rootReducer = require('./reducers');
+
+const store = createStore( rootReducer );
+
+const App = require('./components/App');
 
 ReactDOM.render(
-	<Projects />,
-	document.getElementById('app')
+	<Provider store={ store }>
+		<App />
+	</Provider>,
+	document.getElementById('root')
 );
 
 // Context menu.
