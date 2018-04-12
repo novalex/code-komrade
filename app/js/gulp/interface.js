@@ -42,27 +42,25 @@ function runTask( taskName, options = {}, callback = null ) {
 
 	cp.stderr.on( 'data', data => {
 		console.error( data );
-		new Notification( 'Buildr compile error', {
-			body: `[error] ${data}`,
-			sound: 'Basso'
-		});
 	});
 
 	cp.on( 'exit', code => {
-		if ( code === 0 ) {
-			let filename = options.filename || 'file';
+		let filename = options.filename || 'file';
 
+		if ( code === 0 ) {
 			new Notification( 'Buildr', {
-				body: `Finished compiling ${filename}`,
+				body: `Finished compiling ${filename}.`,
 				silent: true
 			});
 		} else {
-			console.error(`Exited with error code ${code}`);
+			let filename = options.filename || 'File';
 
-			new Notification( 'Buildr compile error', {
-				body: `Exited with error code ${code}`,
+			new Notification( 'Buildr', {
+				body: `Error when compiling ${filename}.`,
 				sound: 'Basso'
 			});
+
+			console.error(`Exited with error code ${code}`);
 		}
 
 		if ( callback ) {
