@@ -45,4 +45,8 @@ gulp.task( 'build-css', ( done ) => {
 		}) )
 		.pipe( rename( arg.filename ) )
 		.pipe( gulp.dest( arg.output ) )
-} )
+});
+
+gulp.task( 'watch', ( done ) => {
+	gulp.watch( arg.watchFiles.split('|'), gulp.series( arg.watchTask ) );
+});

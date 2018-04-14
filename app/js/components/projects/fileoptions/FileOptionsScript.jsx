@@ -14,6 +14,7 @@ class FileOptionsScript extends FileOptions {
 	constructor( props ) {
 		super( props );
 
+		this.fileType = 'script';
 		this.buildTaskName = 'build-js';
 		this.outputSuffix = '-dist';
 		this.outputExtension = '.js';

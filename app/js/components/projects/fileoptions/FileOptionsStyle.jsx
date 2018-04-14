@@ -18,6 +18,7 @@ class FileOptionsStylesheet extends FileOptions {
 	constructor( props ) {
 		super( props );
 
+		this.fileType = 'style';
 		this.buildTaskName = 'build-css';
 		this.outputSuffix = '-dist';
 		this.outputExtension = '.css';
@@ -34,8 +35,8 @@ class FileOptionsStylesheet extends FileOptions {
 		this.handleAutoCompile = this.handleAutoCompile.bind( this );
 	}
 
-	isPartial( file ) {
-		return file.name.startsWith('_');
+	isPartial() {
+		return this.props.file.name.startsWith('_');
 	}
 
 	getFileDependencies() {
@@ -51,13 +52,13 @@ class FileOptionsStylesheet extends FileOptions {
 	handleAutoCompile( event, value ) {
 		let imports = ( value ) ? this.getFileDependencies() : [];
 
-		this.setFileImports( imports );
-
 		this.handleChange( event, value );
+
+		this.setFileImports( imports );
 	}
 
 	render() {
-		if ( this.isPartial( this.props.file ) ) {
+		if ( this.isPartial() ) {
 			return (
 				<div id='file-options' className='file-options-style'>
 					<div className='header'>

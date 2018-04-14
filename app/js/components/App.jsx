@@ -16,6 +16,12 @@ class App extends React.Component {
 			view: 'files'
 		};
 
+		this.views = {
+			files: 'Files',
+			term: 'Terminal',
+			settings: 'Settings'
+		};
+
 		this.changeView = this.changeView.bind( this );
 	}
 
@@ -27,14 +33,23 @@ class App extends React.Component {
 		if ( this.state.view === 'files' ) {
 			return <Projects />;
 		} else {
-			return <p>You shouldn't be here, you naughty naughty boy.</p>;
+			return (
+				<React.Fragment>
+					<h2>{ this.views[ this.state.view ] }</h2>
+					<p>You shouldn't be here, you naughty naughty boy.</p>
+				</React.Fragment>
+			);
 		}
 	}
 
 	render() {
 		return (
 			<div id='app'>
-				<Sidebar active={ this.state.view } changeView={ this.changeView } />
+				<Sidebar
+					items={ this.views }
+					active={ this.state.view }
+					changeView={ this.changeView }
+				/>
 
 				<div id='content-wrap'>
 					{ this.renderContent() }

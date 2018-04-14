@@ -10,6 +10,10 @@ global.config = new Store({
 
 global.ui = require('./utils/globalUI');
 
+global.compiler = require('./gulp/interface');
+
+global.compilerTasks = [];
+
 const React = require('react');
 
 const ReactDOM = require('react-dom');
@@ -45,4 +49,13 @@ fileList.addEventListener( 'contextmenu', function( event ) {
 	if ( fileNameCont.dataset.file ) {
 		console.log( JSON.parse( decodeURIComponent( fileNameCont.dataset.file ) ) );
 	}
+});
+
+// App close/restart events.
+window.addEventListener( 'beforeunload', function( event ) {
+	console.log( 'Killing %d running tasks...', global.compilerTasks.length );
+
+	global.compiler.killTasks();
+
+	while ( global.compilerTasks.length > 1 );
 });

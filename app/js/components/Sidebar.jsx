@@ -8,12 +8,6 @@ class Sidebar extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		this.items = {
-			files: 'Files',
-			term: 'Terminal',
-			settings: 'Settings'
-		};
-
 		this.onClick = this.onClick.bind( this );
 	}
 
@@ -28,12 +22,12 @@ class Sidebar extends React.Component {
 	renderItems() {
 		let items = [];
 
-		for ( var id in this.items ) {
+		for ( var id in this.props.items ) {
 			items.push(
 				<li
 					key={ id }
 					data-view={ id }
-					data-tip={ this.items[ id ] }
+					data-tip={ this.props.items[ id ] }
 					className={ this.props.active === id ? 'active' : '' }
 					onClick={ this.onClick }
 				>

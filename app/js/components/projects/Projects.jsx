@@ -81,6 +81,12 @@ class Projects extends React.Component {
 			name: 'buildr-project',
 			cwd: path
 		});
+
+		global.compiler.initProject();
+
+		global.projectConfig.onDidChange( 'files', function() {
+			global.compiler.initProject();
+		});
 	}
 
 	walkDirectory( path ) {

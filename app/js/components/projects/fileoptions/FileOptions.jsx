@@ -6,8 +6,6 @@ const path = require('path');
 
 const { slash, fileRelativePath, fileAbsolutePath, fileOutputPath } = require('../../../utils/pathHelpers');
 
-const { runTask } = require('../../../gulp/interface');
-
 const React = require('react');
 
 class FileOptions extends React.Component {
@@ -91,7 +89,7 @@ class FileOptions extends React.Component {
 	}
 
 	setFileImports( imports ) {
-		let relativeImports = imports.map( path => fileRelativePath( this.props.base, path ) );
+		let relativeImports = imports.map( path => slash( fileRelativePath( this.props.base, path ) ) );
 
 		this.setOption( 'imports', relativeImports );
 	}
@@ -108,7 +106,7 @@ class FileOptions extends React.Component {
 		global.ui.loading( true );
 		this.setState({ loading: true });
 
-		runTask( this.buildTaskName, taskOptions, function( code ) {
+		global.compiler.runTask( this.buildTaskName, taskOptions, function( code ) {
 			global.ui.loading( false );
 			this.setState({ loading: false });
 		}.bind( this ));
@@ -128,6 +126,7 @@ class FileOptions extends React.Component {
 		if ( fileIndex === -1 ) {
 			files.push({
 				path: filePath,
+				type: this.fileType,
 				options: options
 			});
 		} else {

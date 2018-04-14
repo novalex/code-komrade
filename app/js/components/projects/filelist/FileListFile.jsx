@@ -8,7 +8,7 @@ const ReactDOM = require('react-dom');
 
 const FileOptionsScript = require('../fileoptions/FileOptionsScript');
 
-const FileOptionsStylesheet = require('../fileoptions/FileOptionsStylesheet');
+const FileOptionsStyle = require('../fileoptions/FileOptionsStyle');
 
 class FileListFile extends React.Component {
 	constructor( props ) {
@@ -27,7 +27,7 @@ class FileListFile extends React.Component {
 			case '.scss':
 			case '.sass':
 			case '.less':
-				return <FileOptionsStylesheet base={ this.props.base } file={ file } />;
+				return <FileOptionsStyle base={ this.props.base } file={ file } />;
 			case '.js':
 			case '.ts':
 			case '.jsx':
