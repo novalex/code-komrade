@@ -48,5 +48,6 @@ gulp.task( 'build-css', ( done ) => {
 });
 
 gulp.task( 'watch', ( done ) => {
-	gulp.watch( arg.watchFiles.split('|'), gulp.series( arg.watchTask ) );
+	gulp.watch( arg.watchFiles.split('|'), gulp.parallel( arg.watchTask ) );
+	done();
 });

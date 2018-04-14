@@ -65,25 +65,27 @@ function initProject() {
 			file.options.output = fileOutputPath( file, suffix, extension );
 		}
 
-		let imports = [];
-		if ( file.options.imports ) {
-			imports = file.options.imports.map( importPath => fileAbsolutePath( projectPath, importPath ) );
+		let watchFiles = [];
+		if ( file.options.imports && file.options.imports.length > 0 ) {
+			watchFiles = file.options.imports.map( importPath => fileAbsolutePath( projectPath, importPath ) );
+		} else {
+			watchFiles.push( fileAbsolutePath( projectPath, file.path ) );
 		}
 
 		if ( file.options.autocompile ) {
-			autoCompile( projectPath, file, imports );
+			autoCompile( projectPath, file, watchFiles );
 		}
 	}
 }
 
-function autoCompile( base, file, imports ) {
+function autoCompile( base, file, watchFiles ) {
 	let filePath = fileAbsolutePath( base, file.path );
 	let outputPath = fileAbsolutePath( base, file.options.output );
 	let options = {
 		input: filePath,
 		filename: path.basename( outputPath ),
 		output: path.parse( outputPath ).dir,
-		watchFiles: imports.join('|')
+		watchFiles: watchFiles.join('|')
 	};
 
 	if ( file.type === 'style' ) {
@@ -111,6 +113,8 @@ function runTask( taskName, options = {}, callback = null ) {
 	}
 
 	const cp = spawn( gulpPath, args );
+
+	console.log( 'Started %s with PID %d', taskName, cp.pid );
 
 	global.compilerTasks.push( cp );
 
