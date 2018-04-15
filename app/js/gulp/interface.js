@@ -45,8 +45,6 @@ function initProject() {
 		return;
 	}
 
-	let watchCssFiles = [];
-	let watchJsFiles = [];
 	let projectFiles = global.projectConfig.get( 'files', [] );
 
 	let projectPath = path.parse( global.projectConfig.path ).dir;
@@ -54,45 +52,63 @@ function initProject() {
 	for ( var i = projectFiles.length - 1; i >= 0; i-- ) {
 		let file = projectFiles[ i ];
 
-		if ( ! file.options ) {
-			continue;
-		}
-
-		if ( ! file.options.output ) {
-			let suffix = '-dist';
-			let extension = ( file.type === 'script' ) ? '.js' : '.css';
-			file.name = path.basename( file.path );
-			file.options.output = fileOutputPath( file, suffix, extension );
-		}
-
-		let watchFiles = [];
-		if ( file.options.imports && file.options.imports.length > 0 ) {
-			watchFiles = file.options.imports.map( importPath => fileAbsolutePath( projectPath, importPath ) );
-		} else {
-			watchFiles.push( fileAbsolutePath( projectPath, file.path ) );
-		}
-
-		if ( file.options.autocompile ) {
-			autoCompile( projectPath, file, watchFiles );
-		}
+		processFile( projectPath, file );
 	}
 }
 
-function autoCompile( base, file, watchFiles ) {
+function processFile( base, file, taskName = null, callback = null ) {
+	if ( ! file.options ) {
+		return;
+	}
+
+	if ( ! file.options.output ) {
+		let suffix = '-dist';
+		let extension = ( file.type === 'script' ) ? '.js' : '.css';
+		file.name = path.basename( file.path );
+		file.options.output = fileOutputPath( file, suffix, extension );
+	}
+
+	let options = getFileConfig( base, file );
+
+	if ( taskName ) {
+		runTask( taskName, options, callback );
+	} else if ( file.options.autocompile ) {
+		let watchFiles = [];
+
+		if ( file.options.imports && file.options.imports.length > 0 ) {
+			watchFiles = file.options.imports.map( importPath => fileAbsolutePath( base, importPath ) );
+		}
+
+		watchFiles.push( fileAbsolutePath( base, file.path ) );
+
+		options.watchFiles = watchFiles.join(' ');
+
+		autoCompile( file, options );
+	}
+}
+
+function getFileConfig( base, file ) {
 	let filePath = fileAbsolutePath( base, file.path );
 	let outputPath = fileAbsolutePath( base, file.options.output );
 	let options = {
 		input: filePath,
 		filename: path.basename( outputPath ),
 		output: path.parse( outputPath ).dir,
-		watchFiles: watchFiles.join('|')
+		sourcemaps: file.options.sourcemaps || false,
+		autoprefixer: file.options.autoprefixer || false
 	};
 
 	if ( file.type === 'style' ) {
 		options.watchTask = 'build-css';
 		options.outputStyle = file.options.style || 'nested';
+	} else if ( file.type === 'script' ) {
+		options.watchTask = 'build-js';
 	}
 
+	return options;
+}
+
+function autoCompile( file, options ) {
 	runTask( 'watch', options );
 }
 
@@ -109,7 +125,10 @@ function runTask( taskName, options = {}, callback = null ) {
 		}
 
 		args.push( '--' + option );
-		args.push( options[ option ] );
+
+		if ( typeof( options[ option ] ) !== 'boolean' ) {
+			args.push( options[ option ] );
+		}
 	}
 
 	const cp = spawn( gulpPath, args );
@@ -170,5 +189,7 @@ module.exports = {
 	runTask,
 	getTasks,
 	killTasks,
+	processFile,
+	getFileConfig,
 	terminateProcess
 }

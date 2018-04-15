@@ -14,7 +14,7 @@ const FieldSaveFile = require('../../fields/FieldSaveFile');
 
 const sassGraph = require('sass-graph');
 
-class FileOptionsStylesheet extends FileOptions {
+class FileOptionsStyles extends FileOptions {
 	constructor( props ) {
 		super( props );
 
@@ -108,6 +108,22 @@ class FileOptionsStylesheet extends FileOptions {
 						value={ this.getOption( 'style', 'nested' ) }
 						options={ this.styleOptions }
 					/>
+
+					<FieldSwitch
+						name='sourcemaps'
+						label='Sourcemaps'
+						labelPos='left'
+						onChange={ this.handleChange }
+						value={ this.getOption( 'sourcemaps', false ) }
+					/>
+
+					<FieldSwitch
+						name='autoprefixer'
+						label='Autoprefixer'
+						labelPos='left'
+						onChange={ this.handleChange }
+						value={ this.getOption( 'autoprefixer', false ) }
+					/>
 				</div>
 
 				<div className='footer'>
@@ -118,4 +134,4 @@ class FileOptionsStylesheet extends FileOptions {
 	}
 }
 
-module.exports = FileOptionsStylesheet;
+module.exports = FileOptionsStyles;

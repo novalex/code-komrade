@@ -2,8 +2,6 @@
  * @file Component for rendering build options for a file.
  */
 
-const path = require('path');
-
 const { slash, fileRelativePath, fileAbsolutePath, fileOutputPath } = require('../../../utils/pathHelpers');
 
 const React = require('react');
@@ -28,6 +26,16 @@ class FileOptions extends React.Component {
 	}
 
 	static getOptionsFromConfig( base, file ) {
+		let cfile = FileOptions.getFileFromConfig( base, file );
+
+		if ( cfile ) {
+			return cfile.options;
+		}
+
+		return {};
+	}
+
+	static getFileFromConfig( base, file ) {
 		if ( file && global.projectConfig ) {
 			let filePath = slash( fileRelativePath( base, file.path ) );
 
@@ -35,7 +43,7 @@ class FileOptions extends React.Component {
 			let cfile = files.find( cfile => cfile.path === filePath );
 
 			if ( cfile ) {
-				return cfile.options;
+				return cfile;
 			}
 		}
 
@@ -54,7 +62,7 @@ class FileOptions extends React.Component {
 	}
 
 	getOption( option, defaultValue = null ) {
-		if ( this.state.options[ option ] ) {
+		if ( this.state.options && this.state.options[ option ] ) {
 			return this.state.options[ option ];
 		}
 
@@ -95,21 +103,18 @@ class FileOptions extends React.Component {
 	}
 
 	handleCompile() {
-		let outputPath = this.getOutputPath( 'absolute' );
-		let taskOptions = {
-			input: this.props.file.path,
-			filename: path.basename( outputPath ),
-			output: path.parse( outputPath ).dir,
-			outputStyle: this.getOption( 'style', 'nested' )
-		};
-
 		global.ui.loading( true );
 		this.setState({ loading: true });
 
-		global.compiler.runTask( this.buildTaskName, taskOptions, function( code ) {
-			global.ui.loading( false );
-			this.setState({ loading: false });
-		}.bind( this ));
+		global.compiler.processFile(
+			this.props.base,
+			FileOptions.getFileFromConfig( this.props.base, this.props.file ),
+			this.buildTaskName,
+			function( code ) {
+				global.ui.loading( false );
+				this.setState({ loading: false });
+			}.bind( this )
+		);
 	}
 
 	updateFileOptions( options = null ) {

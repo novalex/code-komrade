@@ -39,7 +39,8 @@ class Projects extends React.Component {
 			ignored: [
 				'.git',
 				'node_modules',
-				'.DS_Store'
+				'.DS_Store',
+				'buildr-project.json'
 			],
 			loading: false
 		};

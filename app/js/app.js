@@ -57,5 +57,5 @@ window.addEventListener( 'beforeunload', function( event ) {
 
 	global.compiler.killTasks();
 
-	while ( global.compilerTasks.length > 1 );
+	while ( global.compilerTasks.length );
 });

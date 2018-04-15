@@ -1,18 +1,13 @@
 'use strict'
 
-const gulp = require( 'gulp' )
-const source = require( 'vinyl-source-stream' )
-const browserify = require( 'browserify' )
-const glob = require( 'glob' )
-const es = require( 'event-stream' )
-const babel = require( 'gulp-babel' )
-const sass = require( 'gulp-sass' )
-const rename = require( 'gulp-rename' )
-const useref = require( 'gulp-useref' )
-const replace = require( 'gulp-replace' )
-const symdest = require( 'gulp-symdest' )
-const path = require( 'path' )
-const del = require('del')
+const gulp = require( 'gulp' );
+const plugins = require('gulp-load-plugins')();
+const source = require( 'vinyl-source-stream' );
+const browserify = require( 'browserify' );
+const glob = require( 'glob' );
+const es = require( 'event-stream' );
+const path = require( 'path' );
+const del = require('del');
 
 // fetch command line arguments.
 const arg = ( argList => {
@@ -38,16 +33,46 @@ const arg = ( argList => {
 	return arg;
 })( process.argv );
 
+let options = {
+	autoprefixer: {
+		browsers: [ 'last 2 versions', '> 5%', 'Firefox ESR' ]
+	}
+}
+
 gulp.task( 'build-css', ( done ) => {
 	return gulp.src( arg.input )
-		.pipe( sass({
+		.pipe( plugins.if( arg.sourcemaps, plugins.sourcemaps.init() ) )
+		.pipe( plugins.sass({
 			outputStyle: arg.outputStyle
 		}) )
-		.pipe( rename( arg.filename ) )
+		.pipe( plugins.if( arg.sourcemaps, plugins.sourcemaps.write() ) )
+		.pipe( plugins.if( arg.autoprefixer, plugins.autoprefixer( options.autoprefixer ) ) )
+		.pipe( plugins.rename( arg.filename ) )
+		.pipe( gulp.dest( arg.output ) )
+});
+
+gulp.task( 'build-js', ( done ) => {
+	return browserify( {
+			entries: [ arg.input ],
+			extensions: [ '.js', '.jsx' ]
+			// ignoreMissing: true,
+			// detectGlobals: false,
+			// bare: true,
+			// browserField: false,
+			// insertGlobals: 'global',
+			// commondir: false,
+			// builtins: false,
+			// bundleExternal: false,
+			// debug: true
+		} )
+		.transform( 'babelify', { presets: [ 'es2015', 'react' ] } )
+		.bundle()
+		.pipe( source( arg.input ) )
+		.pipe( plugins.rename( arg.filename ) )
 		.pipe( gulp.dest( arg.output ) )
 });
 
 gulp.task( 'watch', ( done ) => {
-	gulp.watch( arg.watchFiles.split('|'), gulp.parallel( arg.watchTask ) );
+	gulp.watch( arg.watchFiles.split(' '), gulp.parallel( arg.watchTask ) );
 	done();
 });
