@@ -63,6 +63,7 @@ class FieldSelect extends React.Component {
 					name={ this.props.name }
 					onChange={ this.onChange }
 					value={ this.state.selected }
+					disabled={ this.props.disabled }
 					id={ 'field_' + this.props.name }
 				>
 					{ this.getOptions() }
@@ -78,7 +79,8 @@ FieldSelect.propTypes = {
 	labelPos: PropTypes.string,
 	onChange: PropTypes.func,
 	value: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
-	options: PropTypes.object.isRequired
+	options: PropTypes.object.isRequired,
+	disabled: PropTypes.bool
 };
 
 module.exports = FieldSelect;

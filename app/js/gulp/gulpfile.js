@@ -68,7 +68,18 @@ gulp.task( 'build-sass', ( done ) => {
 });
 
 gulp.task( 'build-js', ( done ) => {
-	return browserify( {
+	let fileStream;
+	let sourcemaps = ( ! arg.bundle && ! arg.babel ) ? false : arg.sourcemaps;
+	let babelOptions = {
+		presets: [
+			path.join( modulesPath, 'babel-preset-es2015' ),
+			path.join( modulesPath, 'babel-preset-react' )
+		],
+		sourceMaps: arg.sourcemaps
+	};
+
+	if ( arg.bundle ) {
+		fileStream = browserify( {
 			entries: [ arg.input ],
 			extensions: [ '.js', '.jsx' ],
 			// paths: [ path.join( arg.cwd, 'node_modules' ) ],
@@ -81,23 +92,30 @@ gulp.task( 'build-js', ( done ) => {
 			// builtins: false,
 			// bundleExternal: false,
 			// debug: true
-		} )
-		.transform( 'babelify', {
-			presets: [
-				path.join( modulesPath, 'babel-preset-es2015' ),
-				path.join( modulesPath, 'babel-preset-react' )
-			],
-			sourceMaps: arg.sourcemaps
-		} )
-		.bundle()
-		.pipe( source( arg.input ) )
-		.pipe( buffer() )
+		} );
+
+		if ( arg.babel ) {
+			fileStream = fileStream.transform( 'babelify', babelOptions );
+		}
+
+		fileStream = fileStream.bundle()
+			.pipe( source( arg.input ) )
+			.pipe( buffer() );
+	} else {
+		fileStream = gulp.src( arg.input );
+
+		if ( arg.babel ) {
+			fileStream = fileStream.pipe( plugins.babel( babelOptions ) );
+		}
+	}
+
+	return fileStream
 		.pipe( plugins.rename( arg.filename ) )
-		.pipe( plugins.if( arg.sourcemaps, plugins.sourcemaps.init( { loadMaps: true } ) ) )
+		.pipe( plugins.if( sourcemaps, plugins.sourcemaps.init( { loadMaps: true } ) ) )
 		.pipe( plugins.if( arg.compress, plugins.uglify({
 			compress: true	
 		}) ) )
-		.pipe( plugins.if( arg.sourcemaps, plugins.sourcemaps.write() ) )
+		.pipe( plugins.if( sourcemaps, plugins.sourcemaps.write() ) )
 		.pipe( gulp.dest( arg.output ) )
 });
 

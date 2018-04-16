@@ -45,6 +45,7 @@ class FieldSwitch extends React.Component {
 					name={ this.props.name }
 					onChange={ this.onChange }
 					checked={ this.state.checked }
+					disabled={ this.props.disabled }
 					id={ 'field_' + this.props.name }
 				/>
 				<label htmlFor={ 'field_' + this.props.name }>{ this.props.label }</label>
@@ -58,7 +59,8 @@ FieldSwitch.propTypes = {
 	label: PropTypes.string.isRequired,
 	labelPos: PropTypes.string,
 	onChange: PropTypes.func,
-	value: PropTypes.bool
+	value: PropTypes.bool,
+	disabled: PropTypes.bool
 };
 
 module.exports = FieldSwitch;

@@ -76,6 +76,7 @@ class FieldSaveFile extends React.Component {
 					id={ 'field_' + this.props.name }
 					value={ this.state.path }
 					readOnly='true'
+					disabled={ this.props.disabled }
 				/>
 			</Field>
 		);
@@ -90,7 +91,8 @@ FieldSaveFile.propTypes = {
 	value: PropTypes.string,
 	sourceFile: PropTypes.object,
 	dialogTitle: PropTypes.string,
-	dialogFilters: PropTypes.oneOfType([ PropTypes.array, PropTypes.object ])
+	dialogFilters: PropTypes.oneOfType([ PropTypes.array, PropTypes.object ]),
+	disabled: PropTypes.bool
 };
 
 module.exports = FieldSaveFile;

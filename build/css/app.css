@@ -150,6 +150,11 @@ input, textarea, select, button {
     .field-switch input[type="checkbox"]:checked + label:before {
       left: calc(100% - 4px);
       transform: translateX(-100%); }
+  .field-switch input[type="checkbox"]:disabled + label {
+    opacity: 0.2;
+    cursor: default;
+    pointer-events: none;
+    filter: grayscale(100%); }
 
 .field-switch label {
   display: block;
@@ -158,9 +163,10 @@ input, textarea, select, button {
   position: relative;
   cursor: pointer;
   text-indent: -9999px;
+  opacity: 1;
   background: #3c3c3c;
   border-radius: 18px;
-  transition: background-color 0.2s; }
+  transition: opacity 0.2s, background-color 0.2s; }
   .field-switch label:before {
     content: '';
     position: absolute;

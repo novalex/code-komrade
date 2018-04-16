@@ -21,6 +21,10 @@ class FileOptionsScript extends FileOptions {
 		];
 	}
 
+	sourceMapsDisabled() {
+		return ( ! this.state.options || ( ! this.state.options.bundle && ! this.state.options.babel ) );
+	}
+
 	render() {
 		return (
 			<div id='file-options' className='file-options-script'>
@@ -52,6 +56,14 @@ class FileOptionsScript extends FileOptions {
 					<hr />
 
 					<FieldSwitch
+						name='bundle'
+						label='Bundle'
+						labelPos='left'
+						onChange={ this.handleChange }
+						value={ this.getOption( 'bundle', false ) }
+					/>
+
+					<FieldSwitch
 						name='babel'
 						label='Babel'
 						labelPos='left'
@@ -68,9 +80,10 @@ class FileOptionsScript extends FileOptions {
 					/>
 
 					<FieldSwitch
-						name='sourcemap'
-						label='Sourcemap'
+						name='sourcemaps'
+						label='Sourcemaps'
 						labelPos='left'
+						disabled={ this.sourceMapsDisabled() }
 						onChange={ this.handleChange }
 						value={ this.getOption( 'sourcemaps', false ) }
 					/>

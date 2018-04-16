@@ -60,6 +60,15 @@
 				// }
 			}
 		}
+
+		&:disabled {
+			+ label {
+				opacity: 0.2;
+				cursor: default;
+				pointer-events: none;
+				filter: grayscale(100%);
+			}
+		}
 	}
 
 	label {
@@ -69,9 +78,10 @@
 		position: relative;
 		cursor: pointer;
 		text-indent: -9999px;
+		opacity: 1;
 		background: $color__border-dark;
 		border-radius: $size__input / 2;
-		transition: background-color 0.2s;
+		transition: opacity 0.2s, background-color 0.2s;
 
 		&:before {
 			content: '';

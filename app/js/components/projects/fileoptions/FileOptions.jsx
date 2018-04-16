@@ -112,7 +112,6 @@ class FileOptions extends React.Component {
 
 	setOption( option, value ) {
 		this.setState( function( prevState ) {
-			console.log( prevState );
 			let options = prevState.options || {};
 			options[ option ] = value;
 
