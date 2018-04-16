@@ -11,28 +11,29 @@ class FileOptions extends React.Component {
 		super( props );
 
 		this.state = {
-			loading: false,
-			options: this.constructor.getOptionsFromConfig( props.base, props.file )
+			loading: false
 		};
 
 		this.handleChange = this.handleChange.bind( this );
 		this.handleCompile = this.handleCompile.bind( this );
+		this.setOutputPath = this.setOutputPath.bind( this );
 	}
 
 	static getDerivedStateFromProps( nextProps ) {
-		let options = FileOptions.getOptionsFromConfig( nextProps.base, nextProps.file );
+		let compileOptions = global.compiler.getFileOptions( nextProps.file );
 
-		return { options: options };
+		return {
+			type: compileOptions.type,
+			fileType: compileOptions.fileType,
+			buildTaskName: compileOptions.buildTaskName,
+			options: FileOptions.getOptionsFromConfig( nextProps.base, nextProps.file )
+		};
 	}
 
 	static getOptionsFromConfig( base, file ) {
 		let cfile = FileOptions.getFileFromConfig( base, file );
 
-		if ( cfile ) {
-			return cfile.options;
-		}
-
-		return {};
+		return ( cfile && cfile.options ) ? cfile.options : {};
 	}
 
 	static getFileFromConfig( base, file ) {
@@ -47,18 +48,58 @@ class FileOptions extends React.Component {
 			}
 		}
 
-		return {};
+		return false;
 	}
 
-	setOption( option, value ) {
-		this.setState( function( prevState ) {
-			let options = prevState.options;
-			options[ option ] = value;
+	getConfig( property, defaultValue = null ) {
+		let defaults = {
+			path: fileRelativePath( this.props.base, this.props.file.path ),
+			output: this.defaultOutputPath(),
+			options: {}
+		};
 
-			return options;
-		}, function() {
-			this.updateFileOptions( this.state.options );
-		});
+		let stored = FileOptions.getFileFromConfig( this.props.base, this.props.file );
+
+		let config = ( stored !== false ) ? stored : defaults;
+
+		if ( property ) {
+			return ( config[ property ] ) ? config[ property ] : defaultValue;
+		} else {
+			return config;
+		}
+	}
+
+	setConfig( property, value ) {
+		if ( ! global.projectConfig || ! property ) {
+			window.alert( 'There was a problem saving the project configuration.' );
+			return;
+		}
+
+		let filePath = slash( fileRelativePath( this.props.base, this.props.file.path ) );
+
+		let files = global.projectConfig.get( 'files', [] );
+		let fileIndex = files.findIndex( file => file.path === filePath );
+
+		if ( fileIndex === -1 ) {
+			let fileConfig = {
+				path: filePath,
+				type: this.state.fileType,
+				output: this.defaultOutputPath()
+			};
+
+			if ( typeof( value ) !== 'undefined' && value !== null ) {
+				fileConfig[ property ] = value;
+			}
+			files.push( fileConfig );
+		} else {
+			if ( typeof( value ) !== 'undefined' ) {
+				files[ fileIndex ][ property ] = value;
+			} else if ( value === null ) {
+				delete files[ fileIndex ][ property ];
+			}
+		}
+
+		global.projectConfig.set( 'files', files );
 	}
 
 	getOption( option, defaultValue = null ) {
@@ -69,6 +110,18 @@ class FileOptions extends React.Component {
 		return defaultValue;
 	}
 
+	setOption( option, value ) {
+		this.setState( function( prevState ) {
+			console.log( prevState );
+			let options = prevState.options || {};
+			options[ option ] = value;
+
+			return { options };
+		}, function() {
+			this.setConfig( 'options', this.state.options );
+		});
+	}
+
 	handleChange( event, value ) {
 		this.setOption( event.target.name, value );
 	}
@@ -77,11 +130,15 @@ class FileOptions extends React.Component {
 		return fileOutputPath( this.props.file, this.outputSuffix, this.outputExtension );
 	}
 
+	setOutputPath( event, path ) {
+		this.setConfig( 'output', path );
+	}
+
 	getOutputPath( type = 'relative' ) {
 		let slashPath = ( type === 'display' );
 		let relativePath = ( type === 'relative' || type === 'display' );
 		let defaultPath = this.defaultOutputPath();
-		let outputPath = this.getOption( 'output', defaultPath );
+		let outputPath = this.getConfig( 'output', defaultPath );
 
 		if ( relativePath ) {
 			outputPath = fileRelativePath( this.props.base, outputPath );
@@ -99,7 +156,7 @@ class FileOptions extends React.Component {
 	setFileImports( imports ) {
 		let relativeImports = imports.map( path => slash( fileRelativePath( this.props.base, path ) ) );
 
-		this.setOption( 'imports', relativeImports );
+		this.setConfig( 'imports', relativeImports );
 	}
 
 	handleCompile() {
@@ -108,37 +165,13 @@ class FileOptions extends React.Component {
 
 		global.compiler.processFile(
 			this.props.base,
-			FileOptions.getFileFromConfig( this.props.base, this.props.file ),
-			this.buildTaskName,
+			this.getConfig(),
+			this.state.buildTaskName,
 			function( code ) {
 				global.ui.loading( false );
 				this.setState({ loading: false });
 			}.bind( this )
 		);
-	}
-
-	updateFileOptions( options = null ) {
-		if ( ! global.projectConfig || ! options ) {
-			window.alert( 'There was a problem saving the project configuration.' );
-			return;
-		}
-
-		let filePath = slash( fileRelativePath( this.props.base, this.props.file.path ) );
-
-		let files = global.projectConfig.get( 'files', [] );
-		let fileIndex = files.findIndex( file => file.path === filePath );
-
-		if ( fileIndex === -1 ) {
-			files.push({
-				path: filePath,
-				type: this.fileType,
-				options: options
-			});
-		} else {
-			files[ fileIndex ].options = options;
-		}
-
-		global.projectConfig.set( 'files', files );
 	}
 
 	renderButton() {

@@ -4,7 +4,7 @@
 
 const electron = require('electron');
 
-const { app, BrowserWindow } = electron;
+const { app, dialog, BrowserWindow } = electron;
 
 const windowStateKeeper = require('electron-window-state');
 
@@ -37,6 +37,22 @@ function createWindow() {
 
 	mainWindow.on( 'closed', function () {
 		mainWindow = null;
+	});
+
+	mainWindow.on( 'unresponsive', function () {
+		const options = {
+			type: 'warning',
+			title: 'Just Hangin\'',
+			message: 'Buildr has become unresponsive.',
+			buttons: [ 'Re-launch', 'Quit' ]
+		};
+
+		dialog.showMessageBox( options, function( index ) {
+			if ( index === 0 ) {
+				app.relaunch();
+			}
+			app.exit( 0 );
+		});
 	});
 }
 

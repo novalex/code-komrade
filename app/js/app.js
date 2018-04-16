@@ -51,11 +51,15 @@ fileList.addEventListener( 'contextmenu', function( event ) {
 	}
 });
 
+const { sleep } = require('./utils/utils');
+
 // App close/restart events.
 window.addEventListener( 'beforeunload', function( event ) {
-	console.log( 'Killing %d running tasks...', global.compilerTasks.length );
+	if ( global.compilerTasks.length > 0 ) {
+		console.log( 'Killing %d running tasks...', global.compilerTasks.length );
 
-	global.compiler.killTasks();
+		global.compiler.killTasks();
 
-	while ( global.compilerTasks.length );
+		sleep( 300 );
+	}
 });

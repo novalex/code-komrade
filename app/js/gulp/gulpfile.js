@@ -1,13 +1,12 @@
 'use strict'
 
-const gulp = require( 'gulp' );
-const plugins = require('gulp-load-plugins')();
-const source = require( 'vinyl-source-stream' );
-const browserify = require( 'browserify' );
-const glob = require( 'glob' );
-const es = require( 'event-stream' );
-const path = require( 'path' );
 const del = require('del');
+const path = require('path');
+const gulp = require( 'gulp' );
+const buffer = require('vinyl-buffer');
+const source = require('vinyl-source-stream');
+const plugins = require('gulp-load-plugins')();
+const browserify = require('browserify');
 
 // fetch command line arguments.
 const arg = ( argList => {
@@ -33,13 +32,30 @@ const arg = ( argList => {
 	return arg;
 })( process.argv );
 
+// console.log( arg );
+
 let options = {
 	autoprefixer: {
-		browsers: [ 'last 2 versions', '> 5%', 'Firefox ESR' ]
+		browsers: [ 'last 5 versions' ]
 	}
-}
+};
+
+const modulesPath = path.join( arg.cwd, 'node_modules' );
 
 gulp.task( 'build-css', ( done ) => {
+	let postCssPlugins = [];
+	let postCssOptions = {};
+
+	return gulp.src( arg.input )
+		.pipe( plugins.if( arg.sourcemaps, plugins.sourcemaps.init() ) )
+		.pipe( plugins.postcss( postCssPlugins, postCssOptions) )
+		.pipe( plugins.if( arg.sourcemaps, plugins.sourcemaps.write() ) )
+		.pipe( plugins.if( arg.autoprefixer, plugins.autoprefixer( options.autoprefixer ) ) )
+		.pipe( plugins.rename( arg.filename ) )
+		.pipe( gulp.dest( arg.output ) )
+});
+
+gulp.task( 'build-sass', ( done ) => {
 	return gulp.src( arg.input )
 		.pipe( plugins.if( arg.sourcemaps, plugins.sourcemaps.init() ) )
 		.pipe( plugins.sass({
@@ -54,7 +70,8 @@ gulp.task( 'build-css', ( done ) => {
 gulp.task( 'build-js', ( done ) => {
 	return browserify( {
 			entries: [ arg.input ],
-			extensions: [ '.js', '.jsx' ]
+			extensions: [ '.js', '.jsx' ],
+			// paths: [ path.join( arg.cwd, 'node_modules' ) ],
 			// ignoreMissing: true,
 			// detectGlobals: false,
 			// bare: true,
@@ -65,10 +82,22 @@ gulp.task( 'build-js', ( done ) => {
 			// bundleExternal: false,
 			// debug: true
 		} )
-		.transform( 'babelify', { presets: [ 'es2015', 'react' ] } )
+		.transform( 'babelify', {
+			presets: [
+				path.join( modulesPath, 'babel-preset-es2015' ),
+				path.join( modulesPath, 'babel-preset-react' )
+			],
+			sourceMaps: arg.sourcemaps
+		} )
 		.bundle()
 		.pipe( source( arg.input ) )
+		.pipe( buffer() )
 		.pipe( plugins.rename( arg.filename ) )
+		.pipe( plugins.if( arg.sourcemaps, plugins.sourcemaps.init( { loadMaps: true } ) ) )
+		.pipe( plugins.if( arg.compress, plugins.uglify({
+			compress: true	
+		}) ) )
+		.pipe( plugins.if( arg.sourcemaps, plugins.sourcemaps.write() ) )
 		.pipe( gulp.dest( arg.output ) )
 });
 

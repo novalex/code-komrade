@@ -14,8 +14,6 @@ class FileOptionsScript extends FileOptions {
 	constructor( props ) {
 		super( props );
 
-		this.fileType = 'script';
-		this.buildTaskName = 'build-js';
 		this.outputSuffix = '-dist';
 		this.outputExtension = '.js';
 		this.saveDialogFilters = [
@@ -34,7 +32,7 @@ class FileOptionsScript extends FileOptions {
 					<FieldSaveFile
 						name='output'
 						label='Output Path'
-						onChange={ this.handleChange }
+						onChange={ this.setOutputPath }
 						value={ this.getOutputPath( 'display' ) }
 						sourceFile={ this.props.file }
 						sourceBase={ this.props.base }
@@ -74,7 +72,7 @@ class FileOptionsScript extends FileOptions {
 						label='Sourcemap'
 						labelPos='left'
 						onChange={ this.handleChange }
-						value={ this.getOption( 'sourcemap', false ) }
+						value={ this.getOption( 'sourcemaps', false ) }
 					/>
 				</div>
 

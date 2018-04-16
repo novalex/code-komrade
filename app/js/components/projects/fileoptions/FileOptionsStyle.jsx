@@ -18,19 +18,11 @@ class FileOptionsStyles extends FileOptions {
 	constructor( props ) {
 		super( props );
 
-		this.fileType = 'style';
-		this.buildTaskName = 'build-css';
 		this.outputSuffix = '-dist';
 		this.outputExtension = '.css';
 		this.saveDialogFilters = [
 			{ name: 'CSS', extensions: [ 'css' ] }
 		];
-		this.styleOptions = {
-			nested: 'Nested',
-			compact: 'Compact',
-			expanded: 'Expanded',
-			compressed: 'Compressed'
-		};
 
 		this.handleAutoCompile = this.handleAutoCompile.bind( this );
 	}
@@ -81,7 +73,7 @@ class FileOptionsStyles extends FileOptions {
 					<FieldSaveFile
 						name='output'
 						label='Output Path'
-						onChange={ this.handleChange }
+						onChange={ this.setOutputPath }
 						value={ this.getOutputPath( 'display' ) }
 						sourceFile={ this.props.file }
 						sourceBase={ this.props.base }
@@ -100,14 +92,21 @@ class FileOptionsStyles extends FileOptions {
 
 					<hr />
 
-					<FieldSelect
-						name='style'
-						label='Output Style'
-						labelPos='left'
-						onChange={ this.handleChange }
-						value={ this.getOption( 'style', 'nested' ) }
-						options={ this.styleOptions }
-					/>
+					{ this.state.type === 'sass' &&
+						<FieldSelect
+							name='style'
+							label='Output Style'
+							labelPos='left'
+							onChange={ this.handleChange }
+							value={ this.getOption( 'style', 'nested' ) }
+							options={ {
+								nested: 'Nested',
+								compact: 'Compact',
+								expanded: 'Expanded',
+								compressed: 'Compressed'
+							} }
+						/>
+					}
 
 					<FieldSwitch
 						name='sourcemaps'
