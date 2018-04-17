@@ -50,7 +50,7 @@
     "gulp-postcss": "^7.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.6.1",
-    "gulp-sass": "^3.2.1",
+    "gulp-sass": "^4.0.1",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.0",
     "ps-tree": "^1.1.0",
@@ -60,6 +60,7 @@
     "redux": "^3.7.2",
     "request": "^2.85.0",
     "sass-graph": "^2.2.4",
+    "split": "^1.0.1",
     "vinyl-buffer": "^1.0.1"
   }
 }

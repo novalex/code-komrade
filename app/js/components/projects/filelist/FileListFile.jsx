@@ -2,6 +2,10 @@
  * @file Component for rendering a file in the filelist.
  */
 
+const { remote, shell } = require('electron');
+
+const { Menu, MenuItem } = remote;
+
 const React = require('react');
 
 const ReactDOM = require('react-dom');
@@ -15,6 +19,7 @@ class FileListFile extends React.Component {
 		super( props );
 
 		this.onClick = this.onClick.bind( this );
+		this.onContextMenu = this.onContextMenu.bind( this );
 	}
 
 	getOptions( file ) {
@@ -59,9 +64,38 @@ class FileListFile extends React.Component {
 		global.ui.offCanvas( true, document.getElementById('files') );
 	}
 
+	onContextMenu( event ) {
+		event.preventDefault();
+
+		let filePath = this.props.file.path;
+
+		let menu = new Menu();
+		menu.append( new MenuItem({
+			label: 'Open',
+			click: function() { shell.openItem( filePath ) }
+		}) );
+		menu.append( new MenuItem({
+			label: 'Show in folder',
+			click: function() { shell.showItemInFolder( filePath ) }
+		}) );
+		menu.append( new MenuItem({
+			type: 'separator'
+		}) );
+		menu.append( new MenuItem({
+			label: 'Delete',
+			click: function() { shell.moveItemToTrash( filePath ) }
+		}) );
+
+		menu.popup( remote.getCurrentWindow() );
+	}
+
 	render() {
 		return (
-			<li className={ this.props.type } onClick={ this.onClick }>
+			<li
+				className={ this.props.type }
+				onClick={ this.onClick }
+				onContextMenu={ this.onContextMenu }
+			>
 				<div className='filename'>
 					{ String.fromCharCode('0x2003').repeat( this.props.level ) }
 					<span className='icon' />

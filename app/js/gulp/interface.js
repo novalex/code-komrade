@@ -8,6 +8,7 @@ const { app } = require('electron').remote;
 
 const path = require('path');
 const spawn = require('child_process').spawn;
+const split = require('split');
 const psTree = require('ps-tree');
 
 const OSCmd = process.platform === 'win32' ? '.cmd' : '';
@@ -58,13 +59,13 @@ function initProject() {
 }
 
 function processFile( base, fileConfig, taskName = null, callback = null ) {
-	if ( ! fileConfig.options ) {
-		return;
-	}
-
 	let options = getFileConfig( base, fileConfig );
 
 	if ( ! options ) {
+		if ( callback ) {
+			callback();
+		}
+
 		return;
 	}
 
@@ -176,14 +177,9 @@ function runTask( taskName, options = {}, callback = null ) {
 		console.log( data );
 	});
 
-	// TODO: show progress in menubar menu
-	// tray.menu = createTrayMenu(name, [], 'progress here');
-
 	cp.stderr.setEncoding('utf8');
 
-	cp.stderr.on( 'data', data => {
-		console.error( data );
-	});
+	cp.stderr.pipe( split() ).on( 'data', handleStderr );
 
 	cp.on( 'exit', code => {
 		let filename = options.filename || 'file';
@@ -215,6 +211,31 @@ function runTask( taskName, options = {}, callback = null ) {
 			callback( code );
 		}
 	});
+}
+
+let captureStderr = false;
+function handleStderr( data ) {
+	let trimmed = data.trim();
+
+	if ( trimmed === 'Details:' ) {
+		captureStderr = true;
+		console.error( 'Starting capture...' );
+		return;
+	}
+
+	if ( captureStderr ) {
+		let errArr = trimmed.split( /:\s(.+)/ );
+		let errObj = {
+			key: errArr[0],
+			value: errArr[1]
+		};
+		console.error( errObj );
+
+		if ( errArr[0] === 'formatted' ) {
+			captureStderr = false;
+			console.error( 'Stopping capture' );
+		}
+	}
 }
 
 module.exports = {
