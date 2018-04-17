@@ -17,6 +17,7 @@ class ProjectSelect extends React.Component {
 		};
 
 		this.newProject = this.newProject.bind( this );
+		this.removeProject = this.removeProject.bind( this );
 		this.toggleSelect = this.toggleSelect.bind( this );
 		this.selectProject = this.selectProject.bind( this );
 	}
@@ -60,6 +61,7 @@ class ProjectSelect extends React.Component {
 			};
 
 			if ( projects.findIndex( project => project.path === newProject.path ) !== -1 ) {
+				// Project already exists.
 				return;
 			}
 
@@ -74,6 +76,19 @@ class ProjectSelect extends React.Component {
 			} else {
 				window.alert( 'There was a problem changing the active project.' );
 			}
+		}
+	}
+
+	removeProject( event ) {
+		event.preventDefault();
+
+		let confirmRemove = window.confirm( 'Are you sure you want to remove ' + this.props.active.name + '?' );
+
+		if ( confirmRemove ) {
+			let remaining = this.props.projects.filter( project => project.path !== this.props.active.path );
+
+			this.props.setProjects( remaining );
+			this.props.setActiveProject( null );
 		}
 	}
 
@@ -98,7 +113,7 @@ class ProjectSelect extends React.Component {
 	}
 
 	render() {
-		if ( ! this.props.active.name || ! this.props.active.path ) {
+		if ( ! this.props.projects || this.props.projects.length === 0 ) {
 			return (
 				<div id='project-select'>
 					<div id='project-active' onClick={ this.newProject }>
@@ -107,13 +122,28 @@ class ProjectSelect extends React.Component {
 					</div>
 				</div>
 			);
+		} else if ( ! this.props.active.name || ! this.props.active.path ) {
+			return (
+				<div id='project-select'>
+					<div id='project-active' onClick={ this.toggleSelect }>
+						<h1>No Project Selected</h1>
+						<h2>Click here to select one...</h2>
+					</div>
+					<div id='project-select-dropdown' className={ this.state.isOpen ? 'open' : '' }>
+						{ this.renderChoices() }
+					</div>
+				</div>
+			);
 		}
 
 		return (
-			<div id='project-select'>
+			<div id='project-select' className='selected'>
 				<div id='project-active' onClick={ this.toggleSelect }>
 					<h1>{ this.props.active.name }</h1>
 					<h2>{ this.props.active.path }</h2>
+				</div>
+				<div id='project-actions'>
+					<a href='#' className='remove' onClick={ this.removeProject }>&times;</a>
 				</div>
 				<div id='project-select-dropdown' className={ this.state.isOpen ? 'open' : '' }>
 					{ this.renderChoices() }

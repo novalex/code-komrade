@@ -49,6 +49,9 @@ input, textarea, select, button {
   outline: none;
   font-family: inherit; }
 
+a {
+  text-decoration: none; }
+
 @-webkit-keyframes fade {
   0% {
     opacity: 1; }
@@ -334,11 +337,16 @@ input[type="submit"] {
 
 #project-select {
   position: relative; }
+  #project-select.selected {
+    padding-right: 36px; }
+  #project-select:not(.selected) #project-select-dropdown:not(.open) {
+    transition: none; }
 
 #project-active {
   cursor: pointer;
   height: 48px;
-  user-select: none; }
+  user-select: none;
+  position: relative; }
   #project-active h1 {
     font-weight: bold;
     font-size: 1.1rem;
@@ -352,6 +360,21 @@ input[type="submit"] {
   #project-active h1,
   #project-active h2 {
     margin: 0; }
+
+#project-actions {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  margin-top: -18px; }
+  #project-actions a {
+    float: left;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    color: #777;
+    font-weight: bold;
+    font-size: 36px; }
 
 #project-select-dropdown {
   position: absolute;

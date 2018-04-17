@@ -59,6 +59,10 @@ input, textarea, select, button {
 	font-family: inherit;
 }
 
+a {
+	text-decoration: none;
+}
+
 // Mixins.
 @import 'plugins/svg-encode';
 

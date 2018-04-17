@@ -2,14 +2,28 @@
 	margin-bottom: $spacing__logo;
 }
 
+// Project Select.
+
+$action-size: $size__input;
+$actions-width: $action-size;
+
 #project-select {
 	position: relative;
+
+	&.selected {
+		padding-right: $actions-width;
+	}
+
+	&:not(.selected) #project-select-dropdown:not(.open) {
+		transition: none;
+	}
 }
 
 #project-active {
 	cursor: pointer;
 	height: $size__logo;
 	user-select: none;
+	position: relative;
 
 	h1 {
 		font-weight: bold;
@@ -28,6 +42,24 @@
 	h1,
 	h2 {
 		margin: 0;
+	}
+}
+
+#project-actions {
+	position: absolute;
+	top: 50%;
+	right: 0;
+	margin-top: $action-size / -2;
+
+	a {
+		float: left;
+		width: $action-size;
+		height: $action-size;
+		line-height: $action-size;
+		text-align: center;
+		color: $color__text-light;
+		font-weight: bold;
+		font-size: $action-size;
 	}
 }
 

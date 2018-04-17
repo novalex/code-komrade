@@ -63,7 +63,18 @@ class Projects extends React.Component {
 		global.config.set( 'projects', projects );
 	}
 
-	setActiveProject( index ) {
+	setActiveProject( index = null ) {
+		if ( index === null ) {
+			this.setState({
+				active: {
+					name: '',
+					path: ''
+				}
+			});
+
+			return;
+		}
+
 		let active = this.state.projects[ index ];
 
 		if ( active && active.path !== this.state.active.path ) {
