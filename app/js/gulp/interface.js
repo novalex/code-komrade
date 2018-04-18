@@ -8,7 +8,6 @@ const { app } = require('electron').remote;
 
 const path = require('path');
 const spawn = require('child_process').spawn;
-const split = require('split');
 const psTree = require('ps-tree');
 
 const OSCmd = process.platform === 'win32' ? '.cmd' : '';
@@ -179,7 +178,7 @@ function runTask( taskName, options = {}, callback = null ) {
 
 	cp.stderr.setEncoding('utf8');
 
-	cp.stderr.pipe( split() ).on( 'data', handleStderr );
+	cp.stderr.on( 'data', handleStderr );
 
 	cp.on( 'exit', code => {
 		let filename = options.filename || 'file';
@@ -213,29 +212,37 @@ function runTask( taskName, options = {}, callback = null ) {
 	});
 }
 
-let captureStderr = false;
 function handleStderr( data ) {
-	let trimmed = data.trim();
+	let errObj = {};
+	let startCapture = false;
 
-	if ( trimmed === 'Details:' ) {
-		captureStderr = true;
-		console.error( 'Starting capture...' );
-		return;
-	}
+	var lines = data.split( /(\r\n|[\n\v\f\r\x85\u2028\u2029])/ );
 
-	if ( captureStderr ) {
-		let errArr = trimmed.split( /:\s(.+)/ );
-		let errObj = {
-			key: errArr[0],
-			value: errArr[1]
-		};
-		console.error( errObj );
+	for ( var line of lines ) {
+		let trimmed = line.trim();
 
-		if ( errArr[0] === 'formatted' ) {
-			captureStderr = false;
-			console.error( 'Stopping capture' );
+		if ( ! trimmed.length ) {
+			continue;
 		}
-	}
+
+		if ( trimmed === 'Details:' ) {
+			startCapture = true;
+			continue;
+		}
+
+		if ( startCapture ) {
+			let errArr = trimmed.split( /:\s(.+)/ );
+			errObj[ errArr[0] ] = errArr[1];
+
+			if ( errArr[0] === 'formatted' ) {
+				startCapture = false;
+			}
+		}
+	};
+
+	console.error( errObj );
+
+	// return errObj;
 }
 
 module.exports = {
