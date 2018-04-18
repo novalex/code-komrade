@@ -32,11 +32,15 @@ function killTasks() {
 function terminateProcess( proc ) {
 	psTree( proc.pid, function( err, children ) {
 		if ( err ) {
-			console.log( err );
+			console.error( err );
 		}
 
 		for ( var pid of [ proc.pid ].concat( children.map( child => child.PID ) ) ) {
-			process.kill( pid );
+			try {
+				process.kill( pid );
+			} catch ( err ) {
+				console.error( err );
+			}
 		}
 	});
 }
@@ -151,6 +155,8 @@ function runTask( taskName, options = {}, callback = null ) {
 		'--no-color'
 	];
 
+	let filename = options.filename || 'file';
+
 	for ( var option in options ) {
 		if ( ! options.hasOwnProperty( option ) ) {
 			continue;
@@ -174,6 +180,14 @@ function runTask( taskName, options = {}, callback = null ) {
 
 	cp.stdout.on( 'data', data => {
 		console.log( data );
+
+		// Watch task success.
+		if ( data.match(/Finished 'build-.*'/) ) {
+			new Notification( 'Buildr', {
+				body: `Finished compiling ${filename}.`,
+				silent: true
+			});
+		}
 	});
 
 	cp.stderr.setEncoding('utf8');
@@ -181,27 +195,25 @@ function runTask( taskName, options = {}, callback = null ) {
 	cp.stderr.on( 'data', handleStderr );
 
 	cp.on( 'exit', code => {
-		let filename = options.filename || 'file';
-
 		// Remove this task from global array.
 		global.compilerTasks = global.compilerTasks.filter( proc => {
 			return ( proc.pid !== cp.pid );
 		});
 
 		if ( code === 0 ) {
-			new Notification( 'Buildr', {
-				body: `Finished compiling ${filename}.`,
-				silent: true
-			});
+			// Success.
+			// new Notification( 'Buildr', {
+			// 	body: `Finished compiling ${filename}.`,
+			// 	silent: true
+			// });
 		} else if ( code === 1 ) {
+			// Terminated.
 			console.log( 'Process %s terminated', cp.pid );
-		} else {
-			let filename = options.filename || 'File';
-
-			new Notification( 'Buildr', {
-				body: `Error when compiling ${filename}.`,
-				sound: 'Basso'
-			});
+		} else if ( code ) {
+			// new Notification( 'Buildr', {
+			// 	body: `Error when compiling ${filename}.`,
+			// 	sound: 'Basso'
+			// });
 
 			console.error(`Exited with error code ${code}`);
 		}
@@ -240,7 +252,9 @@ function handleStderr( data ) {
 		}
 	};
 
-	console.error( errObj );
+	if ( Object.keys( errObj ).length ) {
+		console.error( errObj );
+	}
 
 	// return errObj;
 }

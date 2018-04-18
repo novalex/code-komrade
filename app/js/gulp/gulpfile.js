@@ -59,10 +59,10 @@ gulp.task( 'build-sass', ( done ) => {
 	return gulp.src( arg.input )
 		.pipe( plugins.if( arg.sourcemaps, plugins.sourcemaps.init() ) )
 		.pipe( plugins.sass({
-			outputStyle: arg.outputStyle
+			outputStyle: arg.style
 		}) )
-		.pipe( plugins.if( arg.sourcemaps, plugins.sourcemaps.write() ) )
 		.pipe( plugins.if( arg.autoprefixer, plugins.autoprefixer( options.autoprefixer ) ) )
+		.pipe( plugins.if( arg.sourcemaps, plugins.sourcemaps.write() ) )
 		.pipe( plugins.rename( arg.filename ) )
 		.pipe( gulp.dest( arg.output ) )
 });
