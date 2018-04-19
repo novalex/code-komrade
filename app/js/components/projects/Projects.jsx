@@ -2,6 +2,8 @@
  * @file Component for the projects view.
  */
 
+const _debounce = require('lodash/debounce');
+
 const React = require('react');
 
 const Store = require('electron-store');
@@ -94,11 +96,7 @@ class Projects extends React.Component {
 			cwd: path
 		});
 
-		global.compiler.initProject();
-
-		global.projectConfig.onDidChange( 'files', function() {
-			global.compiler.initProject();
-		});
+		global.projectConfig.onDidChange( 'files', _debounce( global.compiler.initProject, 100 ) );
 	}
 
 	walkDirectory( path ) {
@@ -129,6 +127,8 @@ class Projects extends React.Component {
 		// Change process cwd.
 		process.chdir( path );
 		// console.log(`Current directory: ${process.cwd()}`);
+
+		global.compiler.initProject();
 	}
 
 	render() {

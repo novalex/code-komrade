@@ -39,7 +39,8 @@ function terminateProcess( proc ) {
 			try {
 				process.kill( pid );
 			} catch ( err ) {
-				console.error( err );
+				// Fail silently lol YOLO
+				// console.error( err );
 			}
 		}
 	});
@@ -208,7 +209,7 @@ function runTask( taskName, options = {}, callback = null ) {
 			// });
 		} else if ( code === 1 ) {
 			// Terminated.
-			console.log( 'Process %s terminated', cp.pid );
+			// console.log( 'Process %s terminated', cp.pid );
 		} else if ( code ) {
 			// new Notification( 'Buildr', {
 			// 	body: `Error when compiling ${filename}.`,

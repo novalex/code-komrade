@@ -53,6 +53,7 @@
     "gulp-sass": "^4.0.1",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.0",
+    "lodash": "^4.17.5",
     "ps-tree": "^1.1.0",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",

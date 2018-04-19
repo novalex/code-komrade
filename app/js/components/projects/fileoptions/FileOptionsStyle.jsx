@@ -42,11 +42,12 @@ class FileOptionsStyles extends FileOptions {
 	}
 
 	handleAutoCompile( event, value ) {
-		let imports = ( value ) ? this.getFileDependencies() : [];
-
 		this.handleChange( event, value );
 
-		this.setFileImports( imports );
+		// Auto compile is turned on, create dependency graph and save to config.
+		if ( value ) {
+			this.setFileImports( this.getFileDependencies() );
+		}
 	}
 
 	render() {
