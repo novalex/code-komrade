@@ -14,6 +14,8 @@ const FileList = require('./filelist/FileList');
 
 const directoryTree = require('../../utils/directoryTree');
 
+const Logger = require('../../utils/Logger');
+
 class Projects extends React.Component {
 	constructor( props ) {
 		super( props );
@@ -127,6 +129,8 @@ class Projects extends React.Component {
 		// Change process cwd.
 		process.chdir( path );
 		// console.log(`Current directory: ${process.cwd()}`);
+
+		global.logger = new Logger();
 
 		global.compiler.initProject();
 	}

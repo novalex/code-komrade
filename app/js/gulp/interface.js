@@ -6,6 +6,7 @@
 
 const { app } = require('electron').remote;
 
+const fs = require('fs');
 const path = require('path');
 const spawn = require('child_process').spawn;
 const psTree = require('ps-tree');
@@ -182,12 +183,19 @@ function runTask( taskName, options = {}, callback = null ) {
 	cp.stdout.on( 'data', data => {
 		console.log( data );
 
-		// Watch task success.
 		if ( data.match(/Finished 'build-.*'/) ) {
-			new Notification( 'Buildr', {
-				body: `Finished compiling ${filename}.`,
+			// Build task successful.
+			let notifyText = `Finished compiling ${filename}.`;
+
+			let notify = new Notification( 'Buildr', {
+				body: notifyText,
 				silent: true
 			});
+
+			global.logger.log( 'success', notifyText );
+		} else if ( data.match(/Starting 'build-.*'/) ) {
+			// Build task starting.
+			global.logger.log( 'info', `Compiling ${filename}...` );
 		}
 	});
 
@@ -255,9 +263,45 @@ function handleStderr( data ) {
 
 	if ( Object.keys( errObj ).length ) {
 		console.error( errObj );
+
+		getLines( errObj.file, errObj.line, function( err, lines ) {
+			if ( err ) {
+				console.error( err );
+			}
+
+			let errLines = lines.join('<br>');
+
+			global.logger.log( 'error', errObj.formatted, errLines );
+		});
 	}
 
 	// return errObj;
+}
+
+function getLines( filename, line, callback ) {
+	line = parseInt( line, 10 ) - 1 || 1;
+
+	fs.readFile(filename, function( err, data ) {
+		if ( err ) {
+			throw err;
+		}
+
+		var lines = data.toString('utf-8').split('\n');
+
+		if ( +line > lines.length ) {
+			return '';
+		}
+
+		let lineArr = [];
+		let minLine = Math.max( line - 2, 1 );
+		let maxLine = Math.min( line + 2, lines.length );
+
+		for ( var i = minLine; i <= maxLine; i++ ) {
+			lineArr.push( lines[ i ] );
+		}
+
+		callback( null, lineArr );
+	});
 }
 
 module.exports = {

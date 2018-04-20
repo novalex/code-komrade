@@ -20,6 +20,18 @@
 	}
 }
 
+// Overlay.
+
+#overlay {
+	position: fixed;
+	top: 0;
+	left: $size__sidebar;
+	right: 0;
+	bottom: 0;
+	padding: $spacing__content;
+	background-color: $color__bg;
+}
+
 // Off-canvas.
 
 #off-canvas {

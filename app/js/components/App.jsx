@@ -6,6 +6,7 @@ const React = require('react');
 
 const Sidebar = require('./Sidebar');
 
+const Logs = require('./projects/Logs');
 const Projects = require('./projects/Projects');
 
 class App extends React.Component {
@@ -29,16 +30,24 @@ class App extends React.Component {
 		this.setState({ view });
 	}
 
-	renderContent() {
+	renderOverlay() {
 		if ( this.state.view === 'files' ) {
-			return <Projects />;
+			return '';
 		} else {
-			return (
-				<React.Fragment>
-					<h2>{ this.views[ this.state.view ] }</h2>
-					<p>You shouldn't be here, you naughty naughty boy.</p>
-				</React.Fragment>
-			);
+			let content;
+
+			if ( this.state.view === 'term' ) {
+				content = <Logs />;
+			} else {
+				content = (
+					<React.Fragment>
+						<h2>{ this.views[ this.state.view ] }</h2>
+						<p>You shouldn't be here, you naughty naughty boy.</p>
+					</React.Fragment>
+				);
+			}
+
+			return <div id='overlay'>{ content }</div>;
 		}
 	}
 
@@ -52,8 +61,10 @@ class App extends React.Component {
 				/>
 
 				<div id='content-wrap'>
-					{ this.renderContent() }
+					<Projects />
 				</div>
+
+				{ this.renderOverlay() }
 			</div>
 		);
 	}

@@ -430,6 +430,15 @@ input[type="submit"] {
   #off-canvas {
     pointer-events: none; }
 
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 84px;
+  right: 0;
+  bottom: 0;
+  padding: 20px;
+  background-color: #fff; }
+
 #off-canvas {
   position: fixed;
   top: 0;
