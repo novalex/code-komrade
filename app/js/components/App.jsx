@@ -4,17 +4,22 @@
 
 const React = require('react');
 
+const Overlay = require('./Overlay');
+
 const Sidebar = require('./Sidebar');
 
 const Logs = require('./projects/Logs');
+
 const Projects = require('./projects/Projects');
+
+const { overlay } = require('../utils/globalUI');
 
 class App extends React.Component {
 	constructor( props ) {
 		super( props );
 
 		this.state = {
-			view: 'files'
+			view: 'term'
 		};
 
 		this.views = {
@@ -32,8 +37,10 @@ class App extends React.Component {
 
 	renderOverlay() {
 		if ( this.state.view === 'files' ) {
+			overlay( false );
 			return '';
 		} else {
+			overlay( true );
 			let content;
 
 			if ( this.state.view === 'term' ) {
@@ -47,7 +54,11 @@ class App extends React.Component {
 				);
 			}
 
-			return <div id='overlay'>{ content }</div>;
+			return (
+				<Overlay hasClose={ false }>
+					{ content }
+				</Overlay>
+			);
 		}
 	}
 

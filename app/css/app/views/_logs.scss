@@ -1,0 +1,88 @@
+#logs {
+	li {
+		color: $color__text-light;
+		padding: $spacing__content-s;
+		margin-bottom: $spacing__content-s;
+		border: 1px solid $color__border;
+
+		.title {
+			display: block;
+			cursor: default;
+
+			// File and line.
+			code {
+				display: block;
+				margin-top: $spacing__content-s;
+				opacity: 0.75;
+			}
+
+			// Timestamp.
+			small {
+				width: 86px;
+				padding: 2px $spacing__content-s 2px 0;
+				opacity: 0.75;
+				user-select: none;
+			}
+		}
+
+		&.type-error {
+			user-select: initial;
+
+			.title {
+				cursor: text;
+
+				small {
+					color: $color__red;
+				}
+			}
+		}
+
+		&.type-success {
+			.title {
+				small {
+					color: $color__green;
+				}
+			}
+		}
+
+		.details {
+			margin-top: $spacing__content-s;
+			padding-top: $spacing__content-s;
+			overflow: auto;
+			border-top: 1px solid $color__border;
+
+			// Code from relevant file section.
+			pre {
+				width: 100%;
+				display: table;
+				font-family: monospace;
+
+				.line {
+					display: table-row;
+
+					// Line with error.
+					&.highlight {
+						color: $color__red;
+					}
+
+					span {
+						padding: 2px;
+						display: table-cell;
+
+						&.line-number {
+							width: 42px;
+							opacity: 0.75;
+							vertical-align: top;
+							user-select: none;
+							cursor: default;
+						}
+
+						&.line-content {
+							vertical-align: middle;
+						}
+					}
+				}
+			}
+		}
+	}
+}

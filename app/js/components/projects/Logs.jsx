@@ -8,34 +8,46 @@ class Logs extends React.Component {
 	constructor( props ) {
 		super( props );
 
+		let type = null;
+		let logs = ( global.logger ) ? global.logger.get( type ) : [];
+
 		this.state = {
-			type: null
+			type,
+			logs
 		};
+
+		this.refresh = this.refresh.bind( this );
+
+		document.addEventListener( 'bd/refresh/logs', this.refresh );
+	}
+
+	refresh() {
+		this.setState({ logs: global.logger.get( this.state.type ) });
 	}
 
 	renderChildren() {
-		if ( ! global.logger ) {
-			return <strong>No logs for you!</strong>;
-		}
-
-		let logs = global.logger.get( this.state.type );
-
-		if ( ! logs.length ) {
-			return <strong>No logs for you!</strong>;
+		if ( ! this.state.logs.length ) {
+			return <strong>No logs yet. Go forth and compile!</strong>;
 		}
 
 		let logIndex = 0;
 		let logList = [];
 
-		for ( var log of logs ) {
+		for ( var log of this.state.logs ) {
+			let titleHTML = { __html: log.title };
+			let bodyHTML = ( log.body ) ? { __html: log.body } : null;
+
 			logList.push(
 				<li
 					key={ logIndex }
 					className={ 'type-' + log.type }
 				>
-					<strong>{ log.title }</strong>
-					{ log.body &&
-						<div className='details'>{ log.body }</div>
+					<div className='title'>
+						<small>{ log.time }</small>
+						<span className='title-text' dangerouslySetInnerHTML={ titleHTML } />
+					</div>
+					{ bodyHTML &&
+						<div className='details' dangerouslySetInnerHTML={ bodyHTML } />
 					}
 				</li>
 			);
@@ -43,16 +55,6 @@ class Logs extends React.Component {
 		}
 
 		return <ul>{ logList }</ul>;
-	}
-
-	onClick( event ) {
-		event.stopPropagation();
-
-		global.ui.offCanvas( false );
-
-		this.setState( function( prevState ) {
-			return { expanded: ! prevState.expanded };
-		});
 	}
 
 	render() {

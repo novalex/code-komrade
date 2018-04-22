@@ -10,6 +10,10 @@ function loading( toggle = true, args = {} ) {
 	document.body.classList.toggle( 'loading', toggle );
 }
 
+function overlay( toggle = true ) {
+	document.body.classList.toggle( 'overlay', toggle );
+}
+
 function offCanvas( toggle = true, exclude = null ) {
 	/* global Event */
 	document.body.classList.toggle( 'off-canvas', toggle );
@@ -53,6 +57,7 @@ function removeFocus( element, className, triggerEvent = null, exclude = null ) 
 module.exports = {
 	unfocus,
 	loading,
+	overlay,
 	offCanvas,
 	removeFocus
 };

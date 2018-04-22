@@ -411,6 +411,17 @@ input[type="submit"] {
   padding: 20px 30px;
   padding-left: 114px; }
 
+::-webkit-scrollbar {
+  background-color: #fff;
+  width: 4px; }
+
+::-webkit-scrollbar-thumb:window-inactive,
+::-webkit-scrollbar-thumb {
+  background: #555; }
+
+body.overlay {
+  overflow: hidden; }
+
 #sidebar,
 #content,
 #off-canvas {
@@ -436,8 +447,11 @@ input[type="submit"] {
   left: 84px;
   right: 0;
   bottom: 0;
-  padding: 20px;
   background-color: #fff; }
+  #overlay #overlay-content {
+    height: 100%;
+    padding: 20px;
+    overflow: auto; }
 
 #off-canvas {
   position: fixed;
@@ -570,3 +584,53 @@ body.off-canvas #off-canvas {
   #file-options .body,
   #file-options .footer {
     border-top: 1px solid #050505; }
+
+#logs li {
+  color: #777;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #e6e6e6; }
+  #logs li .title {
+    display: block;
+    cursor: default; }
+    #logs li .title code {
+      display: block;
+      margin-top: 10px;
+      opacity: 0.75; }
+    #logs li .title small {
+      width: 86px;
+      padding: 2px 10px 2px 0;
+      opacity: 0.75;
+      user-select: none; }
+  #logs li.type-error {
+    user-select: initial; }
+    #logs li.type-error .title {
+      cursor: text; }
+      #logs li.type-error .title small {
+        color: #dc3130; }
+  #logs li.type-success .title small {
+    color: #5d9a0b; }
+  #logs li .details {
+    margin-top: 10px;
+    padding-top: 10px;
+    overflow: auto;
+    border-top: 1px solid #e6e6e6; }
+    #logs li .details pre {
+      width: 100%;
+      display: table;
+      font-family: monospace; }
+      #logs li .details pre .line {
+        display: table-row; }
+        #logs li .details pre .line.highlight {
+          color: #dc3130; }
+        #logs li .details pre .line span {
+          padding: 2px;
+          display: table-cell; }
+          #logs li .details pre .line span.line-number {
+            width: 42px;
+            opacity: 0.75;
+            vertical-align: top;
+            user-select: none;
+            cursor: default; }
+          #logs li .details pre .line span.line-content {
+            vertical-align: middle; }

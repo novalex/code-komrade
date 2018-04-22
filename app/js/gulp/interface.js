@@ -11,11 +11,13 @@ const path = require('path');
 const spawn = require('child_process').spawn;
 const psTree = require('ps-tree');
 
+const stripIndent = require('strip-indent');
+
 const OSCmd = process.platform === 'win32' ? '.cmd' : '';
 const gulpPath = path.join( __dirname, '..', 'node_modules', '.bin', 'gulp' + OSCmd );
 const gulpFilePath = path.join( __dirname, '..', 'app', 'js', 'gulp', 'gulpfile.js' );
 
-const { fileAbsolutePath } = require('../utils/pathHelpers');
+const { slash, fileAbsolutePath, fileRelativePath } = require('../utils/pathHelpers');
 
 function killTasks() {
 	if ( global.compilerTasks.length ) {
@@ -264,24 +266,31 @@ function handleStderr( data ) {
 	if ( Object.keys( errObj ).length ) {
 		console.error( errObj );
 
-		getLines( errObj.file, errObj.line, function( err, lines ) {
+		getErrLines( errObj.file, errObj.line, function( err, lines ) {
 			if ( err ) {
 				console.error( err );
+				return;
 			}
 
-			let errLines = lines.join('<br>');
+			let title = errObj.formatted.replace( /\.$/, '' ) +
+				'<code>' +
+					' in ' + slash( fileRelativePath( process.cwd(), errObj.file ) ) +
+					' on line ' + errObj.line +
+				'</code>';
 
-			global.logger.log( 'error', errObj.formatted, errLines );
+			let details = '<pre>' + lines + '</pre>';
+
+			global.logger.log( 'error', title, details );
 		});
 	}
 
 	// return errObj;
 }
 
-function getLines( filename, line, callback ) {
-	line = parseInt( line, 10 ) - 1 || 1;
+function getErrLines( filename, line, callback ) {
+	line = Math.max( parseInt( line, 10 ) - 1 || 0, 0 );
 
-	fs.readFile(filename, function( err, data ) {
+	fs.readFile( filename, function( err, data ) {
 		if ( err ) {
 			throw err;
 		}
@@ -293,14 +302,27 @@ function getLines( filename, line, callback ) {
 		}
 
 		let lineArr = [];
-		let minLine = Math.max( line - 2, 1 );
+		let _lineArr = [];
+		let minLine = Math.max( line - 2, 0 );
 		let maxLine = Math.min( line + 2, lines.length );
 
 		for ( var i = minLine; i <= maxLine; i++ ) {
-			lineArr.push( lines[ i ] );
+			_lineArr[ i ] = lines[ i ];
 		}
 
-		callback( null, lineArr );
+		// Remove extraneous indentation.
+		let strippedLines = stripIndent( _lineArr.join('\n') ).split('\n');
+
+		for ( var j = minLine; j <= maxLine; j++ ) {
+			lineArr.push(
+				'<div class="line' + ( line === j ? ' highlight' : '' ) + '">' +
+					'<span class="line-number">' + ( j + 1 ) + '</span>' +
+					'<span class="line-content">' + strippedLines[ j ] + '</span>' +
+				'</div>'
+			);
+		}
+
+		callback( null, lineArr.join('\n') );
 	});
 }
 

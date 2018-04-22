@@ -2,6 +2,8 @@
  * @file Logger utility.
  */
 
+const moment = require('moment');
+
 class Logger {
 	constructor() {
 		this.logs = [];
@@ -11,16 +13,27 @@ class Logger {
 		this.logs.push({
 			type: type,
 			title: title,
-			body: body
+			body: body,
+			time: moment().format('HH:mm:ss.SSS')
 		});
+		/* global Event */
+		document.dispatchEvent( new Event('bd/refresh/logs') );
 	}
 
-	get( type = null ) {
+	get( type = null, order = 'desc' ) {
+		let logs;
+
 		if ( ! type ) {
-			return this.logs;
+			logs = this.logs;
+		} else {
+			logs = this.logs.filter( log => { return log.type === type } );
 		}
 
-		return this.logs.filter( log => { return log.type === type } );
+		if ( order === 'desc' ) {
+			logs = logs.slice().reverse();
+		}
+
+		return logs;
 	}
 }
 

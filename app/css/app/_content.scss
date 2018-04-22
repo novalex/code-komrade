@@ -4,6 +4,22 @@
 	padding-left: $size__sidebar + $spacing__content-l;
 }
 
+::-webkit-scrollbar {     
+	background-color: $color__bg;
+	width: 4px;
+}
+
+::-webkit-scrollbar-thumb:window-inactive,
+::-webkit-scrollbar-thumb {
+	background: $color__bg-dark;
+}
+
+body {
+	&.overlay {
+		overflow: hidden;
+	}
+}
+
 #sidebar,
 #content,
 #off-canvas {
@@ -28,8 +44,13 @@
 	left: $size__sidebar;
 	right: 0;
 	bottom: 0;
-	padding: $spacing__content;
 	background-color: $color__bg;
+
+	#overlay-content {
+		height: 100%;
+		padding: $spacing__content;
+		overflow: auto;
+	}
 }
 
 // Off-canvas.
