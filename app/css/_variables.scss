@@ -3,9 +3,9 @@ $path__res: '../res';
 
 // Element sizes.
 $size__sidebar: 84px;
-$size__logo: 48px;
+$size__header: 44px;
 
-$size__menu-icon: 32px;
+$size__menu-icon: 24px;
 
 $size__list-icon: 16px;
 $size__list-item: 42px;
@@ -41,7 +41,7 @@ $spacing__content: 20px;
 $spacing__content-s: 10px;
 $spacing__content-l: 30px;
 
-$spacing__logo: ( $size__sidebar - $size__logo ) / 2;
+$spacing__header: ( $size__sidebar - $size__header ) / 2;
 
 // Misc.
 $border-radius: 4px;

@@ -19,12 +19,12 @@ class App extends React.Component {
 		super( props );
 
 		this.state = {
-			view: 'term'
+			view: 'files'
 		};
 
 		this.views = {
 			files: 'Files',
-			term: 'Terminal',
+			logs: 'Logs',
 			settings: 'Settings'
 		};
 
@@ -36,14 +36,14 @@ class App extends React.Component {
 	}
 
 	renderOverlay() {
+		overlay( this.state.view !== 'files' );
+
 		if ( this.state.view === 'files' ) {
-			overlay( false );
 			return '';
 		} else {
-			overlay( true );
 			let content;
 
-			if ( this.state.view === 'term' ) {
+			if ( this.state.view === 'logs' ) {
 				content = <Logs />;
 			} else {
 				content = (

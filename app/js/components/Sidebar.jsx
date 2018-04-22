@@ -42,8 +42,6 @@ class Sidebar extends React.Component {
 	render() {
 		return (
 			<nav id='sidebar'>
-				<div id='logo' />
-
 				<ul id='menu'>
 					{ this.renderItems() }
 				</ul>

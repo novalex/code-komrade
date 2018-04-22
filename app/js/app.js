@@ -35,22 +35,6 @@ ReactDOM.render(
 	document.getElementById('root')
 );
 
-// Context menu.
-const fileList = document.getElementById('files');
-// const filenames = fileList.getElementsByTagName('li');
-
-fileList.addEventListener( 'contextmenu', function( event ) {
-	let fileNameCont = event.target;
-
-	if ( fileNameCont.tagName !== 'li' ) {
-		fileNameCont = event.target.closest('li');
-	}
-
-	if ( fileNameCont.dataset.file ) {
-		console.log( JSON.parse( decodeURIComponent( fileNameCont.dataset.file ) ) );
-	}
-});
-
 const { sleep } = require('./utils/utils');
 
 // App close/restart events.

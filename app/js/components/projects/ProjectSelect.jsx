@@ -143,7 +143,8 @@ class ProjectSelect extends React.Component {
 					<h2>{ this.props.active.path }</h2>
 				</div>
 				<div id='project-actions'>
-					<a href='#' className='remove' onClick={ this.removeProject }>&times;</a>
+					<a href='#' className='refresh' onClick={ this.props.refreshProject } />
+					<a href='#' className='remove' onClick={ this.removeProject } />
 				</div>
 				<div id='project-select-dropdown' className={ this.state.isOpen ? 'open' : '' }>
 					{ this.renderChoices() }

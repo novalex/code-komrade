@@ -74,3 +74,13 @@ body.off-canvas {
 		transform: translate(0, 0);
 	}
 }
+
+// No content.
+.no-content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	cursor: default;
+	color: $color__text-light;
+	transform: translate(-50%, -50%);
+}

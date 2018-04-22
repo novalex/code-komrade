@@ -4,6 +4,8 @@
 
 const React = require('react');
 
+const NoContent = require('../NoContent');
+
 class Logs extends React.Component {
 	constructor( props ) {
 		super( props );
@@ -26,10 +28,6 @@ class Logs extends React.Component {
 	}
 
 	renderChildren() {
-		if ( ! this.state.logs.length ) {
-			return <strong>No logs yet. Go forth and compile!</strong>;
-		}
-
 		let logIndex = 0;
 		let logList = [];
 
@@ -58,6 +56,10 @@ class Logs extends React.Component {
 	}
 
 	render() {
+		if ( ! this.state.logs.length ) {
+			return <NoContent>No logs yet. Go forth and compile!</NoContent>;
+		}
+
 		return (
 			<div id='logs'>
 				{ this.renderChildren() }

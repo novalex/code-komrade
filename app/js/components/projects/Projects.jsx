@@ -50,6 +50,7 @@ class Projects extends React.Component {
 		};
 
 		this.setProjects = this.setProjects.bind( this );
+		this.refreshProject = this.refreshProject.bind( this );
 		this.setActiveProject = this.setActiveProject.bind( this );
 	}
 
@@ -92,6 +93,10 @@ class Projects extends React.Component {
 		}
 	}
 
+	refreshProject() {
+		this.getFiles( this.state.active.path );
+	}
+
 	setProjectConfig( path ) {
 		global.projectConfig = new Store({
 			name: 'buildr-project',
@@ -101,21 +106,17 @@ class Projects extends React.Component {
 		global.projectConfig.onDidChange( 'files', _debounce( global.compiler.initProject, 100 ) );
 	}
 
-	walkDirectory( path ) {
-		let exclude = new RegExp( this.state.ignored.join('|'), 'i' );
-
-		return directoryTree( path, {
-			// depth: 2,
-			exclude
-		});
-	}
-
-	setProjectPath( path ) {
+	getFiles( path ) {
 		this.setState({ loading: true });
 
 		global.ui.loading();
 
-		this.walkDirectory( path ).then( function( files ) {
+		let exclude = new RegExp( this.state.ignored.join('|'), 'i' );
+
+		directoryTree( path, {
+			// depth: 2,
+			exclude
+		}).then( function( files ) {
 			this.setState({
 				files,
 				loading: false
@@ -123,6 +124,10 @@ class Projects extends React.Component {
 
 			global.ui.loading( false );
 		}.bind( this ));
+	}
+
+	setProjectPath( path ) {
+		this.getFiles( path );
 
 		this.setProjectConfig( path );
 
@@ -143,6 +148,7 @@ class Projects extends React.Component {
 						active={ this.state.active }
 						projects={ this.state.projects }
 						setProjects={ this.setProjects }
+						refreshProject={ this.refreshProject }
 						setActiveProject={ this.setActiveProject }
 					/>
 				</div>

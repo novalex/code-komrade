@@ -1,11 +1,11 @@
 #header {
-	margin-bottom: $spacing__logo;
+	margin-bottom: $spacing__header;
 }
 
 // Project Select.
 
-$action-size: $size__input;
-$actions-width: $action-size;
+$action-size: $size__header;
+$actions-width: $action-size * 2;
 
 #project-select {
 	position: relative;
@@ -21,7 +21,7 @@ $actions-width: $action-size;
 
 #project-active {
 	cursor: pointer;
-	height: $size__logo;
+	height: $size__header;
 	user-select: none;
 	position: relative;
 
@@ -29,14 +29,14 @@ $actions-width: $action-size;
 		font-weight: bold;
 		font-size: 1.1rem;
 		color: $color__text;
-		line-height: 3 / 5 * $size__logo;
+		line-height: 3 / 5 * $size__header;
 	}
 
 	h2 {
 		font-size: 1rem;
 		font-weight: normal;
 		color: $color__text-light;
-		line-height: 2 / 5 * $size__logo;
+		line-height: 2 / 5 * $size__header;
 	}
 
 	h1,
@@ -55,11 +55,23 @@ $actions-width: $action-size;
 		float: left;
 		width: $action-size;
 		height: $action-size;
-		line-height: $action-size;
-		text-align: center;
-		color: $color__text-light;
-		font-weight: bold;
-		font-size: $action-size;
+		opacity: 0.4;
+		background-size: 16px;
+		background-repeat: no-repeat;
+		background-position: center;
+		transition: opacity 0.2s;
+
+		&:hover {
+			opacity: 1;
+		}
+
+		&.refresh {
+			background-image: url( '#{$path__res}/img/sync.svg' );
+		}
+
+		&.remove {
+			background-image: url( '#{$path__res}/img/x.svg' );
+		}
 	}
 }
 
@@ -79,7 +91,7 @@ $actions-width: $action-size;
 	&.open {
 		opacity: 1;
 		visibility: visible;
-		transform: translate( 0, $spacing__logo - 1px );
+		transform: translate( 0, $spacing__header - 1px );
 	}
 
 	> div {
