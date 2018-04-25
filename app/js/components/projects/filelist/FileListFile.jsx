@@ -83,7 +83,16 @@ class FileListFile extends React.Component {
 		}) );
 		menu.append( new MenuItem({
 			label: 'Delete',
-			click: function() { shell.moveItemToTrash( filePath ) }
+			click: function() {
+				if ( window.confirm( `Are you sure you want to delete ${this.props.file.name}?` ) ) {
+					if ( shell.moveItemToTrash( filePath ) ) {
+						/* global Event */
+						document.dispatchEvent( new Event('bd/refresh/files') );
+					} else {
+						window.alert( `Could not delete ${this.props.file.name}.` );
+					}
+				}
+			}.bind( this )
 		}) );
 
 		menu.popup( remote.getCurrentWindow() );

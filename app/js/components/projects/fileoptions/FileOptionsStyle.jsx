@@ -12,8 +12,6 @@ const FieldSelect = require('../../fields/FieldSelect');
 
 const FieldSaveFile = require('../../fields/FieldSaveFile');
 
-const sassGraph = require('sass-graph');
-
 class FileOptionsStyles extends FileOptions {
 	constructor( props ) {
 		super( props );
@@ -23,31 +21,10 @@ class FileOptionsStyles extends FileOptions {
 		this.saveDialogFilters = [
 			{ name: 'CSS', extensions: [ 'css' ] }
 		];
-
-		this.handleAutoCompile = this.handleAutoCompile.bind( this );
 	}
 
 	isPartial() {
 		return this.props.file.name.startsWith('_');
-	}
-
-	getFileDependencies() {
-		let graph = sassGraph.parseFile( this.props.file.path );
-
-		if ( graph && graph.index && graph.index[ this.props.file.path ] ) {
-			return graph.index[ this.props.file.path ].imports;
-		}
-
-		return [];
-	}
-
-	handleAutoCompile( event, value ) {
-		this.handleChange( event, value );
-
-		// Auto compile is turned on, create dependency graph and save to config.
-		if ( value ) {
-			this.setFileImports( this.getFileDependencies() );
-		}
 	}
 
 	render() {
@@ -87,7 +64,7 @@ class FileOptionsStyles extends FileOptions {
 						name='autocompile'
 						label='Auto Compile'
 						labelPos='left'
-						onChange={ this.handleAutoCompile }
+						onChange={ this.handleChange }
 						value={ this.getOption( 'autocompile', false ) }
 					/>
 

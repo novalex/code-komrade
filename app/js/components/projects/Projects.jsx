@@ -52,6 +52,8 @@ class Projects extends React.Component {
 		this.setProjects = this.setProjects.bind( this );
 		this.refreshProject = this.refreshProject.bind( this );
 		this.setActiveProject = this.setActiveProject.bind( this );
+
+		document.addEventListener( 'bd/refresh/files', this.refreshProject );
 	}
 
 	componentDidMount() {

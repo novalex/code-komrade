@@ -34,13 +34,36 @@ const arg = ( argList => {
 
 // console.log( arg );
 
+let watchFiles = [];
+
+const modulesPath = path.join( arg.cwd, 'node_modules' );
+const sassGraph = require( path.join( modulesPath, 'sass-graph' ) );
+
+const jsPath = path.join( arg.cwd, 'app', 'js' );
+const { slash, fileAbsolutePath, fileRelativePath } = require( path.join( jsPath, 'utils', 'pathHelpers.js' ) );
+
+const config = require( arg.projectConfig );
+const fileKey = slash( fileRelativePath( arg.projectBase, arg.input ) );
+const fileConfig = config.files.filter( _config => {
+	return _config.path === fileKey;
+} );
+
+if ( arg.getImports ) {
+	// Get imported files.
+	let graph = sassGraph.parseFile( arg.input );
+
+	if ( graph && graph.index ) {
+		for ( var file in graph.index ) {
+			watchFiles.push( file );
+		}
+	}
+}
+
 let options = {
 	autoprefixer: {
 		browsers: [ 'last 5 versions' ]
 	}
 };
-
-const modulesPath = path.join( arg.cwd, 'node_modules' );
 
 gulp.task( 'build-css', ( done ) => {
 	let postCssPlugins = [];
@@ -120,6 +143,6 @@ gulp.task( 'build-js', ( done ) => {
 });
 
 gulp.task( 'watch', ( done ) => {
-	gulp.watch( arg.watchFiles.split(' '), gulp.parallel( arg.watchTask ) );
+	gulp.watch( watchFiles, gulp.parallel( arg.watchTask ) );
 	done();
 });

@@ -152,12 +152,6 @@ class FileOptions extends React.Component {
 		return outputPath;
 	}
 
-	setFileImports( imports ) {
-		let relativeImports = imports.map( path => slash( fileRelativePath( this.props.base, path ) ) );
-
-		this.setConfig( 'imports', relativeImports );
-	}
-
 	handleCompile() {
 		global.ui.loading( true );
 		this.setState({ loading: true });

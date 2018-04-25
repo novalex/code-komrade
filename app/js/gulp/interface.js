@@ -79,15 +79,9 @@ function processFile( base, fileConfig, taskName = null, callback = null ) {
 	if ( taskName ) {
 		runTask( taskName, options, callback );
 	} else if ( options.autocompile ) {
-		let watchFiles = [];
-
-		if ( fileConfig.imports && fileConfig.imports.length > 0 ) {
-			watchFiles = fileConfig.imports.map( importPath => fileAbsolutePath( base, importPath ) );
+		if ( options.watchTask && options.watchTask === 'build-sass' ) {
+			options.getImports = true;
 		}
-
-		watchFiles.push( fileAbsolutePath( base, fileConfig.path ) );
-
-		options.watchFiles = watchFiles.join(' ');
 
 		runTask( 'watch', options );
 	}
@@ -132,7 +126,9 @@ function getFileConfig( base, fileConfig ) {
 	let options = {
 		input: filePath,
 		filename: path.basename( outputPath ),
-		output: path.parse( outputPath ).dir
+		output: path.parse( outputPath ).dir,
+		projectBase: base,
+		projectConfig: global.projectConfig.path
 	};
 
 	if ( fileConfig.options ) {
