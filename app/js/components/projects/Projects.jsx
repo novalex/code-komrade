@@ -23,7 +23,8 @@ class Projects extends React.Component {
 		let projects = [];
 		let active = {
 			name: '',
-			path: ''
+			path: '',
+			paused: false
 		};
 
 		if ( global.config.has('projects') ) {
@@ -50,6 +51,7 @@ class Projects extends React.Component {
 		};
 
 		this.setProjects = this.setProjects.bind( this );
+		this.toggleProject = this.toggleProject.bind( this );
 		this.refreshProject = this.refreshProject.bind( this );
 		this.setActiveProject = this.setActiveProject.bind( this );
 
@@ -62,6 +64,16 @@ class Projects extends React.Component {
 		}
 	}
 
+	initCompiler() {
+		console.log( this.state.active );
+
+		if ( ! this.state.active.paused ) {
+			global.compiler.initProject();
+		} else {
+			global.compiler.killTasks();
+		}
+	}
+
 	setProjects( projects ) {
 		this.setState({
 			projects
@@ -70,12 +82,30 @@ class Projects extends React.Component {
 		global.config.set( 'projects', projects );
 	}
 
+	toggleProject() {
+		this.setState( function( prevState ) {
+			let paused = prevState.active.paused || false;
+			let newState = Object.assign( {}, prevState );
+
+			newState.active.paused = ! paused;
+
+			return newState;
+		}, function() {
+			this.setProjectConfig( 'paused', this.state.active.paused );
+		});
+	}
+
+	refreshProject() {
+		this.getFiles( this.state.active.path );
+	}
+
 	setActiveProject( index = null ) {
 		if ( index === null ) {
 			this.setState({
 				active: {
 					name: '',
-					path: ''
+					path: '',
+					paused: false
 				}
 			});
 
@@ -87,25 +117,34 @@ class Projects extends React.Component {
 		if ( active && active.path !== this.state.active.path ) {
 			this.setState({
 				active
+			}, function() {
+				this.setProjectPath( active.path );
 			});
-
-			this.setProjectPath( active.path );
 
 			global.config.set( 'active-project', index );
 		}
 	}
 
-	refreshProject() {
-		this.getFiles( this.state.active.path );
+	setProjectConfig( property, value ) {
+		let projects = global.config.get('projects');
+		let activeIndex = global.config.get('active-project');
+
+		if ( Array.isArray( projects ) && projects[ activeIndex ] ) {
+			projects[ activeIndex ][ property ] = value;
+
+			global.config.set( 'projects', projects );
+		} else {
+			window.alert( 'There was a problem saving the project config.' );
+		}
 	}
 
-	setProjectConfig( path ) {
+	setProjectConfigFile( path ) {
 		global.projectConfig = new Store({
 			name: 'buildr-project',
 			cwd: path
 		});
 
-		global.projectConfig.onDidChange( 'files', _debounce( global.compiler.initProject, 100 ) );
+		global.projectConfig.onDidChange( 'files', _debounce( this.initCompiler, 100 ) );
 	}
 
 	getFiles( path ) {
@@ -131,7 +170,7 @@ class Projects extends React.Component {
 	setProjectPath( path ) {
 		this.getFiles( path );
 
-		this.setProjectConfig( path );
+		this.setProjectConfigFile( path );
 
 		// Change process cwd.
 		process.chdir( path );
@@ -139,7 +178,17 @@ class Projects extends React.Component {
 
 		global.logger = new Logger();
 
-		global.compiler.initProject();
+		this.initCompiler();
+	}
+
+	renderNotices() {
+		if ( this.state.active.paused ) {
+			return (
+				<p>Project is paused. Files will not be watched and auto compiled.</p>
+			);
+		}
+
+		return '';
 	}
 
 	render() {
@@ -150,11 +199,14 @@ class Projects extends React.Component {
 						active={ this.state.active }
 						projects={ this.state.projects }
 						setProjects={ this.setProjects }
+						toggleProject={ this.toggleProject }
 						refreshProject={ this.refreshProject }
 						setActiveProject={ this.setActiveProject }
 					/>
 				</div>
 				<div id='content'>
+					{ this.renderNotices() }
+
 					<FileList
 						path={ this.state.active.path }
 						files={ this.state.files }

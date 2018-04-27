@@ -57,7 +57,8 @@ class ProjectSelect extends React.Component {
 
 			let newProject = {
 				name: fspath.basename( path[0] ),
-				path: path[0]
+				path: path[0],
+				paused: false
 			};
 
 			if ( projects.findIndex( project => project.path === newProject.path ) !== -1 ) {
@@ -143,6 +144,7 @@ class ProjectSelect extends React.Component {
 					<h2>{ this.props.active.path }</h2>
 				</div>
 				<div id='project-actions'>
+					<a href='#' className={ 'toggle' + ( this.props.active.paused ? ' paused' : ' active' ) } onClick={ this.props.toggleProject } />
 					<a href='#' className='refresh' onClick={ this.props.refreshProject } />
 					<a href='#' className='remove' onClick={ this.removeProject } />
 				</div>

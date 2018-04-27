@@ -5,7 +5,7 @@
 // Project Select.
 
 $action-size: $size__header;
-$actions-width: $action-size * 2;
+$actions-width: $action-size * 3;
 
 #project-select {
 	position: relative;
@@ -63,6 +63,14 @@ $actions-width: $action-size * 2;
 
 		&:hover {
 			opacity: 1;
+		}
+
+		&.toggle {
+			background-image: url( '#{$path__res}/img/stop.svg' );
+
+			&.paused {
+				background-image: url( '#{$path__res}/img/start.svg' );
+			}
 		}
 
 		&.refresh {

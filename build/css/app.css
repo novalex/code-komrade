@@ -332,7 +332,7 @@ input[type="submit"] {
 #project-select {
   position: relative; }
   #project-select.selected {
-    padding-right: 88px; }
+    padding-right: 132px; }
   #project-select:not(.selected) #project-select-dropdown:not(.open) {
     transition: none; }
 
@@ -371,6 +371,10 @@ input[type="submit"] {
     transition: opacity 0.2s; }
     #project-actions a:hover {
       opacity: 1; }
+    #project-actions a.toggle {
+      background-image: url("../res/img/stop.svg"); }
+      #project-actions a.toggle.paused {
+        background-image: url("../res/img/start.svg"); }
     #project-actions a.refresh {
       background-image: url("../res/img/sync.svg"); }
     #project-actions a.remove {
