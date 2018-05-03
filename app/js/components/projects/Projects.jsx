@@ -8,6 +8,8 @@ const React = require('react');
 
 const Store = require('electron-store');
 
+const Notice = require('../ui/Notice');
+
 const ProjectSelect = require('./ProjectSelect');
 
 const FileList = require('./filelist/FileList');
@@ -51,6 +53,7 @@ class Projects extends React.Component {
 		};
 
 		this.setProjects = this.setProjects.bind( this );
+		this.initCompiler = this.initCompiler.bind( this );
 		this.toggleProject = this.toggleProject.bind( this );
 		this.refreshProject = this.refreshProject.bind( this );
 		this.setActiveProject = this.setActiveProject.bind( this );
@@ -65,8 +68,6 @@ class Projects extends React.Component {
 	}
 
 	initCompiler() {
-		console.log( this.state.active );
-
 		if ( ! this.state.active.paused ) {
 			global.compiler.initProject();
 		} else {
@@ -92,6 +93,8 @@ class Projects extends React.Component {
 			return newState;
 		}, function() {
 			this.setProjectConfig( 'paused', this.state.active.paused );
+
+			this.initCompiler();
 		});
 	}
 
@@ -174,7 +177,6 @@ class Projects extends React.Component {
 
 		// Change process cwd.
 		process.chdir( path );
-		// console.log(`Current directory: ${process.cwd()}`);
 
 		global.logger = new Logger();
 
@@ -184,7 +186,9 @@ class Projects extends React.Component {
 	renderNotices() {
 		if ( this.state.active.paused ) {
 			return (
-				<p>Project is paused. Files will not be watched and auto compiled.</p>
+				<Notice type='warning'>
+					<p>Project is paused. Files will not be watched and auto compiled.</p>
+				</Notice>
 			);
 		}
 

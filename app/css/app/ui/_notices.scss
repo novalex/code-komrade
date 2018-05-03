@@ -1,0 +1,32 @@
+.notice {
+	color: $color__text-light;
+	padding: $spacing__content;
+	margin-bottom: $spacing__content;
+	border: 1px solid $color__border;
+	user-select: none;
+	cursor: default;
+
+	&.type-info {
+		color: fade-out( $color__blue, 0.2 );
+		background-color: fade-out( $color__blue, 0.95 );
+		border-color: darken( fade-out( $color__blue, 0.8 ), 20 );
+	}
+
+	&.type-warning {
+		color: fade-out( $color__orange, 0.2 );
+		background-color: fade-out( $color__orange, 0.95 );
+		border-color: darken( fade-out( $color__orange, 0.8 ), 20 );
+	}
+
+	&.type-success {
+		color: fade-out( $color__green, 0.2 );
+		background-color: fade-out( $color__green, 0.95 );
+		border-color: darken( fade-out( $color__green, 0.8 ), 20 );
+	}
+
+	&.type-error {
+		color: fade-out( $color__red, 0.2 );
+		background-color: fade-out( $color__red, 0.95 );
+		border-color: darken( fade-out( $color__red, 0.8 ), 20 );
+	}
+}
