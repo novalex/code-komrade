@@ -11,11 +11,12 @@
 
 	li {
 		cursor: pointer;
-		margin-top: -1px;
-		overflow: hidden;
 		position: relative;
-		border-top: 1px solid $color__border;
 		border-bottom: 1px solid $color__border;
+
+		&:first-child {
+			border-top: 1px solid $color__border;
+		}
 
 		&:hover,
 		&.active {
@@ -24,26 +25,41 @@
 			}
 		}
 
+		&:before,
 		&:after {
-			content: '';
-			opacity: 0;
-			transform: translate(24px, 0);
-			transition: opacity 0.1s, transform 0.1s;
-			transition-delay: 0.175s;
-		}
-
-		&.has-options:after {
 			position: absolute;
 			top: 0;
-			right: $size__off-canvas - $spacing__content-l - 1px;
+			right: -$spacing__content-l - 2px;
 			width: 0;
 			height: 0;
+			content: '';
+			opacity: 0;
 			border-style: solid;
+			transition: opacity 0.1s, transform 0.1s;
+			transition-delay: 0.175s;
+			z-index: 1;
+		}
+
+		&:before {
+			top: -1px;
+			transform: translate(25px, 0);
+			border-width: 21.5px 25px 21.5px 0;
+			border-color: transparent $color__border transparent transparent;
+		}
+
+		&:after {
+			transform: translate(24px, 0);
 			border-width: 20.5px 24px 20.5px 0;
-			border-color: transparent $color__bg-darker transparent transparent;
-			opacity: 1;
-			transform: translate(0, 0);
-			transition-delay: 0;
+			border-color: transparent $color__bg-alt transparent transparent;
+		}
+
+		&.has-options {
+			&:before,
+			&:after {
+				opacity: 1;
+				transform: translate(0, 0);
+				transition-delay: 0;
+			}
 		}
 	}
 
@@ -121,54 +137,5 @@
 				animation-iteration-count: infinite;
 			}
 		}
-	}
-}
-
-// File options.
-#file-options {
-	height: 100%;
-	position: relative;
-
-	.header {
-		text-align: center;
-	}
-
-	.body {
-		> p,
-		> .field {
-			margin-bottom: 0;
-		}
-
-		hr {
-			margin: 0;
-			border-color: $color__border-darker;
-			border-bottom-width: 0;
-		}
-	}
-
-	.footer {
-		position: absolute;
-		left: 0;
-		bottom: 0;
-		width: 100%;
-		padding-right: $spacing__content;
-
-		button {
-			width: 100%;
-			border-width: 0;
-		}
-	}
-
-	.header,
-	.body > p,
-	.body > .field,
-	.footer {
-		padding: $spacing__content;
-		padding-left: 0;
-	}
-
-	.body,
-	.footer {
-		border-top: 1px solid $color__border-darker;
 	}
 }

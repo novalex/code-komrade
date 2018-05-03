@@ -42,6 +42,9 @@ $actions-width: $action-size * 3;
 	h1,
 	h2 {
 		margin: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 }
 

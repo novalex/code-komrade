@@ -50,7 +50,7 @@ class FileListFile extends React.Component {
 		let _FileOptions = this.getOptions( this.props.file );
 
 		if ( ! _FileOptions ) {
-			global.ui.offCanvas( false );
+			// Todo: render original panel contents.
 			return;
 		}
 
@@ -58,10 +58,8 @@ class FileListFile extends React.Component {
 
 		ReactDOM.render(
 			_FileOptions,
-			document.getElementById('off-canvas')
+			document.getElementById('panel')
 		);
-
-		global.ui.offCanvas( true, document.getElementById('files') );
 	}
 
 	onContextMenu( event ) {

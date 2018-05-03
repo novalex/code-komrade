@@ -2,8 +2,11 @@
 	li {
 		color: $color__text-light;
 		padding: $spacing__content-s;
-		margin-bottom: $spacing__content-s;
-		border: 1px solid $color__border;
+		border-bottom: 1px solid $color__border;
+
+		&:last-of-type {
+			border-bottom-width: 0;
+		}
 
 		.title {
 			display: block;
@@ -46,10 +49,8 @@
 		}
 
 		.details {
-			margin-top: $spacing__content-s;
-			padding-top: $spacing__content-s;
 			overflow: auto;
-			border-top: 1px solid $color__border;
+			margin-top: $spacing__content-s;
 
 			// Code from relevant file section.
 			pre {

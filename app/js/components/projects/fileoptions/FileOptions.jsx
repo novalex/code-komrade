@@ -153,7 +153,6 @@ class FileOptions extends React.Component {
 	}
 
 	handleCompile() {
-		global.ui.loading( true );
 		this.setState({ loading: true });
 
 		global.compiler.processFile(
@@ -161,7 +160,6 @@ class FileOptions extends React.Component {
 			this.getConfig(),
 			this.state.buildTaskName,
 			function( code ) {
-				global.ui.loading( false );
 				this.setState({ loading: false });
 			}.bind( this )
 		);

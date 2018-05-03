@@ -19,12 +19,6 @@ class FileList extends React.Component {
 		this.setActiveFile = this.setActiveFile.bind( this );
 	}
 
-	componentDidMount() {
-		document.addEventListener( 'off-canvas-hide', function() {
-			this.setActiveFile( null );
-		}.bind( this ));
-	}
-
 	getMimeType( ext ) {
 		let type;
 

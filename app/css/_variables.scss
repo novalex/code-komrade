@@ -12,9 +12,9 @@ $size__list-item: 42px;
 
 $size__min-width: 800px;
 
-$size__off-canvas: 320px;
+$size__panel: 320px;
 
-$size__input: 36px;
+$size__input: 32px;
 
 // Colors.
 $color__bg: #fff;
@@ -23,13 +23,14 @@ $color__bg-dark: #555;
 $color__bg-darker: #1e1e1e;
 
 $color__border: darken( $color__bg, 10 );
+$color__border-alt: darken( $color__bg-alt, 10 );
 $color__border-dark: darken( $color__bg-dark, 10 );
 $color__border-darker: darken( $color__bg-darker, 10 );
 
 $color__text: #555;
 $color__text-dark: #222;
 $color__text-light: #777;
-$color__text-lighter: #ddd;
+$color__text-lighter: #fff;
 
 $color__blue: #1d6ed6;
 $color__green: #5d9a0b;

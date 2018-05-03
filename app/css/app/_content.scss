@@ -2,6 +2,7 @@
 	min-width: $size__min-width;
 	padding: $spacing__content $spacing__content-l;
 	padding-left: $size__sidebar + $spacing__content-l;
+	padding-right: $size__panel + $spacing__content-l;
 }
 
 ::-webkit-scrollbar {     
@@ -22,7 +23,7 @@ body {
 
 #sidebar,
 #content,
-#off-canvas {
+#panel {
 	opacity: 1;
 	transition: opacity 0.2s;
 
@@ -45,33 +46,12 @@ body {
 	right: 0;
 	bottom: 0;
 	background-color: $color__bg;
+	z-index: 1;
 
 	#overlay-content {
 		height: 100%;
 		padding: $spacing__content;
 		overflow: auto;
-	}
-}
-
-// Off-canvas.
-
-#off-canvas {
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	width: $size__off-canvas;
-	padding-left: $spacing__content;
-	color: $color__text-lighter;
-	background-color: $color__bg-darker;
-	box-shadow: -1px 0 30px rgba(0,0,0,0.15);
-	transform: translate($size__off-canvas, 0);
-	transition: transform 0.2s;
-}
-
-body.off-canvas {
-	#off-canvas {
-		transform: translate(0, 0);
 	}
 }
 

@@ -2,6 +2,11 @@
 .field {
 	margin-bottom: $spacing__content;
 
+	.field-label {
+		font-weight: normal;
+	}
+
+	// Label positions.
 	&.label-top {
 		.field-label {
 			display: block;
@@ -26,11 +31,11 @@
 			height: $size__input;
 			padding: 0 $spacing__content-s;
 			font-size: 1rem;
-			color: $color__text-lighter;
+			color: $color__text;
 			line-height: $size__input;
 			border-radius: $border-radius;
-			border: 1px solid $color__border-darker;
-			background-color: $color__border-dark;
+			border: 1px solid $color__border-alt;
+			background-color: $color__border;
 		}
 	}
 }
@@ -73,7 +78,7 @@
 
 	label {
 		display: block;
-		width: 58px;
+		width: $size__input * 1.65;
 		height: $size__input;
 		position: relative;
 		cursor: pointer;
@@ -138,8 +143,9 @@
 		top: 0;
 		left: 0;
 		font-size: 1rem;
-		background-color: $color__border-dark;
-		border: 1px solid $color__border-darker;
+		color: $color__text;
+		background-color: $color__border;
+		border: 1px solid $color__border-alt;
 		z-index: 0;
 	}
 
@@ -155,8 +161,8 @@
 		z-index: 1;
 
 		option {
-			color: $color__text-lighter;
-			background-color: $color__border-dark;
+			color: $color__text;
+			background-color: $color__border;
 		}
 	}
 }

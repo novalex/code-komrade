@@ -26,8 +26,6 @@ class FileListDirectory extends React.Component {
 	onClick( event ) {
 		event.stopPropagation();
 
-		global.ui.offCanvas( false );
-
 		this.setState( function( prevState ) {
 			return { expanded: ! prevState.expanded };
 		});

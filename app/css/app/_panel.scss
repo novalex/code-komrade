@@ -1,0 +1,60 @@
+
+#panel {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	color: $color__text;
+	width: $size__panel;
+	background-color: $color__bg-alt;
+	border-left: 1px solid $color__border;
+}
+
+// File options.
+#file-options {
+	height: 100%;
+	position: relative;
+
+	.header {
+		text-align: center;
+	}
+
+	.body {
+		> p,
+		> .field {
+			margin-bottom: 0;
+		}
+
+		hr {
+			margin: 0;
+			border-style: solid;
+			border-color: $color__border;
+			border-bottom-width: 0;
+		}
+	}
+
+	.footer {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		padding-right: $spacing__content;
+
+		button {
+			width: 100%;
+			border-width: 0;
+		}
+	}
+
+	.header,
+	.body > p,
+	.body > .field,
+	.footer {
+		padding: $spacing__content;
+	}
+
+	.body,
+	.footer {
+		border-top: 1px solid $color__border;
+	}
+}
