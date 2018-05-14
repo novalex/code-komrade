@@ -6,6 +6,8 @@ const _debounce = require('lodash/debounce');
 
 const React = require('react');
 
+const { connect } = require('react-redux');
+
 const Store = require('electron-store');
 
 const Notice = require('../ui/Notice');
@@ -14,35 +16,19 @@ const ProjectSelect = require('./ProjectSelect');
 
 const FileList = require('./filelist/FileList');
 
+const Panel = require('./Panel');
+
 const directoryTree = require('../../utils/directoryTree');
 
 const Logger = require('../../utils/Logger');
+
+const { receiveFiles } = require('../../actions');
 
 class Projects extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		let projects = [];
-		let active = {
-			name: '',
-			path: '',
-			paused: false
-		};
-
-		if ( global.config.has('projects') ) {
-			projects = global.config.get('projects');
-
-			let activeIndex = global.config.get('active-project');
-
-			if ( Array.isArray( projects ) && projects[ activeIndex ] ) {
-				active = projects[ activeIndex ];
-			}
-		}
-
 		this.state = {
-			projects,
-			active,
-			files: null,
 			ignored: [
 				'.git',
 				'node_modules',
@@ -62,13 +48,13 @@ class Projects extends React.Component {
 	}
 
 	componentDidMount() {
-		if ( this.state.active.path ) {
-			this.setProjectPath( this.state.active.path );
+		if ( this.props.active.path ) {
+			this.setProjectPath( this.props.active.path );
 		}
 	}
 
 	initCompiler() {
-		if ( ! this.state.active.paused ) {
+		if ( ! this.props.active.paused ) {
 			global.compiler.initProject();
 		} else {
 			global.compiler.killTasks();
@@ -92,14 +78,14 @@ class Projects extends React.Component {
 
 			return newState;
 		}, function() {
-			this.setProjectConfig( 'paused', this.state.active.paused );
+			this.setProjectConfig( 'paused', this.props.active.paused );
 
 			this.initCompiler();
 		});
 	}
 
 	refreshProject() {
-		this.getFiles( this.state.active.path );
+		this.getFiles( this.props.active.path );
 	}
 
 	setActiveProject( index = null ) {
@@ -115,9 +101,9 @@ class Projects extends React.Component {
 			return;
 		}
 
-		let active = this.state.projects[ index ];
+		let active = this.props.projects[ index ];
 
-		if ( active && active.path !== this.state.active.path ) {
+		if ( active && active.path !== this.props.active.path ) {
 			this.setState({
 				active
 			}, function() {
@@ -162,8 +148,9 @@ class Projects extends React.Component {
 			exclude
 		}).then( function( files ) {
 			this.setState({
-				files,
 				loading: false
+			}, function() {
+				// global.store.dispatch( receiveFiles( files ) );
 			});
 
 			global.ui.loading( false );
@@ -184,7 +171,7 @@ class Projects extends React.Component {
 	}
 
 	renderNotices() {
-		if ( this.state.active.paused ) {
+		if ( this.props.active.paused ) {
 			return (
 				<Notice type='warning'>
 					<p>Project is paused. Files will not be watched and auto compiled.</p>
@@ -200,26 +187,35 @@ class Projects extends React.Component {
 			<React.Fragment>
 				<div id='header'>
 					<ProjectSelect
-						active={ this.state.active }
-						projects={ this.state.projects }
+						active={ this.props.active }
+						projects={ this.props.projects }
 						setProjects={ this.setProjects }
 						toggleProject={ this.toggleProject }
 						refreshProject={ this.refreshProject }
 						setActiveProject={ this.setActiveProject }
 					/>
 				</div>
+
 				<div id='content'>
 					{ this.renderNotices() }
 
 					<FileList
-						path={ this.state.active.path }
-						files={ this.state.files }
+						path={ this.props.active.path }
+						files={ this.props.files }
 						loading={ this.state.loading }
 					/>
 				</div>
+
+				<Panel />
 			</React.Fragment>
 		);
 	}
 }
 
-module.exports = Projects;
+const mapStateToProps = ( state ) => ({
+	projects: state.projects,
+	active: state.activeProject,
+	files: state.activeProjectFiles
+});
+
+module.exports = connect( mapStateToProps, null )( Projects );

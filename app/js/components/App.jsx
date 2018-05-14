@@ -4,6 +4,8 @@
 
 const React = require('react');
 
+const { connect } = require('react-redux');
+
 const Overlay = require('./Overlay');
 
 const Sidebar = require('./Sidebar');
@@ -18,37 +20,27 @@ class App extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		this.state = {
-			view: 'files'
-		};
-
 		this.views = {
 			files: 'Files',
 			logs: 'Logs',
 			settings: 'Settings'
 		};
-
-		this.changeView = this.changeView.bind( this );
-	}
-
-	changeView( view ) {
-		this.setState({ view });
 	}
 
 	renderOverlay() {
-		overlay( this.state.view !== 'files' );
+		overlay( this.props.view !== 'files' );
 
-		if ( this.state.view === 'files' ) {
+		if ( this.props.view === 'files' ) {
 			return '';
 		} else {
 			let content;
 
-			if ( this.state.view === 'logs' ) {
+			if ( this.props.view === 'logs' ) {
 				content = <Logs />;
 			} else {
 				content = (
 					<React.Fragment>
-						<h2>{ this.views[ this.state.view ] }</h2>
+						<h2>{ this.views[ this.props.view ] }</h2>
 						<p>You shouldn't be here, you naughty naughty boy.</p>
 					</React.Fragment>
 				);
@@ -67,8 +59,6 @@ class App extends React.Component {
 			<div id='app'>
 				<Sidebar
 					items={ this.views }
-					active={ this.state.view }
-					changeView={ this.changeView }
 				/>
 
 				<div id='content-wrap'>
@@ -81,4 +71,8 @@ class App extends React.Component {
 	}
 }
 
-module.exports = App;
+const mapStateToProps = ( state ) => ({
+	view: state.view
+});
+
+module.exports = connect( mapStateToProps, null )( App );

@@ -4,6 +4,10 @@
 
 const React = require('react');
 
+const { changeView } = require('../actions');
+
+const { connect } = require('react-redux');
+
 class Sidebar extends React.Component {
 	constructor( props ) {
 		super( props );
@@ -50,4 +54,12 @@ class Sidebar extends React.Component {
 	}
 }
 
-module.exports = Sidebar;
+const mapStateToProps = ( state ) => ({
+	active: state.view
+});
+
+const mapDispatchToProps = ( dispatch ) => ({
+	changeView: view => dispatch( changeView( view ) )
+});
+
+module.exports = connect( mapStateToProps, mapDispatchToProps )( Sidebar );

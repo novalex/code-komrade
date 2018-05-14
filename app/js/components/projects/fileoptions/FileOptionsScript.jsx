@@ -28,9 +28,7 @@ class FileOptionsScript extends FileOptions {
 	render() {
 		return (
 			<div id='file-options' className='file-options-script'>
-				<div className='header'>
-					<strong>{ this.props.file.name }</strong>
-				</div>
+				{ this.renderHeader() }
 
 				<div className='body'>
 					<FieldSaveFile
@@ -89,9 +87,7 @@ class FileOptionsScript extends FileOptions {
 					/>
 				</div>
 
-				<div className='footer'>
-					{ this.renderButton() }
-				</div>
+				{ this.renderFooter() }
 			</div>
 		);
 	}

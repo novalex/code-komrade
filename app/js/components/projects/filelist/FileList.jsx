@@ -125,7 +125,7 @@ class FileList extends React.Component {
 					No folder selected.
 				</FileListPlaceholder>
 			);
-		} else if ( ! this.props.files ) {
+		} else if ( ! this.props.files || ! Object.keys( this.props.files ).length ) {
 			return (
 				<FileListPlaceholder type='empty'>
 					Nothing to see here.

@@ -31,9 +31,8 @@ class FileOptionsStyles extends FileOptions {
 		if ( this.isPartial() ) {
 			return (
 				<div id='file-options' className='file-options-style'>
-					<div className='header'>
-						<strong>{ this.props.file.name }</strong>
-					</div>
+					{ this.renderHeader() }
+
 					<div className='body'>
 						<p>This is a partial file, it cannot be compiled by itself.</p>
 					</div>
@@ -43,9 +42,7 @@ class FileOptionsStyles extends FileOptions {
 
 		return (
 			<div id='file-options' className='file-options-style'>
-				<div className='header'>
-					<strong>{ this.props.file.name }</strong>
-				</div>
+				{ this.renderHeader() }
 
 				<div className='body'>
 					<FieldSaveFile
@@ -103,9 +100,7 @@ class FileOptionsStyles extends FileOptions {
 					/>
 				</div>
 
-				<div className='footer'>
-					{ this.renderButton() }
-				</div>
+				{ this.renderFooter() }
 			</div>
 		);
 	}

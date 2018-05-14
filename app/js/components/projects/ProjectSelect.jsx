@@ -8,6 +8,10 @@ const fspath = require('path');
 
 const React = require('react');
 
+const { connect } = require('react-redux');
+
+const { changeProject, removeProject } = require('../../actions');
+
 class ProjectSelect extends React.Component {
 	constructor( props ) {
 		super( props );
@@ -37,14 +41,10 @@ class ProjectSelect extends React.Component {
 		if ( index === 'new' ) {
 			this.newProject();
 		} else {
-			this.changeProject( index );
+			this.props.changeProject( index );
 		}
 
 		this.toggleSelect();
-	}
-
-	changeProject( index ) {
-		this.props.setActiveProject( index );
 	}
 
 	newProject() {
@@ -86,10 +86,11 @@ class ProjectSelect extends React.Component {
 		let confirmRemove = window.confirm( 'Are you sure you want to remove ' + this.props.active.name + '?' );
 
 		if ( confirmRemove ) {
-			let remaining = this.props.projects.filter( project => project.path !== this.props.active.path );
+			this.props.removeProject( this.props.active.id );
+			// let remaining = this.props.projects.filter( project => project.path !== this.props.active.path );
 
-			this.props.setProjects( remaining );
-			this.props.setActiveProject( null );
+			// this.props.setProjects( remaining );
+			// this.props.setActiveProject( null );
 		}
 	}
 
@@ -156,4 +157,13 @@ class ProjectSelect extends React.Component {
 	}
 }
 
-module.exports = ProjectSelect;
+const mapStateToProps = ( state ) => ({
+	projects: state.projects
+});
+
+const mapDispatchToProps = ( dispatch ) => ({
+	changeProject: id => dispatch( changeProject( id ) ),
+	removeProject: id => dispatch( removeProject( id ) )
+});
+
+module.exports = connect( mapStateToProps, mapDispatchToProps )( ProjectSelect );

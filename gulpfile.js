@@ -81,7 +81,7 @@ gulp.task( 'build-client-js', ( done ) => {
 					bundleExternal: false,
 					debug: true
 				} )
-				.transform( 'babelify', { presets: [ 'es2015', 'react' ] } )
+				.transform( 'babelify' )
 				.bundle()
 				.pipe( source( entry ) )
 				.pipe( rename( {

@@ -165,15 +165,25 @@ class FileOptions extends React.Component {
 		);
 	}
 
-	renderButton() {
+	renderHeader() {
 		return (
-			<button
-				className='compile green'
-				onClick={ this.handleCompile }
-				disabled={ this.state.loading }
-			>
-				{ this.state.loading ? 'Compiling...' : 'Compile' }
-			</button>
+			<div className='header'>
+				<strong>{ this.props.file.name }</strong>
+			</div>
+		);
+	}
+
+	renderFooter() {
+		return (
+			<div className='footer'>
+				<button
+					className='compile green'
+					onClick={ this.handleCompile }
+					disabled={ this.state.loading }
+				>
+					{ this.state.loading ? 'Compiling...' : 'Compile' }
+				</button>
+			</div>
 		);
 	}
 

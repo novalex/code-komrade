@@ -24,7 +24,17 @@ const { createStore } = require('redux');
 
 const rootReducer = require('./reducers');
 
-const store = createStore( rootReducer );
+// let initialState = {
+// 	view: 'files',
+// 	projects: {},
+// 	activeProject: 0,
+// 	activeProjectFiles: {},
+// 	selectedFile: null
+// };
+
+const store = createStore( rootReducer ); // , initialState );
+
+global.store = store;
 
 const App = require('./components/App');
 

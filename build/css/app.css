@@ -193,7 +193,7 @@ a {
   cursor: pointer;
   text-indent: -9999px;
   opacity: 1;
-  background: #3c3c3c;
+  background: #999999;
   border-radius: 16px;
   transition: opacity 0.2s, background-color 0.2s; }
   .field-switch label:before {
@@ -564,7 +564,6 @@ body.overlay {
       opacity: 0;
       border-style: solid;
       transition: opacity 0.1s, transform 0.1s;
-      transition-delay: 0.175s;
       z-index: 1; }
     #files li:before {
       top: -1px;
@@ -577,8 +576,7 @@ body.overlay {
       border-color: transparent #f4f4f4 transparent transparent; }
     #files li.has-options:before, #files li.has-options:after {
       opacity: 1;
-      transform: translate(0, 0);
-      transition-delay: 0; }
+      transform: translate(0, 0); }
   #files .filename {
     height: 42px;
     line-height: 42px;
