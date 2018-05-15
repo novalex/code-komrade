@@ -41,8 +41,7 @@ if ( initialProjects.length && global.config.has('active-project') ) {
 const activeProject = ( active = initialActive, action ) => {
 	switch ( action.type ) {
 		case 'CHANGE_PROJECT':
-			/* global store */
-			let projects = store.getState().projects;
+			let projects = global.store.getState().projects;
 
 			if ( Array.isArray( projects ) && projects[ action.id ] ) {
 				return {

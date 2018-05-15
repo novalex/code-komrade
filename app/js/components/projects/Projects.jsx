@@ -150,7 +150,7 @@ class Projects extends React.Component {
 			this.setState({
 				loading: false
 			}, function() {
-				// global.store.dispatch( receiveFiles( files ) );
+				global.store.dispatch( receiveFiles( files ) );
 			});
 
 			global.ui.loading( false );
@@ -218,4 +218,8 @@ const mapStateToProps = ( state ) => ({
 	files: state.activeProjectFiles
 });
 
-module.exports = connect( mapStateToProps, null )( Projects );
+const mapDispatchToProps = ( dispatch ) => ({
+	changeView: view => dispatch( changeView( view ) )
+});
+
+module.exports = connect( mapStateToProps, mapDispatchToProps )( Projects );
