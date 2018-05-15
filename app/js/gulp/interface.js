@@ -79,7 +79,7 @@ function processFile( base, fileConfig, taskName = null, callback = null ) {
 	if ( taskName ) {
 		runTask( taskName, options, callback );
 	} else if ( options.autocompile ) {
-		if ( options.watchTask && options.watchTask === 'build-sass' ) {
+		if ( options.watchTask ) {
 			options.getImports = true;
 		}
 

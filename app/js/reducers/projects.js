@@ -11,10 +11,14 @@ if ( global.config.has('projects') ) {
 const projects = ( projects = initialProjects, action ) => {
 	switch ( action.type ) {
 		case 'ADD_PROJECT':
-			return [
+			let newProjects = [
 				...projects,
 				action.payload
 			];
+
+			global.config.set( 'projects', newProjects );
+
+			return newProjects;
 		case 'REMOVE_PROJECT':
 			return projects.filter( ( project, index ) => index !== action.id );
 		default:
@@ -41,16 +45,14 @@ if ( initialProjects.length && global.config.has('active-project') ) {
 const activeProject = ( active = initialActive, action ) => {
 	switch ( action.type ) {
 		case 'CHANGE_PROJECT':
-			let projects = global.store.getState().projects;
+			global.config.set( 'active-project', action.payload.id );
 
-			if ( Array.isArray( projects ) && projects[ action.id ] ) {
-				return {
-					...projects[ action.id ],
-					id: action.id
-				};
-			} else {
-				return active;
-			}
+			return action.payload;
+		case 'SET_PROJECT_STATE':
+			return {
+				...active,
+				...action.payload
+			};
 		default:
 			return active;
 	}

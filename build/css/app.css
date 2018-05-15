@@ -193,7 +193,7 @@ a {
   cursor: pointer;
   text-indent: -9999px;
   opacity: 1;
-  background: #999999;
+  background: #666666;
   border-radius: 16px;
   transition: opacity 0.2s, background-color 0.2s; }
   .field-switch label:before {
@@ -440,12 +440,6 @@ input[type="submit"] {
     #project-select-dropdown > div:last-child {
       border-bottom-width: 0; }
 
-#root {
-  min-width: 800px;
-  padding: 20px 30px;
-  padding-left: 114px;
-  padding-right: 350px; }
-
 ::-webkit-scrollbar {
   background-color: #fff;
   width: 4px; }
@@ -456,6 +450,21 @@ input[type="submit"] {
 
 body.overlay {
   overflow: hidden; }
+
+html,
+body,
+#root,
+#app,
+#content-wrap {
+  height: 100%; }
+
+#root {
+  min-width: 800px;
+  padding: 20px 30px;
+  padding-left: 114px; }
+
+#content-wrap {
+  position: relative; }
 
 #sidebar,
 #content,
@@ -491,11 +500,26 @@ body.overlay {
 
 .no-content {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  cursor: default;
-  color: #777;
-  transform: translate(-50%, -50%); }
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; }
+  .no-content .inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    cursor: default;
+    text-align: center;
+    color: #777;
+    transform: translate(-50%, -50%); }
+  .no-content h1:not(:last-child), .no-content h2:not(:last-child), .no-content h3:not(:last-child), .no-content h4:not(:last-child), .no-content h5:not(:last-child), .no-content h6:not(:last-child), .no-content p:not(:last-child) {
+    margin-bottom: 20px; }
+
+.welcome-screen {
+  background-image: url("../res/img/package.svg");
+  background-repeat: no-repeat;
+  background-size: 256px;
+  background-position: 80% 80%; }
 
 #panel {
   position: fixed;
@@ -537,6 +561,9 @@ body.overlay {
   #file-options .body,
   #file-options .footer {
     border-top: 1px solid #e6e6e6; }
+
+#projects {
+  padding-right: 350px; }
 
 #files {
   border-left: 1px solid #e6e6e6;

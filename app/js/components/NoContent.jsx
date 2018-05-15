@@ -6,8 +6,10 @@ const React = require('react');
 
 module.exports = function( props ) {
 	return (
-		<div className='no-content'>
-			{ props.children }
+		<div className={ 'no-content ' + props.className }>
+			<div className='inner'>
+				{ props.children }
+			</div>
 		</div>
 	);
 }

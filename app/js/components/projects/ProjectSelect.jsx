@@ -2,15 +2,13 @@
  * @file Component for the project selector.
  */
 
-const { dialog } = require('electron').remote;
-
-const fspath = require('path');
-
 const React = require('react');
 
 const { connect } = require('react-redux');
 
-const { changeProject, removeProject } = require('../../actions');
+const { setProjectState } = require('../../actions');
+
+const { setProjectConfig } = require('../../utils/utils');
 
 class ProjectSelect extends React.Component {
 	constructor( props ) {
@@ -20,10 +18,9 @@ class ProjectSelect extends React.Component {
 			isOpen: false
 		};
 
-		this.newProject = this.newProject.bind( this );
-		this.removeProject = this.removeProject.bind( this );
 		this.toggleSelect = this.toggleSelect.bind( this );
 		this.selectProject = this.selectProject.bind( this );
+		this.toggleProject = this.toggleProject.bind( this );
 	}
 
 	toggleSelect() {
@@ -34,64 +31,25 @@ class ProjectSelect extends React.Component {
 		});
 	}
 
+	toggleProject() {
+		let paused = ! this.props.active.paused || false;
+
+		this.props.setProjectState({ paused: paused });
+
+		setProjectConfig( 'paused', paused );
+	}
+
 	selectProject( event ) {
 		event.persist();
 		let index = event.currentTarget.dataset.project;
 
 		if ( index === 'new' ) {
-			this.newProject();
+			this.props.newProject();
 		} else {
 			this.props.changeProject( index );
 		}
 
 		this.toggleSelect();
-	}
-
-	newProject() {
-		let path = dialog.showOpenDialog({
-			properties: [ 'openDirectory' ]
-		});
-
-		if ( path ) {
-			let projects = this.props.projects;
-
-			let newProject = {
-				name: fspath.basename( path[0] ),
-				path: path[0],
-				paused: false
-			};
-
-			if ( projects.findIndex( project => project.path === newProject.path ) !== -1 ) {
-				// Project already exists.
-				return;
-			}
-
-			projects.push( newProject );
-
-			this.props.setProjects( projects );
-
-			let activeIndex = projects.length - 1;
-
-			if ( projects[ activeIndex ] ) {
-				this.props.setActiveProject( activeIndex );
-			} else {
-				window.alert( 'There was a problem changing the active project.' );
-			}
-		}
-	}
-
-	removeProject( event ) {
-		event.preventDefault();
-
-		let confirmRemove = window.confirm( 'Are you sure you want to remove ' + this.props.active.name + '?' );
-
-		if ( confirmRemove ) {
-			this.props.removeProject( this.props.active.id );
-			// let remaining = this.props.projects.filter( project => project.path !== this.props.active.path );
-
-			// this.props.setProjects( remaining );
-			// this.props.setActiveProject( null );
-		}
 	}
 
 	renderChoices() {
@@ -115,16 +73,7 @@ class ProjectSelect extends React.Component {
 	}
 
 	render() {
-		if ( ! this.props.projects || this.props.projects.length === 0 ) {
-			return (
-				<div id='project-select'>
-					<div id='project-active' onClick={ this.newProject }>
-						<h1>No Project Selected</h1>
-						<h2>Click here to add one...</h2>
-					</div>
-				</div>
-			);
-		} else if ( ! this.props.active.name || ! this.props.active.path ) {
+		if ( ! this.props.active.name || ! this.props.active.path ) {
 			return (
 				<div id='project-select'>
 					<div id='project-active' onClick={ this.toggleSelect }>
@@ -145,9 +94,9 @@ class ProjectSelect extends React.Component {
 					<h2>{ this.props.active.path }</h2>
 				</div>
 				<div id='project-actions'>
-					<a href='#' className={ 'toggle' + ( this.props.active.paused ? ' paused' : ' active' ) } onClick={ this.props.toggleProject } />
+					<a href='#' className={ 'toggle' + ( this.props.active.paused ? ' paused' : ' active' ) } onClick={ this.toggleProject } />
 					<a href='#' className='refresh' onClick={ this.props.refreshProject } />
-					<a href='#' className='remove' onClick={ this.removeProject } />
+					<a href='#' className='remove' onClick={ this.props.removeProject } />
 				</div>
 				<div id='project-select-dropdown' className={ this.state.isOpen ? 'open' : '' }>
 					{ this.renderChoices() }
@@ -158,12 +107,12 @@ class ProjectSelect extends React.Component {
 }
 
 const mapStateToProps = ( state ) => ({
-	projects: state.projects
+	projects: state.projects,
+	active: state.activeProject
 });
 
 const mapDispatchToProps = ( dispatch ) => ({
-	changeProject: id => dispatch( changeProject( id ) ),
-	removeProject: id => dispatch( removeProject( id ) )
+	setProjectState: state => dispatch( setProjectState( state ) )
 });
 
 module.exports = connect( mapStateToProps, mapDispatchToProps )( ProjectSelect );

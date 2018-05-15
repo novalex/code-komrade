@@ -4,11 +4,17 @@
 
 const _debounce = require('lodash/debounce');
 
+const { dialog } = require('electron').remote;
+
+const fspath = require('path');
+
 const React = require('react');
 
 const { connect } = require('react-redux');
 
 const Store = require('electron-store');
+
+const NoContent = require('../NoContent');
 
 const Notice = require('../ui/Notice');
 
@@ -22,7 +28,7 @@ const directoryTree = require('../../utils/directoryTree');
 
 const Logger = require('../../utils/Logger');
 
-const { receiveFiles } = require('../../actions');
+const { addProject, removeProject, changeProject, receiveFiles } = require('../../actions');
 
 class Projects extends React.Component {
 	constructor( props ) {
@@ -38,18 +44,83 @@ class Projects extends React.Component {
 			loading: false
 		};
 
-		this.setProjects = this.setProjects.bind( this );
-		this.initCompiler = this.initCompiler.bind( this );
-		this.toggleProject = this.toggleProject.bind( this );
+		this.newProject = this.newProject.bind( this );
+		this.setupProject = this.setupProject.bind( this );
+		this.changeProject = this.changeProject.bind( this );
 		this.refreshProject = this.refreshProject.bind( this );
-		this.setActiveProject = this.setActiveProject.bind( this );
+
+		this.initCompiler = this.initCompiler.bind( this );
 
 		document.addEventListener( 'bd/refresh/files', this.refreshProject );
 	}
 
 	componentDidMount() {
 		if ( this.props.active.path ) {
-			this.setProjectPath( this.props.active.path );
+			this.setupProject( this.props.active.path );
+		}
+	}
+
+	componentDidUpdate( prevProps, prevState ) {
+		if ( prevProps.active.paused !== this.props.active.paused ) {
+			this.initCompiler();
+		}
+	}
+
+	// Add a new project.
+	newProject() {
+		let path = dialog.showOpenDialog({
+			properties: [ 'openDirectory' ]
+		});
+
+		if ( path ) {
+			let newProject = {
+				name: fspath.basename( path[0] ),
+				path: path[0],
+				paused: false
+			};
+
+			if ( this.props.projects.findIndex( project => project.path === newProject.path ) !== -1 ) {
+				// Project already exists.
+				return;
+			}
+
+			// Save new project to config.
+			this.props.addProject( newProject );
+
+			// Set new project as active.
+			this.props.changeProject({
+				...newProject,
+				id: this.props.projects.length
+			});
+
+			// Project setup.
+			this.setupProject( newProject.path );
+		}
+	}
+
+	// Chnage the active project.
+	changeProject( id ) {
+		if ( this.props.projects[ id ] ) {
+			let active = this.props.projects[ id ];
+
+			this.props.changeProject({
+				...active,
+				id
+			});
+
+			this.setupProject( active.path );
+		}
+	}
+
+	// Remove the current project.
+	removeProject( event ) {
+		event.preventDefault();
+
+		let confirmRemove = window.confirm( 'Are you sure you want to remove ' + this.props.active.name + '?' );
+
+		if ( confirmRemove ) {
+			this.props.removeProject( this.props.active.id );
+			this.changeProject( null );
 		}
 	}
 
@@ -61,70 +132,8 @@ class Projects extends React.Component {
 		}
 	}
 
-	setProjects( projects ) {
-		this.setState({
-			projects
-		});
-
-		global.config.set( 'projects', projects );
-	}
-
-	toggleProject() {
-		this.setState( function( prevState ) {
-			let paused = prevState.active.paused || false;
-			let newState = Object.assign( {}, prevState );
-
-			newState.active.paused = ! paused;
-
-			return newState;
-		}, function() {
-			this.setProjectConfig( 'paused', this.props.active.paused );
-
-			this.initCompiler();
-		});
-	}
-
 	refreshProject() {
 		this.getFiles( this.props.active.path );
-	}
-
-	setActiveProject( index = null ) {
-		if ( index === null ) {
-			this.setState({
-				active: {
-					name: '',
-					path: '',
-					paused: false
-				}
-			});
-
-			return;
-		}
-
-		let active = this.props.projects[ index ];
-
-		if ( active && active.path !== this.props.active.path ) {
-			this.setState({
-				active
-			}, function() {
-				this.setProjectPath( active.path );
-			});
-
-			global.config.set( 'active-project', index );
-		}
-	}
-
-	setProjectConfig( property, value ) {
-		let projects = global.config.get('projects');
-		let activeIndex = global.config.get('active-project');
-
-		if ( Array.isArray( projects ) && projects[ activeIndex ] ) {
-			projects[ activeIndex ][ property ] = value;
-
-			global.config.set( 'projects', projects );
-		} else {
-			window.alert( 'There was a problem saving the project config.' );
-		}
 	}
 
 	setProjectConfigFile( path ) {
@@ -157,7 +166,7 @@ class Projects extends React.Component {
 		}.bind( this ));
 	}
 
-	setProjectPath( path ) {
+	setupProject( path ) {
 		this.getFiles( path );
 
 		this.setProjectConfigFile( path );
@@ -183,16 +192,25 @@ class Projects extends React.Component {
 	}
 
 	render() {
+		if ( ! this.props.projects || this.props.projects.length === 0 ) {
+			// No projects yet, show welcome screen.
+			return (
+				<NoContent className='welcome-screen'>
+					<h3>You don't have any projects yet.</h3>
+					<p>Would you like to add one now?</p>
+					<button className='add-new-project' onClick={ this.newProject }>Add Project</button>
+				</NoContent>
+			);
+		}
+
 		return (
-			<React.Fragment>
+			<div id='projects'>
 				<div id='header'>
 					<ProjectSelect
-						active={ this.props.active }
-						projects={ this.props.projects }
-						setProjects={ this.setProjects }
-						toggleProject={ this.toggleProject }
+						newProject={ this.newProject }
+						setupProject={ this.setupProject }
+						changeProject={ this.changeProject }
 						refreshProject={ this.refreshProject }
-						setActiveProject={ this.setActiveProject }
 					/>
 				</div>
 
@@ -207,7 +225,7 @@ class Projects extends React.Component {
 				</div>
 
 				<Panel />
-			</React.Fragment>
+			</div>
 		);
 	}
 }
@@ -219,7 +237,9 @@ const mapStateToProps = ( state ) => ({
 });
 
 const mapDispatchToProps = ( dispatch ) => ({
-	changeView: view => dispatch( changeView( view ) )
+	addProject: payload => dispatch( addProject( payload ) ),
+	changeProject: id => dispatch( changeProject( id ) ),
+	removeProject: id => dispatch( removeProject( id ) )
 });
 
 module.exports = connect( mapStateToProps, mapDispatchToProps )( Projects );

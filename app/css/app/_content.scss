@@ -1,10 +1,3 @@
-#root {
-	min-width: $size__min-width;
-	padding: $spacing__content $spacing__content-l;
-	padding-left: $size__sidebar + $spacing__content-l;
-	padding-right: $size__panel + $spacing__content-l;
-}
-
 ::-webkit-scrollbar {     
 	background-color: $color__bg;
 	width: 4px;
@@ -19,6 +12,24 @@ body {
 	&.overlay {
 		overflow: hidden;
 	}
+}
+
+html,
+body,
+#root,
+#app,
+#content-wrap {
+	height: 100%;
+}
+
+#root {
+	min-width: $size__min-width;
+	padding: $spacing__content $spacing__content-l;
+	padding-left: $size__sidebar + $spacing__content-l;
+}
+
+#content-wrap {
+	position: relative;
 }
 
 #sidebar,
@@ -38,7 +49,6 @@ body {
 }
 
 // Overlay.
-
 #overlay {
 	position: fixed;
 	top: 0;
@@ -58,9 +68,32 @@ body {
 // No content.
 .no-content {
 	position: absolute;
-	top: 50%;
-	left: 50%;
-	cursor: default;
-	color: $color__text-light;
-	transform: translate(-50%, -50%);
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+
+	.inner {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		cursor: default;
+		text-align: center;
+		color: $color__text-light;
+		transform: translate(-50%, -50%);
+	}
+
+	h1, h2, h3, h4, h5, h6, p {
+		&:not(:last-child) {
+			margin-bottom: $spacing__content;
+		}
+	}
+}
+
+// Welcome screen.
+.welcome-screen {
+	background-image: url( '#{$path__res}/img/package.svg' );
+	background-repeat: no-repeat;
+	background-size: 256px;
+	background-position: 80% 80%;
 }

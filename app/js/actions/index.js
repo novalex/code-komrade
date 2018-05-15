@@ -13,21 +13,17 @@ function changeView( view ) {
 
 // Projects.
 
-function addProject( name, path ) {
+function addProject( project ) {
 	return {
 		type: 'ADD_PROJECT',
-		payload: {
-			id: path,
-			name,
-			path
-		}
+		payload: project
 	};
 }
 
-function changeProject( id ) {
+function changeProject( project ) {
 	return {
 		type: 'CHANGE_PROJECT',
-		id
+		payload: project
 	}
 }
 
@@ -35,6 +31,13 @@ function removeProject( id ) {
 	return {
 		type: 'REMOVE_PROJECT',
 		id
+	}
+}
+
+function setProjectState( state ) {
+	return {
+		type: 'SET_PROJECT_STATE',
+		payload: state
 	}
 }
 
@@ -52,5 +55,6 @@ module.exports = {
 	addProject,
 	changeProject,
 	removeProject,
+	setProjectState,
 	receiveFiles
 };

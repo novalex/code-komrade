@@ -50,12 +50,16 @@ const fileConfig = config.files.filter( _config => {
 
 if ( arg.getImports ) {
 	// Get imported files.
-	let graph = sassGraph.parseFile( arg.input );
+	if ( arg.watchTask === 'build-sass' ) {
+		let graph = sassGraph.parseFile( arg.input );
 
-	if ( graph && graph.index ) {
-		for ( var file in graph.index ) {
-			watchFiles.push( file );
+		if ( graph && graph.index ) {
+			for ( var file in graph.index ) {
+				watchFiles.push( file );
+			}
 		}
+	} else if ( arg.watchTask === 'build-js' ) {
+		watchFiles.push( arg.input );
 	}
 }
 

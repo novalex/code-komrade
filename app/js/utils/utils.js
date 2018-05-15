@@ -11,6 +11,20 @@ function sleep(milliseconds) {
 	}
 }
 
+function setProjectConfig( property, value ) {
+	let projects = global.config.get('projects');
+	let activeIndex = global.config.get('active-project');
+
+	if ( Array.isArray( projects ) && projects[ activeIndex ] ) {
+		projects[ activeIndex ][ property ] = value;
+
+		global.config.set( 'projects', projects );
+	} else {
+		window.alert( 'There was a problem saving the project config.' );
+	}
+}
+
 module.exports = {
-	sleep
+	sleep,
+	setProjectConfig
 };

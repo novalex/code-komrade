@@ -14,8 +14,6 @@ const Logs = require('./projects/Logs');
 
 const Projects = require('./projects/Projects');
 
-const { overlay } = require('../utils/globalUI');
-
 class App extends React.Component {
 	constructor( props ) {
 		super( props );
@@ -28,7 +26,7 @@ class App extends React.Component {
 	}
 
 	renderOverlay() {
-		overlay( this.props.view !== 'files' );
+		global.ui.overlay( this.props.view !== 'files' );
 
 		if ( this.props.view === 'files' ) {
 			return '';
@@ -57,9 +55,7 @@ class App extends React.Component {
 	render() {
 		return (
 			<div id='app'>
-				<Sidebar
-					items={ this.views }
-				/>
+				<Sidebar items={ this.views } />
 
 				<div id='content-wrap'>
 					<Projects />
@@ -72,7 +68,8 @@ class App extends React.Component {
 }
 
 const mapStateToProps = ( state ) => ({
-	view: state.view
+	view: state.view,
+	projects: state.projects
 });
 
 module.exports = connect( mapStateToProps, null )( App );
