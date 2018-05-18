@@ -84,7 +84,7 @@ class FileOptions extends React.Component {
 			let fileConfig = {
 				path: filePath,
 				type: this.state.fileType,
-				output: this.defaultOutputPath()
+				output: fileRelativePath( this.props.base, this.defaultOutputPath() )
 			};
 
 			if ( typeof( value ) !== 'undefined' && value !== null ) {

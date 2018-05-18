@@ -9,9 +9,11 @@ if ( global.config.has('projects') ) {
 }
 
 const projects = ( projects = initialProjects, action ) => {
+	let newProjects;
+
 	switch ( action.type ) {
 		case 'ADD_PROJECT':
-			let newProjects = [
+			newProjects = [
 				...projects,
 				action.payload
 			];
@@ -20,7 +22,11 @@ const projects = ( projects = initialProjects, action ) => {
 
 			return newProjects;
 		case 'REMOVE_PROJECT':
-			return projects.filter( ( project, index ) => index !== action.id );
+			newProjects = projects.filter( ( project, index ) => index !== action.id );
+
+			global.config.set( 'projects', newProjects );
+
+			return newProjects;
 		default:
 			return projects;
 	}

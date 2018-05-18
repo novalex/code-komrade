@@ -90,8 +90,9 @@ body,
 	}
 }
 
-// Welcome screen.
-.welcome-screen {
+// Welcome/Project select screen.
+.welcome-screen,
+.project-select-screen {
 	overflow: hidden;
 
 	$icon-size: 512px;

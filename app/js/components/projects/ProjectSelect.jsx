@@ -24,11 +24,9 @@ class ProjectSelect extends React.Component {
 	}
 
 	toggleSelect() {
-		this.setState( function( prevState ) {
-			global.ui.unfocus( ! prevState.isOpen );
+		global.ui.unfocus( ! this.state.isOpen );
 
-			return { isOpen: ! prevState.isOpen };
-		});
+		this.setState({ isOpen: ! this.state.isOpen });
 	}
 
 	toggleProject() {
@@ -43,13 +41,13 @@ class ProjectSelect extends React.Component {
 		event.persist();
 		let index = event.currentTarget.dataset.project;
 
+		this.toggleSelect();
+
 		if ( index === 'new' ) {
 			this.props.newProject();
 		} else {
 			this.props.changeProject( index );
 		}
-
-		this.toggleSelect();
 	}
 
 	renderChoices() {

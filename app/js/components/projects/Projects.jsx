@@ -2,11 +2,13 @@
  * @file Component for the projects view.
  */
 
+const fs = require('fs');
+
+const fspath = require('path');
+
 const _debounce = require('lodash/debounce');
 
 const { dialog } = require('electron').remote;
-
-const fspath = require('path');
 
 const React = require('react');
 
@@ -47,6 +49,7 @@ class Projects extends React.Component {
 		this.newProject = this.newProject.bind( this );
 		this.setupProject = this.setupProject.bind( this );
 		this.changeProject = this.changeProject.bind( this );
+		this.removeProject = this.removeProject.bind( this );
 		this.refreshProject = this.refreshProject.bind( this );
 
 		this.initCompiler = this.initCompiler.bind( this );
@@ -100,26 +103,33 @@ class Projects extends React.Component {
 
 	// Chnage the active project.
 	changeProject( id ) {
+		let active = {
+			name: '',
+			path: '',
+			paused: true
+		};
+
 		if ( this.props.projects[ id ] ) {
-			let active = this.props.projects[ id ];
-
-			this.props.changeProject({
-				...active,
-				id
-			});
-
-			this.setupProject( active.path );
+			active = this.props.projects[ id ];
 		}
+
+		this.props.changeProject({
+			...active,
+			id
+		});
+
+		this.setupProject( active.path );
 	}
 
 	// Remove the current project.
 	removeProject( event ) {
 		event.preventDefault();
 
-		let confirmRemove = window.confirm( 'Are you sure you want to remove ' + this.props.active.name + '?' );
+		let confirmRemove = window.confirm( `Are you sure you want to remove ${this.props.active.name}?` );
 
 		if ( confirmRemove ) {
 			this.props.removeProject( this.props.active.id );
+
 			this.changeProject( null );
 		}
 	}
@@ -167,16 +177,44 @@ class Projects extends React.Component {
 	}
 
 	setupProject( path ) {
-		this.getFiles( path );
+		fs.open( path, 'r+', 0o666, function( err, stats ) {
+			if ( err ) {
+				// Chosen directory not readable or no path provided.
+				if ( path ) {
+					window.alert( `Could not read the ${path} directory.` );
+				}
 
-		this.setProjectConfigFile( path );
+				global.projectConfig = null;
 
-		// Change process cwd.
-		process.chdir( path );
+				global.store.dispatch( receiveFiles( {} ) );
+
+				global.compiler.killTasks();
+			} else {
+				// Directory is readable, get files and setup config.
+				this.getFiles( path );
+
+				this.setProjectConfigFile( path );
+
+				// Change process cwd.
+				process.chdir( path );
+
+				this.initCompiler();
+			}
+		}.bind( this ));
 
 		global.logger = new Logger();
+	}
 
-		this.initCompiler();
+	renderProjectSelect() {
+		return (
+			<ProjectSelect
+				newProject={ this.newProject }
+				setupProject={ this.setupProject }
+				changeProject={ this.changeProject }
+				removeProject={ this.removeProject }
+				refreshProject={ this.refreshProject }
+			/>
+		);
 	}
 
 	renderNotices() {
@@ -201,17 +239,19 @@ class Projects extends React.Component {
 					<button className='large flat add-new-project' onClick={ this.newProject }>Add Project</button>
 				</NoContent>
 			);
+		} else if ( ! this.props.active.name || ! this.props.active.path ) {
+			// No project selected, show selector.
+			return (
+				<NoContent className='project-select-screen'>
+					{ this.renderProjectSelect() }
+				</NoContent>
+			);
 		}
 
 		return (
 			<div id='projects'>
 				<div id='header'>
-					<ProjectSelect
-						newProject={ this.newProject }
-						setupProject={ this.setupProject }
-						changeProject={ this.changeProject }
-						refreshProject={ this.refreshProject }
-					/>
+					{ this.renderProjectSelect() }
 				</div>
 
 				<div id='content'>

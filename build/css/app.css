@@ -615,9 +615,11 @@ body,
   .no-content h1:not(:last-child), .no-content h2:not(:last-child), .no-content h3:not(:last-child), .no-content h4:not(:last-child), .no-content h5:not(:last-child), .no-content h6:not(:last-child), .no-content p:not(:last-child) {
     margin-bottom: 20px; }
 
-.welcome-screen {
+.welcome-screen,
+.project-select-screen {
   overflow: hidden; }
-  .welcome-screen:before {
+  .welcome-screen:before,
+  .project-select-screen:before {
     content: '';
     width: 512px;
     height: 512px;

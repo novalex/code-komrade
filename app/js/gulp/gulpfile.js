@@ -8,7 +8,7 @@ const source = require('vinyl-source-stream');
 const plugins = require('gulp-load-plugins')();
 const browserify = require('browserify');
 
-// fetch command line arguments.
+// Fetch command line arguments.
 const arg = ( argList => {
 	let arg = {}, a, opt, thisOpt, curOpt;
 	for ( a = 0; a < argList.length; a++ ) {
@@ -38,6 +38,7 @@ let watchFiles = [];
 
 const modulesPath = path.join( arg.cwd, 'node_modules' );
 const sassGraph = require( path.join( modulesPath, 'sass-graph' ) );
+const dependencyTree = require( path.join( modulesPath, 'dependency-tree' ) );
 
 const jsPath = path.join( arg.cwd, 'app', 'js' );
 const { slash, fileAbsolutePath, fileRelativePath } = require( path.join( jsPath, 'utils', 'pathHelpers.js' ) );
@@ -59,6 +60,11 @@ if ( arg.getImports ) {
 			}
 		}
 	} else if ( arg.watchTask === 'build-js' ) {
+		let depTree = dependencyTree({
+			filename: arg.input,
+			directory: arg.projectBase
+		});
+		console.log( depTree );
 		watchFiles.push( arg.input );
 	}
 }
