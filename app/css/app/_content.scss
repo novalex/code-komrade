@@ -24,12 +24,12 @@ body,
 
 #root {
 	min-width: $size__min-width;
-	padding: $spacing__content $spacing__content-l;
-	padding-left: $size__sidebar + $spacing__content-l;
+	padding-left: $size__sidebar;
 }
 
 #content-wrap {
 	position: relative;
+	padding: $spacing__content $spacing__content-l;
 }
 
 #sidebar,
@@ -92,8 +92,42 @@ body,
 
 // Welcome screen.
 .welcome-screen {
-	background-image: url( '#{$path__res}/img/package.svg' );
-	background-repeat: no-repeat;
-	background-size: 256px;
-	background-position: 80% 80%;
+	overflow: hidden;
+
+	$icon-size: 512px;
+
+	&:before {
+		content: '';
+		width: $icon-size;
+		height: $icon-size;
+		position: absolute;
+		bottom: $icon-size / -4;
+		right: $icon-size / -4;
+		opacity: 0.05;
+		background-image: url( '#{$path__res}/img/package.svg' );
+		background-repeat: no-repeat;
+		background-size: $icon-size;
+		background-position: center;
+	}
+}
+
+// Logs screen.
+.logs-screen {
+	overflow: hidden;
+
+	$icon-size: 512px;
+
+	&:before {
+		content: '';
+		width: $icon-size;
+		height: $icon-size;
+		position: absolute;
+		bottom: $icon-size / -4;
+		right: $icon-size / -4;
+		opacity: 0.05;
+		background-image: url( '#{$path__res}/img/terminal.svg' );
+		background-repeat: no-repeat;
+		background-size: $icon-size;
+		background-position: center;
+	}
 }

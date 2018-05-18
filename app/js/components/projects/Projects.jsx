@@ -198,7 +198,7 @@ class Projects extends React.Component {
 				<NoContent className='welcome-screen'>
 					<h3>You don't have any projects yet.</h3>
 					<p>Would you like to add one now?</p>
-					<button className='add-new-project' onClick={ this.newProject }>Add Project</button>
+					<button className='large flat add-new-project' onClick={ this.newProject }>Add Project</button>
 				</NoContent>
 			);
 		}

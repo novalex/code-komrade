@@ -52,6 +52,18 @@ input, textarea, select, button {
 a {
   text-decoration: none; }
 
+/**
+ * Calculate the luminance for a color.
+ * See https://www.w3.org/TR/WCAG20-TECHS/G17.html#G17-tests
+ */
+/**
+ * Calculate the contrast ratio between two colors.
+ * See https://www.w3.org/TR/WCAG20-TECHS/G17.html#G17-tests
+ */
+/**
+ * Determine whether to use dark or light text on top of given color.
+ * Returns black for dark text and white for light text.
+ */
 @-webkit-keyframes fade {
   0% {
     opacity: 1; }
@@ -252,13 +264,13 @@ input[type="button"],
 input[type="submit"] {
   cursor: pointer;
   height: 32px;
+  padding: 0 16px;
+  opacity: 1;
   font-size: 1rem;
   line-height: 32px;
   color: #fff;
-  opacity: 1;
-  padding: 0 10px;
   background-color: #3c3c3c;
-  border: 1px solid #050505;
+  border: 1px solid #222222;
   border-radius: 4px;
   transition: background-color 0.2s, border-color 0.2s, opacity 0.2s;
   -webkit-appearance: none; }
@@ -266,17 +278,51 @@ input[type="submit"] {
   .button.outline,
   input[type="button"].outline,
   input[type="submit"].outline {
+    color: #3c3c3c;
+    border-color: #3c3c3c;
     background-color: transparent !important; }
+  button.flat,
+  .button.flat,
+  input[type="button"].flat,
+  input[type="submit"].flat {
+    border-width: 0; }
   button:disabled,
   .button:disabled,
   input[type="button"]:disabled,
   input[type="submit"]:disabled {
     opacity: 0.6;
+    cursor: default; }
+  button.loading,
+  .button.loading,
+  input[type="button"].loading,
+  input[type="submit"].loading {
     cursor: wait; }
+  button.small,
+  .button.small,
+  input[type="button"].small,
+  input[type="submit"].small {
+    height: 24px;
+    line-height: 24px;
+    padding: 0 12px; }
+  button.large,
+  .button.large,
+  input[type="button"].large,
+  input[type="submit"].large {
+    height: 42px;
+    line-height: 42px;
+    padding: 0 21px; }
+  button.extra,
+  .button.extra,
+  input[type="button"].extra,
+  input[type="submit"].extra {
+    height: 51px;
+    line-height: 51px;
+    padding: 0 25.5px; }
   button.red,
   .button.red,
   input[type="button"].red,
   input[type="submit"].red {
+    color: #fff;
     background-color: #dc3130;
     border-color: #ba201f; }
     button.red.outline,
@@ -289,6 +335,7 @@ input[type="submit"] {
   .button.green,
   input[type="button"].green,
   input[type="submit"].green {
+    color: #222;
     background-color: #5d9a0b;
     border-color: #406a08; }
     button.green.outline,
@@ -301,6 +348,7 @@ input[type="submit"] {
   .button.blue,
   input[type="button"].blue,
   input[type="submit"].blue {
+    color: #fff;
     background-color: #1d6ed6;
     border-color: #1757a9; }
     button.blue.outline,
@@ -309,6 +357,58 @@ input[type="submit"] {
     input[type="submit"].blue.outline {
       color: #1d6ed6;
       border-color: #1d6ed6; }
+  button.orange,
+  .button.orange,
+  input[type="button"].orange,
+  input[type="submit"].orange {
+    color: #222;
+    background-color: #d6851d;
+    border-color: #a96917; }
+    button.orange.outline,
+    .button.orange.outline,
+    input[type="button"].orange.outline,
+    input[type="submit"].orange.outline {
+      color: #d6851d;
+      border-color: #d6851d; }
+  button.black,
+  .button.black,
+  input[type="button"].black,
+  input[type="submit"].black {
+    color: #fff;
+    background-color: #1e1e1e;
+    border-color: #050505; }
+    button.black.outline,
+    .button.black.outline,
+    input[type="button"].black.outline,
+    input[type="submit"].black.outline {
+      color: #1e1e1e;
+      border-color: #1e1e1e; }
+  button.white,
+  .button.white,
+  input[type="button"].white,
+  input[type="submit"].white {
+    color: #222;
+    background-color: #fff;
+    border-color: #e6e6e6; }
+    button.white.outline,
+    .button.white.outline,
+    input[type="button"].white.outline,
+    input[type="submit"].white.outline {
+      color: #fff;
+      border-color: #fff; }
+  button.off-white,
+  .button.off-white,
+  input[type="button"].off-white,
+  input[type="submit"].off-white {
+    color: #222;
+    background-color: #f4f4f4;
+    border-color: #dbdbdb; }
+    button.off-white.outline,
+    .button.off-white.outline,
+    input[type="button"].off-white.outline,
+    input[type="submit"].off-white.outline {
+      color: #f4f4f4;
+      border-color: #f4f4f4; }
 
 #sidebar {
   position: fixed;
@@ -460,11 +560,11 @@ body,
 
 #root {
   min-width: 800px;
-  padding: 20px 30px;
-  padding-left: 114px; }
+  padding-left: 84px; }
 
 #content-wrap {
-  position: relative; }
+  position: relative;
+  padding: 20px 30px; }
 
 #sidebar,
 #content,
@@ -516,10 +616,34 @@ body,
     margin-bottom: 20px; }
 
 .welcome-screen {
-  background-image: url("../res/img/package.svg");
-  background-repeat: no-repeat;
-  background-size: 256px;
-  background-position: 80% 80%; }
+  overflow: hidden; }
+  .welcome-screen:before {
+    content: '';
+    width: 512px;
+    height: 512px;
+    position: absolute;
+    bottom: -128px;
+    right: -128px;
+    opacity: 0.05;
+    background-image: url("../res/img/package.svg");
+    background-repeat: no-repeat;
+    background-size: 512px;
+    background-position: center; }
+
+.logs-screen {
+  overflow: hidden; }
+  .logs-screen:before {
+    content: '';
+    width: 512px;
+    height: 512px;
+    position: absolute;
+    bottom: -128px;
+    right: -128px;
+    opacity: 0.05;
+    background-image: url("../res/img/terminal.svg");
+    background-repeat: no-repeat;
+    background-size: 512px;
+    background-position: center; }
 
 #panel {
   position: fixed;
@@ -563,7 +687,7 @@ body,
     border-top: 1px solid #e6e6e6; }
 
 #projects {
-  padding-right: 350px; }
+  padding-right: 320px; }
 
 #files {
   border-left: 1px solid #e6e6e6;

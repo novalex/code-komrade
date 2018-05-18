@@ -172,31 +172,70 @@ button,
 .button,
 input[type="button"],
 input[type="submit"] {
+	$default-color: $color__border-dark;
+	$default-text-color: choose-contrast-color( $default-color, $color__text-lighter, $color__text-dark );
+
 	cursor: pointer;
 	height: $size__input;
+	padding: 0 $size__input / 2;
+	opacity: 1;
 	font-size: 1rem;
 	line-height: $size__input;
-	color: $color__text-lighter;
-	opacity: 1;
-	padding: 0 $spacing__content-s;
-	background-color: $color__border-dark;
-	border: 1px solid $color__border-darker;
+	color: $default-text-color;
+	background-color: $default-color;
+	border: 1px solid darken( $default-color, 10 );
 	border-radius: $border-radius;
 	transition: background-color 0.2s, border-color 0.2s, opacity 0.2s;
 	-webkit-appearance: none;
 
 	&.outline {
+		color: $default-color;
+		border-color: $default-color;
 		background-color: transparent !important;
+	}
+
+	&.flat {
+		border-width: 0;
 	}
 
 	&:disabled {
 		opacity: 0.6;
+		cursor: default;
+	}
+
+	&.loading {
 		cursor: wait;
 	}
 
+	// Sizes.
+	$button-sizes: (
+		'small': round( $size__input * 0.75 ),
+		'large': round( $size__input * 1.3 ),
+		'extra': round( $size__input * 1.6 )
+	);
+	@each $size_name, $size in $button-sizes {
+		&.#{$size_name} {
+			height: $size;
+			line-height: $size;
+			padding: 0 $size / 2;
+		}
+	}
+
 	// Colors.
-	@each $color_name, $color in ( 'red': $color__red, 'green': $color__green, 'blue': $color__blue ) {
+	$button-colors: (
+		'red': $color__red,
+		'green': $color__green,
+		'blue': $color__blue,
+		'orange': $color__orange,
+		'black': $color__bg-darker,
+		'white': $color__bg,
+		'off-white': $color__bg-alt
+	);
+	@each $color_name, $color in $button-colors {
 		&.#{$color_name} {
+			$text-color: choose-contrast-color( $color, $color__text-lighter, $color__text-dark );
+
+			color: $text-color;
 			background-color: $color;
 			border-color: darken( $color, 10 );
 

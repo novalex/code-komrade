@@ -57,11 +57,16 @@ class Logs extends React.Component {
 
 	render() {
 		if ( ! this.state.logs.length ) {
-			return <NoContent>No logs yet. Go forth and compile!</NoContent>;
+			return (
+				<NoContent className='logs-screen'>
+					<h3>No logs yet.</h3>
+					<p>Go forth and compile!</p>
+				</NoContent>
+			);
 		}
 
 		return (
-			<div id='logs'>
+			<div id='logs' className='logs-screen'>
 				{ this.renderChildren() }
 			</div>
 		);
