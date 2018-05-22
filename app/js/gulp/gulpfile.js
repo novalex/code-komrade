@@ -37,11 +37,11 @@ const arg = ( argList => {
 let watchFiles = [];
 
 const modulesPath = path.join( arg.cwd, 'node_modules' );
-const sassGraph = require( path.join( modulesPath, 'sass-graph' ) );
 const dependencyTree = require( path.join( modulesPath, 'dependency-tree' ) );
 
 const jsPath = path.join( arg.cwd, 'app', 'js' );
-const { slash, fileAbsolutePath, fileRelativePath } = require( path.join( jsPath, 'utils', 'pathHelpers.js' ) );
+const { getDependencyArray } = require( path.join( jsPath, 'utils', 'utils' ) );
+const { slash, fileAbsolutePath, fileRelativePath } = require( path.join( jsPath, 'utils', 'pathHelpers' ) );
 
 const config = require( arg.projectConfig );
 const fileKey = slash( fileRelativePath( arg.projectBase, arg.input ) );
@@ -51,22 +51,10 @@ const fileConfig = config.files.filter( _config => {
 
 if ( arg.getImports ) {
 	// Get imported files.
-	if ( arg.watchTask === 'build-sass' ) {
-		let graph = sassGraph.parseFile( arg.input );
-
-		if ( graph && graph.index ) {
-			for ( var file in graph.index ) {
-				watchFiles.push( file );
-			}
-		}
-	} else if ( arg.watchTask === 'build-js' ) {
-		let depTree = dependencyTree({
-			filename: arg.input,
-			directory: arg.projectBase
-		});
-		console.log( depTree );
-		watchFiles.push( arg.input );
-	}
+	watchFiles = getDependencyArray( dependencyTree({
+		filename: arg.input,
+		directory: arg.projectBase
+	}) );
 }
 
 let options = {

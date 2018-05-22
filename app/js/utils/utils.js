@@ -24,7 +24,22 @@ function setProjectConfig( property, value ) {
 	}
 }
 
+function getDependencyArray( dependencyTree ) {
+	let dependencies = [];
+
+	for ( var dependency in dependencyTree ) {
+		dependencies.push( dependency );
+
+		if ( Object.keys( dependencyTree[ dependency ] ).length > 0 ) {
+			dependencies = dependencies.concat( getDependencyArray( dependencyTree[ dependency ] ) );
+		}
+	}
+
+	return dependencies;
+}
+
 module.exports = {
 	sleep,
-	setProjectConfig
+	setProjectConfig,
+	getDependencyArray
 };

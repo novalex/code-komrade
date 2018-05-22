@@ -63,7 +63,6 @@
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
     "request": "^2.86.0",
-    "sass-graph": "^2.2.4",
     "strip-indent": "^2.0.0",
     "vinyl-buffer": "^1.0.1"
   }
