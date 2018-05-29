@@ -15,9 +15,19 @@ const view = ( current = 'files', action ) => {
 
 const { projects, activeProject, activeProjectFiles } = require('./projects');
 
+const activeFile = ( file = null, action ) => {
+	switch ( action.type ) {
+		case 'SET_ACTIVE_FILE':
+			return action.payload;
+		default:
+			return file;
+	}
+}
+
 module.exports = combineReducers({
 	view,
 	projects,
 	activeProject,
-	activeProjectFiles
+	activeProjectFiles,
+	activeFile
 });

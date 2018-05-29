@@ -6,22 +6,48 @@ const React = require('react');
 
 const { connect } = require('react-redux');
 
+const FileOptionsScript = require('./fileoptions/FileOptionsScript');
+
+const FileOptionsStyle = require('./fileoptions/FileOptionsStyle');
+
 const NoContent = require('../NoContent');
 
 class Panel extends React.Component {
+	getOptions() {
+		if ( ! this.props.activeFile.file.extension ) {
+			return null;
+		}
+
+		switch ( this.props.activeFile.file.extension ) {
+			case '.css':
+			case '.scss':
+			case '.sass':
+			case '.less':
+				return <FileOptionsStyle base={ this.props.project.path } file={ this.props.activeFile.file } />;
+			case '.js':
+			case '.ts':
+			case '.jsx':
+				return <FileOptionsScript base={ this.props.project.path } file={ this.props.activeFile.file } />;
+			default:
+				return null;
+		}
+	}
+
 	renderContent() {
-		if ( ! this.props.project ) {
-			return <NoContent>No project currently selected.</NoContent>;
+		if ( this.props.activeFile ) {
+			let options = this.getOptions();
+
+			if ( options ) {
+				this.props.activeFile.element.classList.add('has-options');
+
+				return options;
+			}
 		}
 
 		return (
-			<div id='project-info'>
-				<h1>{ this.props.project.name }</h1>
-				<h2>{ this.props.project.path }</h2>
-				{ this.props.files &&
-					<p>Number of files: { Object.keys( this.props.files ).length }</p>
-				}
-			</div>
+			<NoContent>
+				<p>Select a stylesheet or script file to view compiling options.</p>
+			</NoContent>
 		);
 	}
 
@@ -35,8 +61,9 @@ class Panel extends React.Component {
 }
 
 const mapStateToProps = ( state ) => ({
+	activeFile: state.activeFile,
 	project: state.activeProject,
-	selectedFile: state.selectedFile
+	files: state.activeProjectFiles
 });
 
 module.exports = connect( mapStateToProps, null )( Panel );

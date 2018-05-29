@@ -554,8 +554,7 @@ body.overlay {
 html,
 body,
 #root,
-#app,
-#content-wrap {
+#app {
   height: 100%; }
 
 #root {
@@ -563,6 +562,7 @@ body,
   padding-left: 84px; }
 
 #content-wrap {
+  min-height: 100%;
   position: relative;
   padding: 20px 30px; }
 
@@ -647,6 +647,21 @@ body,
     background-size: 512px;
     background-position: center; }
 
+.settings-screen {
+  overflow: hidden; }
+  .settings-screen:before {
+    content: '';
+    width: 512px;
+    height: 512px;
+    position: absolute;
+    bottom: -128px;
+    right: -128px;
+    opacity: 0.05;
+    background-image: url("../res/img/settings.svg");
+    background-repeat: no-repeat;
+    background-size: 512px;
+    background-position: center; }
+
 #panel {
   position: fixed;
   top: 0;
@@ -656,6 +671,8 @@ body,
   width: 320px;
   background-color: #f4f4f4;
   border-left: 1px solid #e6e6e6; }
+  #panel .no-content .inner {
+    width: 80%; }
 
 #file-options {
   height: 100%;

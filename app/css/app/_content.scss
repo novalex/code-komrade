@@ -17,8 +17,7 @@ body {
 html,
 body,
 #root,
-#app,
-#content-wrap {
+#app {
 	height: 100%;
 }
 
@@ -28,6 +27,7 @@ body,
 }
 
 #content-wrap {
+	min-height: 100%;
 	position: relative;
 	padding: $spacing__content $spacing__content-l;
 }
@@ -127,6 +127,27 @@ body,
 		right: $icon-size / -4;
 		opacity: 0.05;
 		background-image: url( '#{$path__res}/img/terminal.svg' );
+		background-repeat: no-repeat;
+		background-size: $icon-size;
+		background-position: center;
+	}
+}
+
+// Settings screen.
+.settings-screen {
+	overflow: hidden;
+
+	$icon-size: 512px;
+
+	&:before {
+		content: '';
+		width: $icon-size;
+		height: $icon-size;
+		position: absolute;
+		bottom: $icon-size / -4;
+		right: $icon-size / -4;
+		opacity: 0.05;
+		background-image: url( '#{$path__res}/img/settings.svg' );
 		background-repeat: no-repeat;
 		background-size: $icon-size;
 		background-position: center;

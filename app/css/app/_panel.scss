@@ -8,6 +8,12 @@
 	width: $size__panel;
 	background-color: $color__bg-alt;
 	border-left: 1px solid $color__border;
+
+	.no-content {
+		.inner {
+			width: 80%;
+		}
+	}
 }
 
 // File options.

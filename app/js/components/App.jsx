@@ -12,6 +12,8 @@ const Sidebar = require('./Sidebar');
 
 const Logs = require('./projects/Logs');
 
+const Settings = require('./projects/Settings');
+
 const Projects = require('./projects/Projects');
 
 class App extends React.Component {
@@ -36,12 +38,7 @@ class App extends React.Component {
 			if ( this.props.view === 'logs' ) {
 				content = <Logs />;
 			} else {
-				content = (
-					<React.Fragment>
-						<h2>{ this.views[ this.props.view ] }</h2>
-						<p>You shouldn't be here, you naughty naughty boy.</p>
-					</React.Fragment>
-				);
+				content = <Settings />;
 			}
 
 			return (

@@ -4,17 +4,17 @@
 
 const React = require('react');
 
+const { connect } = require('react-redux');
+
 const { FileListFile, FileListPlaceholder } = require('./FileListFile');
 
 const FileListDirectory = require('./FileListDirectory');
 
+const { setActiveFile } = require('../../../actions');
+
 class FileList extends React.Component {
 	constructor( props ) {
 		super( props );
-
-		this.state = {
-			activeFile: null
-		};
 
 		this.setActiveFile = this.setActiveFile.bind( this );
 	}
@@ -58,22 +58,20 @@ class FileList extends React.Component {
 		return type;
 	}
 
-	setActiveFile( element ) {
-		if ( this.state.activeFile && this.state.activeFile === element ) {
+	setActiveFile( fileProps ) {
+		if ( this.props.activeFile && this.props.activeFile.element === fileProps.element ) {
 			return;
 		}
 
-		if ( element ) {
-			element.classList.add('active');
+		if ( fileProps.element ) {
+			fileProps.element.classList.add('active');
 		}
 
-		this.setState( function( prevState ) {
-			if ( prevState.activeFile ) {
-				prevState.activeFile.classList.remove('active', 'has-options');
-			}
+		if ( this.props.activeFile ) {
+			this.props.activeFile.element.classList.remove('active', 'has-options');
+		}
 
-			return { activeFile: element };
-		})
+		this.props.setActiveFile( fileProps );
 	}
 
 	buildTree( file, level = 0 ) {
@@ -156,4 +154,12 @@ class FileList extends React.Component {
 	}
 }
 
-module.exports = FileList;
+const mapStateToProps = ( state ) => ({
+	activeFile: state.activeFile
+});
+
+const mapDispatchToProps = ( dispatch ) => ({
+	setActiveFile: payload => dispatch( setActiveFile( payload ) )
+});
+
+module.exports = connect( mapStateToProps, mapDispatchToProps )( FileList );

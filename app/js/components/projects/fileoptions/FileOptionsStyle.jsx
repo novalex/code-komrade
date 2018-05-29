@@ -12,6 +12,8 @@ const FieldSelect = require('../../fields/FieldSelect');
 
 const FieldSaveFile = require('../../fields/FieldSaveFile');
 
+const NoContent = require('../../NoContent');
+
 class FileOptionsStyles extends FileOptions {
 	constructor( props ) {
 		super( props );
@@ -30,13 +32,9 @@ class FileOptionsStyles extends FileOptions {
 	render() {
 		if ( this.isPartial() ) {
 			return (
-				<div id='file-options' className='file-options-style'>
-					{ this.renderHeader() }
-
-					<div className='body'>
-						<p>This is a partial file, it cannot be compiled by itself.</p>
-					</div>
-				</div>
+				<NoContent>
+					<p>This is a partial file,<br /> it cannot be compiled on its own.</p>
+				</NoContent>
 			);
 		}
 

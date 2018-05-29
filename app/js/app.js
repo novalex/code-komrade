@@ -29,7 +29,7 @@ const rootReducer = require('./reducers');
 // 	projects: {},
 // 	activeProject: 0,
 // 	activeProjectFiles: {},
-// 	selectedFile: null
+// 	activeFile: null
 // };
 
 const store = createStore( rootReducer ); // , initialState );

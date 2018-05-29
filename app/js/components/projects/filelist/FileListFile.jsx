@@ -8,12 +8,6 @@ const { Menu, MenuItem } = remote;
 
 const React = require('react');
 
-const ReactDOM = require('react-dom');
-
-const FileOptionsScript = require('../fileoptions/FileOptionsScript');
-
-const FileOptionsStyle = require('../fileoptions/FileOptionsStyle');
-
 class FileListFile extends React.Component {
 	constructor( props ) {
 		super( props );
@@ -22,44 +16,13 @@ class FileListFile extends React.Component {
 		this.onContextMenu = this.onContextMenu.bind( this );
 	}
 
-	getOptions( file ) {
-		if ( ! file.extension ) {
-			return null;
-		}
-
-		switch ( file.extension ) {
-			case '.css':
-			case '.scss':
-			case '.sass':
-			case '.less':
-				return <FileOptionsStyle base={ this.props.base } file={ file } />;
-			case '.js':
-			case '.ts':
-			case '.jsx':
-				return <FileOptionsScript base={ this.props.base } file={ file } />;
-			default:
-				return null;
-		}
-	}
-
 	onClick( event ) {
 		event.stopPropagation();
 
-		this.props.setActiveFile( event.currentTarget );
-
-		let _FileOptions = this.getOptions( this.props.file );
-
-		if ( ! _FileOptions ) {
-			// Todo: render original panel contents.
-			return;
-		}
-
-		event.currentTarget.classList.add('has-options');
-
-		ReactDOM.render(
-			_FileOptions,
-			document.getElementById('panel')
-		);
+		this.props.setActiveFile({
+			file: this.props.file,
+			element: event.currentTarget
+		});
 	}
 
 	onContextMenu( event ) {
