@@ -218,15 +218,17 @@ class Projects extends React.Component {
 	}
 
 	renderNotices() {
+		let notices = [];
+
 		if ( this.props.active.paused ) {
-			return (
-				<Notice type='warning'>
+			notices.push( (
+				<Notice key='paused' type='warning'>
 					<p>Project is paused. Files will not be watched and auto compiled.</p>
 				</Notice>
-			);
+			) );
 		}
 
-		return '';
+		return notices;
 	}
 
 	render() {

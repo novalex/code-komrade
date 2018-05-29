@@ -65,6 +65,7 @@
 		height: $size__list-item;
 		line-height: $size__list-item;
 		padding: 0 $spacing__content-s;
+		overflow: hidden;
 		box-shadow: none;
 		transition: box-shadow 0.1s;
 
@@ -88,6 +89,10 @@
 		strong {
 			font-weight: normal;
 			color: $color__text;
+			width: calc( 100% - #{$size__list-icon} - #{$spacing__content-s} );
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
 		}
 	}
 
@@ -116,24 +121,6 @@
 	@each $filetype in $filetypes {
 		.#{$filetype} > .filename .icon {
 			background-image: url( '#{$path__res}/img/filetypes/file-#{$filetype}.svg' );
-		}
-	}
-
-	// Informative.
-	li.informative {
-		height: auto;
-		cursor: default;
-		color: $color__text-light;
-		font-weight: normal;
-		font-size: 1.1rem;
-		padding: $spacing__content-l;
-		background-color: $color__bg-alt;
-
-		&.loading {
-			.inner {
-				animation: bounce 1.2s ease-in;
-				animation-iteration-count: infinite;
-			}
 		}
 	}
 }

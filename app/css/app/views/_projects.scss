@@ -1,3 +1,14 @@
 #projects {
 	padding-right: $size__panel;
+
+	#content .no-content {
+		right: $size__panel;
+
+		// &.loading {
+		// 	p {
+		// 		animation: bounce 1.2s ease-in;
+		// 		animation-iteration-count: infinite;
+		// 	}
+		// }
+	}
 }

@@ -76,15 +76,4 @@ class FileListFile extends React.Component {
 	}
 }
 
-function FileListPlaceholder( props ) {
-	return (
-		<li className={ props.type + ' informative' }>
-			<div className='inner'>{ props.children }</div>
-		</li>
-	);
-}
-
-module.exports = {
-	FileListFile,
-	FileListPlaceholder
-}
+module.exports = FileListFile;

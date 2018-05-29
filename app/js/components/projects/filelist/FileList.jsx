@@ -6,9 +6,11 @@ const React = require('react');
 
 const { connect } = require('react-redux');
 
-const { FileListFile, FileListPlaceholder } = require('./FileListFile');
+const FileListFile = require('./FileListFile');
 
 const FileListDirectory = require('./FileListDirectory');
+
+const NoContent = require('../../NoContent');
 
 const { setActiveFile } = require('../../../actions');
 
@@ -110,24 +112,25 @@ class FileList extends React.Component {
 		}
 	}
 
-	renderTree() {
-		if ( this.props.loading ) {
+	render() {
+		if (
+			this.props.loading ) {
 			return (
-				<FileListPlaceholder type='loading'>
-					Loading &hellip;
-				</FileListPlaceholder>
+				<NoContent className='loading'>
+					<p>Loading&hellip;</p>
+				</NoContent>
 			);
 		} else if ( ! this.props.path ) {
 			return (
-				<FileListPlaceholder type='empty'>
-					No folder selected.
-				</FileListPlaceholder>
+				<NoContent className='empty'>
+					<p>No project folder selected.</p>
+				</NoContent>
 			);
 		} else if ( ! this.props.files || ! Object.keys( this.props.files ).length ) {
 			return (
-				<FileListPlaceholder type='empty'>
-					Nothing to see here.
-				</FileListPlaceholder>
+				<NoContent className='empty'>
+					<p>Nothing to see here.</p>
+				</NoContent>
 			);
 		}
 
@@ -142,13 +145,9 @@ class FileList extends React.Component {
 			filelist.push( this.buildTree( this.props.files ) );
 		}
 
-		return filelist;
-	}
-
-	render() {
 		return (
 			<ul id='files'>
-				{ this.renderTree() }
+				{ filelist }
 			</ul>
 		);
 	}

@@ -707,6 +707,8 @@ body,
 
 #projects {
   padding-right: 320px; }
+  #projects #content .no-content {
+    right: 320px; }
 
 #files {
   border-left: 1px solid #e6e6e6;
@@ -751,6 +753,7 @@ body,
     height: 42px;
     line-height: 42px;
     padding: 0 10px;
+    overflow: hidden;
     box-shadow: none;
     transition: box-shadow 0.1s; }
     #files .filename span,
@@ -768,7 +771,11 @@ body,
       transition: opacity 0.2s; }
     #files .filename strong {
       font-weight: normal;
-      color: #555; }
+      color: #555;
+      width: calc( 100% - 16px - 10px);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis; }
   #files .children > li:last-child {
     border-bottom-color: transparent; }
   #files .children > li:not(:first-child) {
@@ -785,17 +792,6 @@ body,
     background-image: url("../res/img/filetypes/file-binary.svg"); }
   #files .directory > .filename .icon {
     background-image: url("../res/img/filetypes/file-directory.svg"); }
-  #files li.informative {
-    height: auto;
-    cursor: default;
-    color: #777;
-    font-weight: normal;
-    font-size: 1.1rem;
-    padding: 30px;
-    background-color: #f4f4f4; }
-    #files li.informative.loading .inner {
-      animation: bounce 1.2s ease-in;
-      animation-iteration-count: infinite; }
 
 #logs li {
   color: #777;
