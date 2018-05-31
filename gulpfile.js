@@ -6,25 +6,26 @@ You can find documentation for the electronPackager() function at the github rep
 There are a few basic branding things you can do there.
 */
 
-const gulp = require( 'gulp' )
-const source = require( 'vinyl-source-stream' )
-const browserify = require( 'browserify' )
-const glob = require( 'glob' )
-const es = require( 'event-stream' )
-const babel = require( 'gulp-babel' )
-const sass = require( 'gulp-sass' )
-const eslint = require( 'gulp-eslint' )
-const rename = require( 'gulp-rename' )
-const useref = require( 'gulp-useref' )
-const replace = require( 'gulp-replace' )
-const electron = require( 'electron-connect' ).server.create()
-const electronPackager = require( 'gulp-atom-electron' )
-const symdest = require( 'gulp-symdest' )
-const zip = require( 'gulp-vinyl-zip' )
-const path = require( 'path' )
+const gulp = require('gulp')
+const source = require('vinyl-source-stream')
+const browserify = require('browserify')
+const glob = require('glob')
+const es = require('event-stream')
+const babel = require('gulp-babel')
+const sass = require('gulp-sass')
+const eslint = require('gulp-eslint')
+const rename = require('gulp-rename')
+const useref = require('gulp-useref')
+const replace = require('gulp-replace')
+const electron = require('electron-connect').server.create()
+const electronPackager = require('gulp-atom-electron')
+const symdest = require('gulp-symdest')
+const zip = require('gulp-vinyl-zip')
+const path = require('path')
 const del = require('del')
 
-const appVersion = require( 'electron/package.json' ).version
+const packageJSON = require('./package.json')
+const appVersion = packageJSON.version
 
 const paths = {
 	client: {
@@ -58,6 +59,11 @@ const paths = {
 // Clean the build folder.
 gulp.task( 'build-clean', () => {
 	return del( [ paths.dist.build + '/**/*' ] );
+} )
+
+// Symlink node_modules.
+gulp.task( 'symlink-modules', () => {
+	return gulp.src( './node_modules' ).pipe( gulp.symlink( paths.dist.build ) );
 } )
 
 gulp.task( 'build-client-js', ( done ) => {
@@ -202,6 +208,7 @@ gulp.task( 'build',
 gulp.task( 'build-production',
 	gulp.series(
 		'build-clean',
+		'symlink-modules',
 		gulp.parallel(
 			'build-client-production',
 			'build-server'
@@ -252,24 +259,23 @@ function reload( done ) {
 	done( null );
 }
 
-gulp.task( 'package-osx', gulp.series( 'build-production', () => {
+gulp.task( 'package-osx', () => {
 	return gulp.src( paths.dist.build + '/**' )
 		.pipe( electronPackager( { version: appVersion, platform: 'darwin' } ) )
-		.pipe( symdest( 'release' ) )
-} ) )
+		.pipe( zip.dest( paths.dist.release + '/mac.zip' ) )
+} )
 
-gulp.task( 'package-windows', gulp.series( 'build-production', () => {
+gulp.task( 'package-windows', () => {
 	return gulp.src( paths.dist.build + '/**' )
 		.pipe( electronPackager( { version: appVersion, platform: 'win32' } ) )
-		.pipe( symdest( paths.dist.release ) )
-		// .pipe( zip.dest( paths.dist.release + '/windows.zip' ) )
-} ) )
+		.pipe( zip.dest( paths.dist.release + '/windows.zip' ) )
+} )
 
-gulp.task( 'package-linux', gulp.series( 'build-production', () => {
+gulp.task( 'package-linux', () => {
 	return gulp.src( paths.dist.build + '/**' )
 		.pipe( electronPackager( { version: appVersion, platform: 'linux' } ) )
 		.pipe( zip.dest( paths.dist.release + '/linux.zip' ) )
-} ) )
+} )
 
 gulp.task( 'package', gulp.series( 'build-production', 'package-windows', 'package-osx', 'package-linux' ) )
 

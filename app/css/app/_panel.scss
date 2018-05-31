@@ -11,7 +11,7 @@
 
 	.no-content {
 		.inner {
-			width: 80%;
+			width: calc( 100% - #{$spacing__content * 2} );
 		}
 	}
 }
@@ -23,6 +23,10 @@
 
 	.header {
 		text-align: center;
+
+		strong {
+			cursor: default;
+		}
 	}
 
 	.body {

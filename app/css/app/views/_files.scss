@@ -65,21 +65,20 @@
 		height: $size__list-item;
 		line-height: $size__list-item;
 		padding: 0 $spacing__content-s;
+		color: $color__text;
 		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 		box-shadow: none;
 		transition: box-shadow 0.1s;
 
-		span,
-		strong {
+		span {
 			display: inline-block;
 			vertical-align: middle;
-		}
-
-		span {
-			opacity: 0.75;
 			width: $size__list-icon;
 			height: $size__list-icon;
 			margin-right: $spacing__content-s;
+			opacity: 0.75;
 			background-size: auto;
 			background-repeat: no-repeat;
 			background-position: center;
@@ -88,11 +87,6 @@
 
 		strong {
 			font-weight: normal;
-			color: $color__text;
-			width: calc( 100% - #{$size__list-icon} - #{$spacing__content-s} );
-			overflow: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
 		}
 	}
 

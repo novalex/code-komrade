@@ -4,6 +4,7 @@
 
 	.field-label {
 		font-weight: normal;
+		cursor: default;
 	}
 
 	// Label positions.
@@ -244,5 +245,17 @@ input[type="submit"] {
 				border-color: $color;
 			}
 		}
+	}
+
+	// Override green button text color.
+	&.green {
+		color: $color__text-lighter;
+	}
+}
+
+// Save file field.
+.field-save-file {
+	small {
+		cursor: pointer;
 	}
 }

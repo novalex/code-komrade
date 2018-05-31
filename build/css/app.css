@@ -159,7 +159,8 @@ a {
 .field {
   margin-bottom: 20px; }
   .field .field-label {
-    font-weight: normal; }
+    font-weight: normal;
+    cursor: default; }
   .field.label-top .field-label {
     display: block;
     margin-bottom: 10px; }
@@ -409,6 +410,14 @@ input[type="submit"] {
     input[type="submit"].off-white.outline {
       color: #f4f4f4;
       border-color: #f4f4f4; }
+  button.green,
+  .button.green,
+  input[type="button"].green,
+  input[type="submit"].green {
+    color: #fff; }
+
+.field-save-file small {
+  cursor: pointer; }
 
 #sidebar {
   position: fixed;
@@ -668,17 +677,19 @@ body,
   bottom: 0;
   right: 0;
   color: #555;
-  width: 320px;
+  width: 280px;
   background-color: #f4f4f4;
   border-left: 1px solid #e6e6e6; }
   #panel .no-content .inner {
-    width: 80%; }
+    width: calc( 100% - 40px); }
 
 #file-options {
   height: 100%;
   position: relative; }
   #file-options .header {
     text-align: center; }
+    #file-options .header strong {
+      cursor: default; }
   #file-options .body > p,
   #file-options .body > .field {
     margin-bottom: 0; }
@@ -706,9 +717,9 @@ body,
     border-top: 1px solid #e6e6e6; }
 
 #projects {
-  padding-right: 320px; }
+  padding-right: 280px; }
   #projects #content .no-content {
-    right: 320px; }
+    right: 280px; }
 
 #files {
   border-left: 1px solid #e6e6e6;
@@ -753,29 +764,25 @@ body,
     height: 42px;
     line-height: 42px;
     padding: 0 10px;
+    color: #555;
     overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     box-shadow: none;
     transition: box-shadow 0.1s; }
-    #files .filename span,
-    #files .filename strong {
-      display: inline-block;
-      vertical-align: middle; }
     #files .filename span {
-      opacity: 0.75;
+      display: inline-block;
+      vertical-align: middle;
       width: 16px;
       height: 16px;
       margin-right: 10px;
+      opacity: 0.75;
       background-size: auto;
       background-repeat: no-repeat;
       background-position: center;
       transition: opacity 0.2s; }
     #files .filename strong {
-      font-weight: normal;
-      color: #555;
-      width: calc( 100% - 16px - 10px);
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis; }
+      font-weight: normal; }
   #files .children > li:last-child {
     border-bottom-color: transparent; }
   #files .children > li:not(:first-child) {

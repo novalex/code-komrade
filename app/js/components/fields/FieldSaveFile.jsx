@@ -70,14 +70,13 @@ class FieldSaveFile extends React.Component {
 		return (
 			<Field type='save-file' label={ this.props.label } labelPos={ this.props.labelPos }>
 				<input
-					type='text'
+					type='hidden'
 					name={ this.props.name }
-					onClick={ this.onClick }
 					id={ 'field_' + this.props.name }
 					value={ this.state.path }
 					readOnly='true'
-					disabled={ this.props.disabled }
 				/>
+				<small onClick={ this.onClick }>{ this.state.path }</small>
 			</Field>
 		);
 	}
