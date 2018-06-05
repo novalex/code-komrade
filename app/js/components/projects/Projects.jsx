@@ -30,7 +30,7 @@ const directoryTree = require('../../utils/directoryTree');
 
 const Logger = require('../../utils/Logger');
 
-const { addProject, removeProject, changeProject, receiveFiles } = require('../../actions');
+const { addProject, removeProject, changeProject, receiveFiles, setActiveFile } = require('../../actions');
 
 class Projects extends React.Component {
 	constructor( props ) {
@@ -64,7 +64,11 @@ class Projects extends React.Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		if ( prevProps.active.paused !== this.props.active.paused ) {
+		if (
+			prevProps.active.path === this.props.active.path &&
+			prevProps.active.paused !== this.props.active.paused
+		) {
+			// Project was paused/unpaused, trigger compiler tasks or terminate them.
 			this.initCompiler();
 		}
 	}
@@ -104,6 +108,10 @@ class Projects extends React.Component {
 
 	// Change the active project.
 	changeProject( id, project = null ) {
+		if ( id === this.props.active.id ) {
+			return;
+		}
+
 		let active = {
 			name: '',
 			path: '',
@@ -124,6 +132,7 @@ class Projects extends React.Component {
 			...active,
 			id
 		});
+		this.props.setActiveFile( null );
 
 		// Init.
 		this.initProject( active.path );
@@ -200,7 +209,7 @@ class Projects extends React.Component {
 
 	// Initialize project.
 	initProject( path ) {
-		fs.readdir( path, function( err, files ) {
+		fs.access( path, fs.constants.W_OK, function( err ) {
 			if ( err ) {
 				// Chosen directory not readable or no path provided.
 				if ( path ) {
@@ -301,9 +310,10 @@ const mapStateToProps = ( state ) => ({
 });
 
 const mapDispatchToProps = ( dispatch ) => ({
-	addProject: payload => dispatch( addProject( payload ) ),
+	addProject: project => dispatch( addProject( project ) ),
 	changeProject: id => dispatch( changeProject( id ) ),
-	removeProject: id => dispatch( removeProject( id ) )
+	removeProject: id => dispatch( removeProject( id ) ),
+	setActiveFile: file => dispatch( setActiveFile( file ) )
 });
 
 module.exports = connect( mapStateToProps, mapDispatchToProps )( Projects );
