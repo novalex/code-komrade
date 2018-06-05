@@ -9,24 +9,14 @@ if ( global.config.has('projects') ) {
 }
 
 const projects = ( projects = initialProjects, action ) => {
-	let newProjects;
-
 	switch ( action.type ) {
 		case 'ADD_PROJECT':
-			newProjects = [
+			return [
 				...projects,
 				action.payload
 			];
-
-			global.config.set( 'projects', newProjects );
-
-			return newProjects;
 		case 'REMOVE_PROJECT':
-			newProjects = projects.filter( ( project, index ) => index !== action.id );
-
-			global.config.set( 'projects', newProjects );
-
-			return newProjects;
+			return projects.filter( ( project, index ) => index !== action.id );
 		default:
 			return projects;
 	}
@@ -51,8 +41,6 @@ if ( initialProjects.length && global.config.has('active-project') ) {
 const activeProject = ( active = initialActive, action ) => {
 	switch ( action.type ) {
 		case 'CHANGE_PROJECT':
-			global.config.set( 'active-project', action.payload.id );
-
 			return action.payload;
 		case 'SET_PROJECT_STATE':
 			return {

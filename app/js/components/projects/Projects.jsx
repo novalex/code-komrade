@@ -47,7 +47,7 @@ class Projects extends React.Component {
 		};
 
 		this.newProject = this.newProject.bind( this );
-		this.setupProject = this.setupProject.bind( this );
+		this.initProject = this.initProject.bind( this );
 		this.changeProject = this.changeProject.bind( this );
 		this.removeProject = this.removeProject.bind( this );
 		this.refreshProject = this.refreshProject.bind( this );
@@ -59,7 +59,7 @@ class Projects extends React.Component {
 
 	componentDidMount() {
 		if ( this.props.active.path ) {
-			this.setupProject( this.props.active.path );
+			this.initProject( this.props.active.path );
 		}
 	}
 
@@ -81,6 +81,7 @@ class Projects extends React.Component {
 				path: path[0],
 				paused: false
 			};
+			let newProjectIndex = this.props.projects.length;
 
 			if ( this.props.projects.findIndex( project => project.path === newProject.path ) !== -1 ) {
 				// Project already exists.
@@ -88,21 +89,21 @@ class Projects extends React.Component {
 			}
 
 			// Save new project to config.
+			global.config.set( 'projects', [
+				...this.props.projects,
+				newProject
+			] );
+
+			// Update state.
 			this.props.addProject( newProject );
 
 			// Set new project as active.
-			this.props.changeProject({
-				...newProject,
-				id: this.props.projects.length
-			});
-
-			// Project setup.
-			this.setupProject( newProject.path );
+			this.changeProject( newProjectIndex, newProject );
 		}
 	}
 
-	// Chnage the active project.
-	changeProject( id ) {
+	// Change the active project.
+	changeProject( id, project = null ) {
 		let active = {
 			name: '',
 			path: '',
@@ -111,14 +112,21 @@ class Projects extends React.Component {
 
 		if ( this.props.projects[ id ] ) {
 			active = this.props.projects[ id ];
+		} else if ( project ) {
+			active = project;
 		}
 
+		// Update config.
+		global.config.set( 'active-project', id );
+
+		// Update state.
 		this.props.changeProject({
 			...active,
 			id
 		});
 
-		this.setupProject( active.path );
+		// Init.
+		this.initProject( active.path );
 	}
 
 	// Remove the current project.
@@ -128,12 +136,22 @@ class Projects extends React.Component {
 		let confirmRemove = window.confirm( `Are you sure you want to remove ${this.props.active.name}?` );
 
 		if ( confirmRemove ) {
-			this.props.removeProject( this.props.active.id );
+			let removeIndex = parseInt( this.props.active.id, 10 );
 
+			let projects = this.props.projects.filter( ( project, index ) => index !== removeIndex );
+
+			// Remove project from config.
+			global.config.set( 'projects', projects );
+
+			// Update state.
+			this.props.removeProject( removeIndex );
+
+			// Unset active project.
 			this.changeProject( null );
 		}
 	}
 
+	// Start the background compiler tasks.
 	initCompiler() {
 		if ( ! this.props.active.paused ) {
 			global.compiler.initProject();
@@ -142,19 +160,23 @@ class Projects extends React.Component {
 		}
 	}
 
+	// Refresh the project files.
 	refreshProject() {
 		this.getFiles( this.props.active.path );
 	}
 
+	// Create or fetch the project config file.
 	setProjectConfigFile( path ) {
 		global.projectConfig = new Store({
 			name: 'buildr-project',
 			cwd: path
 		});
 
+		// Listen for changes to the project's file options and trigger the compiler init.
 		global.projectConfig.onDidChange( 'files', _debounce( this.initCompiler, 100 ) );
 	}
 
+	// Read the files in the project directory.
 	getFiles( path ) {
 		this.setState({ loading: true });
 
@@ -176,8 +198,9 @@ class Projects extends React.Component {
 		}.bind( this ));
 	}
 
-	setupProject( path ) {
-		fs.open( path, 'r+', 0o666, function( err, stats ) {
+	// Initialize project.
+	initProject( path ) {
+		fs.readdir( path, function( err, files ) {
 			if ( err ) {
 				// Chosen directory not readable or no path provided.
 				if ( path ) {
@@ -209,7 +232,6 @@ class Projects extends React.Component {
 		return (
 			<ProjectSelect
 				newProject={ this.newProject }
-				setupProject={ this.setupProject }
 				changeProject={ this.changeProject }
 				removeProject={ this.removeProject }
 				refreshProject={ this.refreshProject }
