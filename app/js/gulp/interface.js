@@ -13,8 +13,8 @@ const psTree = require('ps-tree');
 
 const stripIndent = require('strip-indent');
 
-const OSCmd = process.platform === 'win32' ? '.cmd' : '';
-const gulpPath = path.join( __dirname, '..', 'node_modules', '.bin', 'gulp' + OSCmd );
+// const OSCmd = process.platform === 'win32' ? '.cmd' : '';
+const gulpPath = path.join( __dirname, '..', 'node_modules', 'gulp', 'bin', 'gulp.js' );
 const gulpFilePath = path.join( __dirname, '..', 'app', 'js', 'gulp', 'gulpfile.js' );
 
 const { slash, fileAbsolutePath, fileRelativePath } = require('../utils/pathHelpers');
@@ -170,7 +170,12 @@ function runTask( taskName, options = {}, callback = null ) {
 		}
 	}
 
-	const cp = spawn( gulpPath, args );
+	let spawnCmd = gulpPath;
+	if ( process.platform === 'win32' ) {
+		spawnCmd = 'gulp.cmd';
+	}
+
+	const cp = spawn( spawnCmd, args );
 
 	console.log( 'Started %s with PID %d', taskName, cp.pid );
 

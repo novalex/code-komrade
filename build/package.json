@@ -2,7 +2,7 @@
   "name": "Buildr",
   "version": "0.1.0",
   "description": "GUI build and compile system.",
-  "main": "build/index.js",
+  "main": "index.js",
   "repository": "",
   "keywords": [],
   "author": "Alex Nitu",
@@ -67,6 +67,6 @@
     "vinyl-buffer": "^1.0.1"
   },
   "scripts": {
-  	"package": "electron-packager ./build Buildr --asar --out='./release' --overwrite --icon='./build/res/img/logo/win/logo.ico'"
+  	"package": "electron-packager ./build Buildr --asar=true --out='./release' --overwrite"
   }
 }
