@@ -10,7 +10,7 @@ global.config = new Store({
 
 global.ui = require('./utils/globalUI');
 
-global.compiler = require('./gulp/interface');
+global.compiler = require('../gulp/interface');
 
 global.compilerTasks = [];
 

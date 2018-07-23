@@ -15,9 +15,10 @@ const stripIndent = require('strip-indent');
 
 // const OSCmd = process.platform === 'win32' ? '.cmd' : '';
 const gulpPath = path.join( __dirname, '..', 'node_modules', 'gulp', 'bin', 'gulp.js' );
-const gulpFilePath = path.join( __dirname, '..', 'app', 'js', 'gulp', 'gulpfile.js' );
+const gulpCmdPath = path.join( __dirname, '..', 'app', 'gulp', 'gulp.cmd' );
+const gulpFilePath = path.join( __dirname, '..', 'app', 'gulp', 'gulpfile.js' );
 
-const { slash, fileAbsolutePath, fileRelativePath } = require('../utils/pathHelpers');
+const { slash, fileAbsolutePath, fileRelativePath } = require('../js/utils/pathHelpers');
 
 function killTasks() {
 	if ( global.compilerTasks.length ) {
@@ -170,10 +171,7 @@ function runTask( taskName, options = {}, callback = null ) {
 		}
 	}
 
-	let spawnCmd = gulpPath;
-	if ( process.platform === 'win32' ) {
-		spawnCmd = 'gulp.cmd';
-	}
+	let spawnCmd = ( process.platform === 'win32' ) ? gulpCmdPath : gulpPath;
 
 	const cp = spawn( spawnCmd, args );
 

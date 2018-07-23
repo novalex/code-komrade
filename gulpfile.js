@@ -19,9 +19,7 @@ const useref = require('gulp-useref')
 const replace = require('gulp-replace')
 const electron = require('electron-connect').server.create()
 const electronPackager = require('gulp-atom-electron')
-const symdest = require('gulp-symdest')
 const zip = require('gulp-vinyl-zip')
-const path = require('path')
 const del = require('del')
 
 const packageJSON = require('./package.json')
@@ -64,6 +62,10 @@ gulp.task( 'build-clean', () => {
 // Symlink node_modules.
 gulp.task( 'symlink-modules', () => {
 	return gulp.src( './node_modules' ).pipe( gulp.symlink( paths.dist.build ) );
+} )
+
+gulp.task( 'symlink-gulp', () => {
+	return gulp.src( './app/gulp' ).pipe( gulp.symlink( paths.dist.build ) );
 } )
 
 gulp.task( 'build-client-js', ( done ) => {
@@ -208,6 +210,7 @@ gulp.task( 'build',
 gulp.task( 'build-production',
 	gulp.series(
 		'build-clean',
+		'symlink-gulp',
 		'symlink-modules',
 		gulp.parallel(
 			'build-client-production',

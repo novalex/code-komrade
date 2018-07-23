@@ -68,6 +68,6 @@
   },
   "scripts": {
   	"package-win": "electron-packager ./build --platform=win32 --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/win/logo.ico",
-  	"package-mac": "electron-packager ./build --platform=darwin --arch=x64 --asar --out=./release --overwrite --icon=./build/res/img/logo/mac/logo.icns"
+  	"package-mac": "electron-packager ./build --platform=darwin --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/mac/logo.icns"
   }
 }
