@@ -235,6 +235,8 @@ function runTask( taskName, options = {}, callback = null ) {
 }
 
 function handleStderr( data ) {
+	console.log( data );
+
 	let errObj = {};
 	let startCapture = false;
 

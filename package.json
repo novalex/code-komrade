@@ -47,6 +47,7 @@
     "gulp": "^4.0.0",
     "gulp-autoprefixer": "^5.0.0",
     "gulp-babel": "^7.0.1",
+    "gulp-cli": "^2.0.1",
     "gulp-if": "^2.0.2",
     "gulp-load-plugins": "^1.5.0",
     "gulp-postcss": "^7.0.1",
@@ -67,7 +68,7 @@
     "vinyl-buffer": "^1.0.1"
   },
   "scripts": {
-  	"package-win": "electron-packager ./build --platform=win32 --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/win/logo.ico",
-  	"package-mac": "electron-packager ./build --platform=darwin --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/mac/logo.icns"
+    "package-win": "electron-packager ./build --platform=win32 --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/win/logo.ico",
+    "package-mac": "electron-packager ./build --platform=darwin --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/mac/logo.icns"
   }
 }
