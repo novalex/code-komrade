@@ -56,7 +56,7 @@ const paths = {
 
 // Clean the build folder.
 gulp.task( 'build-clean', () => {
-	return del( [ paths.dist.build + '/**/*' ] );
+	return del( [ paths.dist.build + '/*' ] );
 } )
 
 // Symlink node_modules.
