@@ -4,7 +4,12 @@
  * @file Main application controller.
  */
 
-const { app, dialog, BrowserWindow } = require('electron');
+var electron = require('electron');
+
+var app = electron.app,
+    dialog = electron.dialog,
+    BrowserWindow = electron.BrowserWindow;
+
 
 var windowStateKeeper = require('electron-window-state');
 

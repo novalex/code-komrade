@@ -18,7 +18,6 @@ const rename = require('gulp-rename')
 const useref = require('gulp-useref')
 const replace = require('gulp-replace')
 const electron = require('electron-connect').server.create()
-const electronPackager = require('gulp-atom-electron')
 const zip = require('gulp-vinyl-zip')
 const del = require('del')
 

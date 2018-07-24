@@ -11,12 +11,9 @@ const path = require('path');
 const spawn = require('child_process').spawn;
 const psTree = require('ps-tree');
 
-const stripIndent = require('strip-indent');
+const webpack = require('webpack');
 
-// const OSCmd = process.platform === 'win32' ? '.cmd' : '';
-const gulpPath = path.join( __dirname, '..', 'node_modules', 'gulp', 'bin', 'gulp.js' );
-const gulpCmdPath = path.join( __dirname, '..', 'app', 'js', 'gulp', 'gulp.cmd' );
-const gulpFilePath = path.join( __dirname, '..', 'app', 'js', 'gulp', 'gulpfile.js' );
+const stripIndent = require('strip-indent');
 
 const { slash, fileAbsolutePath, fileRelativePath } = require('../utils/pathHelpers');
 
@@ -149,33 +146,32 @@ function getFileConfig( base, fileConfig ) {
 }
 
 function runTask( taskName, options = {}, callback = null ) {
-	let args = [
-		taskName,
-		'--cwd', app.getAppPath(),
-		'--gulpfile', gulpFilePath,
-		'--no-color'
-	];
+	console.log( options );
 
 	let filename = options.filename || 'file';
 
-	for ( var option in options ) {
-		if ( ! options.hasOwnProperty( option ) ) {
-			continue;
+	let config = {
+		mode: 'development',
+		entry: options.input,
+		output: {
+			path: options.output,
+			filename: options.filename
+		}
+	};
+
+	webpack( config, ( err, stats ) => {
+		console.log( err );
+		console.log( stats );
+		if ( err || stats.hasErrors() ) {
+			// Handle errors here
 		}
 
-		if ( typeof( options[ option ] ) !== 'boolean' ) {
-			args.push( '--' + option );
-			args.push( options[ option ] );
-		} else if ( options[ option ] === true ) {
-			args.push( '--' + option );
+		if ( callback ) {
+			callback();
 		}
-	}
+	});
 
-	let spawnCmd = ( process.platform === 'win32' ) ? gulpCmdPath : gulpPath;
-
-	const cp = spawn( spawnCmd, args );
-
-	console.log( 'Started %s with PID %d', taskName, cp.pid );
+	return;
 
 	global.compilerTasks.push( cp );
 
