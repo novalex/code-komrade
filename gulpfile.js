@@ -65,7 +65,7 @@ gulp.task( 'symlink-modules', () => {
 } )
 
 gulp.task( 'symlink-gulp', () => {
-	return gulp.src( './app/gulp' ).pipe( gulp.symlink( paths.dist.build ) );
+	return gulp.src( './app/js/gulp/gulp.cmd' ).pipe( gulp.symlink( paths.dist.build ) );
 } )
 
 gulp.task( 'build-client-js', ( done ) => {
@@ -76,19 +76,19 @@ gulp.task( 'build-client-js', ( done ) => {
 
 		let tasks = files.map( ( entry ) => {
 			return browserify( {
-					entries: [ entry ],
-					extensions: [ '.js', '.jsx' ],
-					paths: paths.browserify,
-					ignoreMissing: true,
-					detectGlobals: false,
-					bare: true,
-					browserField: false,
-					insertGlobals: 'global',
-					commondir: false,
-					builtins: false,
-					bundleExternal: false,
-					debug: true
-				} )
+				entries: [ entry ],
+				extensions: [ '.js', '.jsx' ],
+				paths: paths.browserify,
+				ignoreMissing: true,
+				detectGlobals: false,
+				bare: true,
+				browserField: false,
+				insertGlobals: 'global',
+				commondir: false,
+				builtins: false,
+				bundleExternal: false,
+				debug: true
+			} )
 				.transform( 'babelify' )
 				.bundle()
 				.pipe( source( entry ) )
