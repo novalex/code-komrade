@@ -8,11 +8,10 @@ const { app } = require('electron').remote;
 
 const fs = require('fs');
 const path = require('path');
-const spawn = require('child_process').spawn;
 const psTree = require('ps-tree');
 
-const sass = require('node-sass');
 const webpack = require('webpack');
+const CssExtract = require('mini-css-extract-plugin');
 
 const stripIndent = require('strip-indent');
 
@@ -158,24 +157,55 @@ function runTask( taskName, options = {}, callback = null ) {
 	// Build task starting.
 	global.logger.log( 'info', `Compiling ${filename}...` );
 
-	switch ( taskName ) {
-		case 'build-css':
-			build = buildCssFile( options, callback );
-			break;
+	let config = {
+		mode: 'development',
+		entry: options.input,
+		output: {
+			path: options.output,
+			filename: options.filename
+		},
+		resolveLoader: {
+			modules: [ path.resolve( app.getAppPath(), 'node_modules' ) ]
+		}
+	};
 
-		case 'build-sass':
-			build = buildSassFile( options, callback );
-			break;
-
-		case 'build-js':
-			build = buildJsFile( options, callback );
-			break;
-
-		default:
-			break;
+	if ( taskName === 'build-sass' ) {
+		config.module = {
+			rules: [{
+				test: /\.scss$/,
+				use: [{
+					loader: CssExtract.loader
+				}, {
+					loader: 'css-loader',
+					options: { sourceMap: options.sourcemaps }
+				}, {
+					loader: 'sass-loader',
+					options: { sourceMap: options.sourcemaps }
+				}]
+			}]
+		};
+		config.plugins = [
+			new CssExtract({
+				filename: options.filename
+			})
+		];
 	}
 
-	if ( build.status === 'success' ) {
+	webpack( config, ( err, stats ) => {
+		console.log( err );
+		console.log( stats );
+		if ( err || stats.hasErrors() ) {
+			// Handle errors here
+		}
+
+		if ( callback ) {
+			callback();
+		}
+
+		build = true;
+	} );
+
+	if ( build ) {
 		// Build task successful.
 		let notifyText = `Finished compiling ${filename}.`;
 
@@ -198,10 +228,6 @@ function runTask( taskName, options = {}, callback = null ) {
 	}
 }
 
-function buildCssFile( options = {}, callback = null ) {
-	return true;
-}
-
 function buildSassFile( options = {}, callback = null ) {
 	sass.render({
 		file: options.input,
@@ -221,31 +247,6 @@ function buildSassFile( options = {}, callback = null ) {
 
 		return { error: 'file_compile_fail' };
 	});
-}
-
-function buildJsFile( options = {}, callback = null ) {
-	let config = {
-		mode: 'development',
-		entry: options.input,
-		output: {
-			path: options.output,
-			filename: options.filename
-		}
-	};
-
-	webpack( config, ( err, stats ) => {
-		console.log( err );
-		console.log( stats );
-		if ( err || stats.hasErrors() ) {
-			// Handle errors here
-		}
-
-		if ( callback ) {
-			callback();
-		}
-
-		return true;
-	} );
 }
 
 function handleStderr( data ) {
