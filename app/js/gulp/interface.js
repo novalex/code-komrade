@@ -11,6 +11,7 @@ const path = require('path');
 const spawn = require('child_process').spawn;
 const psTree = require('ps-tree');
 
+const sass = require('node-sass');
 const webpack = require('webpack');
 
 const stripIndent = require('strip-indent');
@@ -134,6 +135,7 @@ function getFileConfig( base, fileConfig ) {
 			if ( ! fileConfig.options.hasOwnProperty( option ) ) {
 				continue;
 			}
+
 			options[ option ] = fileConfig.options[ option ];
 		}
 
@@ -150,6 +152,78 @@ function runTask( taskName, options = {}, callback = null ) {
 
 	let filename = options.filename || 'file';
 
+	let notify;
+	let build;
+
+	// Build task starting.
+	global.logger.log( 'info', `Compiling ${filename}...` );
+
+	switch ( taskName ) {
+		case 'build-css':
+			build = buildCssFile( options, callback );
+			break;
+
+		case 'build-sass':
+			build = buildSassFile( options, callback );
+			break;
+
+		case 'build-js':
+			build = buildJsFile( options, callback );
+			break;
+
+		default:
+			break;
+	}
+
+	if ( build.status === 'success' ) {
+		// Build task successful.
+		let notifyText = `Finished compiling ${filename}.`;
+
+		notify = new Notification( 'Buildr', {
+			body: notifyText,
+			silent: true
+		} );
+
+		global.logger.log( 'success', notifyText );
+
+		return notify;
+	} else {
+		// Build task error.
+		notify = new Notification( 'Buildr', {
+			body: `Error when compiling ${filename}.`,
+			sound: 'Basso'
+		} );
+
+		return notify;
+	}
+}
+
+function buildCssFile( options = {}, callback = null ) {
+	return true;
+}
+
+function buildSassFile( options = {}, callback = null ) {
+	sass.render({
+		file: options.input,
+		outFile: options.output,
+		sourcemaps: options.sourcemaps,
+		outputStyle: options.style
+	}, function( error, result ) {
+		if ( ! error ) {
+			fs.writeFile( options.output, result.css, function ( err ) {
+				if ( ! err ) {
+					return true;
+				}
+
+				return { error: 'file_write_fail' };
+			});
+		}
+
+		return { error: 'file_compile_fail' };
+	});
+}
+
+function buildJsFile( options = {}, callback = null ) {
 	let config = {
 		mode: 'development',
 		entry: options.input,
@@ -169,67 +243,9 @@ function runTask( taskName, options = {}, callback = null ) {
 		if ( callback ) {
 			callback();
 		}
-	});
 
-	return;
-
-	global.compilerTasks.push( cp );
-
-	cp.stdout.setEncoding('utf8');
-
-	cp.stdout.on( 'data', data => {
-		console.log( data );
-
-		if ( data.match(/Finished 'build-.*'/) ) {
-			// Build task successful.
-			let notifyText = `Finished compiling ${filename}.`;
-
-			let notify = new Notification( 'Buildr', {
-				body: notifyText,
-				silent: true
-			});
-
-			global.logger.log( 'success', notifyText );
-
-			return notify;
-		} else if ( data.match(/Starting 'build-.*'/) ) {
-			// Build task starting.
-			global.logger.log( 'info', `Compiling ${filename}...` );
-		}
-	});
-
-	cp.stderr.setEncoding('utf8');
-
-	cp.stderr.on( 'data', handleStderr );
-
-	cp.on( 'exit', code => {
-		// Remove this task from global array.
-		global.compilerTasks = global.compilerTasks.filter( proc => {
-			return ( proc.pid !== cp.pid );
-		});
-
-		if ( code === 0 ) {
-			// Success.
-			// new Notification( 'Buildr', {
-			// 	body: `Finished compiling ${filename}.`,
-			// 	silent: true
-			// });
-		} else if ( code === 1 ) {
-			// Terminated.
-			// console.log( 'Process %s terminated', cp.pid );
-		} else if ( code ) {
-			// new Notification( 'Buildr', {
-			// 	body: `Error when compiling ${filename}.`,
-			// 	sound: 'Basso'
-			// });
-
-			console.error(`Exited with error code ${code}`);
-		}
-
-		if ( callback ) {
-			callback( code );
-		}
-	});
+		return true;
+	} );
 }
 
 function handleStderr( data ) {
