@@ -30,7 +30,7 @@ function createWindow() {
 		width: mainWindowState.width,
 		height: mainWindowState.height,
 		autoHideMenuBar: true,
-		icon: path.join(__dirname, 'res/img/logo/png/64x64.png')
+		icon: path.join(__dirname, '../res/img/logo/png/64x64.png')
 	});
 
 	mainWindowState.manage(mainWindow);

@@ -13,16 +13,15 @@ const glob = require('glob')
 const es = require('event-stream')
 const babel = require('gulp-babel')
 const sass = require('gulp-sass')
-const eslint = require('gulp-eslint')
 const rename = require('gulp-rename')
 const useref = require('gulp-useref')
 const replace = require('gulp-replace')
 const electron = require('electron-connect').server.create()
-const zip = require('gulp-vinyl-zip')
+// const zip = require('gulp-vinyl-zip')
 const del = require('del')
 
-const packageJSON = require('./package.json')
-const appVersion = packageJSON.version
+// const packageJSON = require('./package.json')
+// const appVersion = packageJSON.version
 
 const paths = {
 	client: {
@@ -45,7 +44,7 @@ const paths = {
 			js: './src/**/*.js'
 		}
 	},
-	browserify: [ './node_modules', './app/js/' ],
+	browserify: [ './app/node_modules', './app/js/' ],
 	dist: {
 		build: './build',
 		release: './release'
@@ -58,13 +57,9 @@ gulp.task( 'build-clean', () => {
 	return del( [ paths.dist.build + '/*' ] );
 } )
 
-// Symlink node_modules.
-gulp.task( 'symlink-modules', () => {
-	return gulp.src( './node_modules' ).pipe( gulp.symlink( paths.dist.build ) );
-} )
-
-gulp.task( 'symlink-gulp', () => {
-	return gulp.src( './app/js/gulp/gulp.cmd' ).pipe( gulp.symlink( paths.dist.build ) );
+// Symlink dependencies.
+gulp.task( 'symlink-deps', () => {
+	return gulp.src( './app/node_modules' ).pipe( gulp.symlink( paths.dist.build ) );
 } )
 
 gulp.task( 'build-client-js', ( done ) => {
@@ -199,6 +194,7 @@ gulp.task( 'build-server', ( done ) => {
 gulp.task( 'build',
 	gulp.series(
 		'build-clean',
+		'symlink-deps',
 		gulp.parallel(
 			'build-client',
 			'build-server'
@@ -209,8 +205,7 @@ gulp.task( 'build',
 gulp.task( 'build-production',
 	gulp.series(
 		'build-clean',
-		'symlink-gulp',
-		'symlink-modules',
+		'symlink-deps',
 		gulp.parallel(
 			'build-client-production',
 			'build-server'
@@ -260,53 +255,3 @@ function reload( done ) {
 	electron.reload();
 	done( null );
 }
-
-gulp.task( 'package-osx', () => {
-	return gulp.src( paths.dist.build + '/**' )
-		.pipe( electronPackager( { version: appVersion, platform: 'darwin' } ) )
-		.pipe( zip.dest( paths.dist.release + '/mac.zip' ) )
-} )
-
-gulp.task( 'package-windows', () => {
-	return gulp.src( paths.dist.build + '/**' )
-		.pipe( electronPackager( { version: appVersion, platform: 'win32' } ) )
-		.pipe( zip.dest( paths.dist.release + '/windows.zip' ) )
-} )
-
-gulp.task( 'package-linux', () => {
-	return gulp.src( paths.dist.build + '/**' )
-		.pipe( electronPackager( { version: appVersion, platform: 'linux' } ) )
-		.pipe( zip.dest( paths.dist.release + '/linux.zip' ) )
-} )
-
-gulp.task( 'package', gulp.series( 'build-production', 'package-windows', 'package-osx', 'package-linux' ) )
-
-gulp.task( 'lint-client', ( done ) => {
-	glob( paths.client.js, ( err, files ) => {
-		if ( err ) done( err )
-
-		let tasks = files.map( ( entry ) => {
-			return gulp.src( entry )
-				.pipe( eslint() )
-				.pipe( eslint.format() )
-		} )
-
-		es.merge( tasks ).on( 'end', done )
-	} )
-} )
-
-gulp.task( 'lint-server', ( done ) => {
-	glob( paths.server.js, ( err, files ) => {
-		if ( err ) done( err )
-
-		let tasks = files.map( ( entry ) => {
-			return gulp.src( entry )
-				.pipe( eslint() )
-				.pipe( eslint.format() )
-		} )
-
-		es.merge( tasks ).on( 'end', done )
-	} )
-} )
-
-gulp.task( 'lint', gulp.parallel( 'lint-client', 'lint-server' ) )

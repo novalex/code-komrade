@@ -9,13 +9,17 @@ const { app } = require('electron').remote;
 const fs = require('fs');
 const path = require('path');
 const psTree = require('ps-tree');
+const dependencyTree = require('dependency-tree');
 
 const webpack = require('webpack');
 const CssExtract = require('mini-css-extract-plugin');
 
+const sass = require('node-sass');
+
 const stripIndent = require('strip-indent');
 
 const { slash, fileAbsolutePath, fileRelativePath } = require('../utils/pathHelpers');
+const { getDependencyArray } = require('../utils/utils');
 
 function killTasks() {
 	if ( global.compilerTasks.length ) {
@@ -149,6 +153,12 @@ function getFileConfig( base, fileConfig ) {
 function runTask( taskName, options = {}, callback = null ) {
 	console.log( options );
 
+	// Get imported files.
+	let watchFiles = getDependencyArray( dependencyTree({
+		filename: options.input,
+		directory: options.projectBase
+	}));
+
 	let filename = options.filename || 'file';
 
 	let notify;
@@ -165,7 +175,7 @@ function runTask( taskName, options = {}, callback = null ) {
 			filename: options.filename
 		},
 		resolveLoader: {
-			modules: [ path.resolve( app.getAppPath(), 'node_modules' ) ]
+			modules: [ path.resolve( app.getAppPath(), 'app', 'node_modules' ) ]
 		}
 	};
 
@@ -226,27 +236,6 @@ function runTask( taskName, options = {}, callback = null ) {
 
 		return notify;
 	}
-}
-
-function buildSassFile( options = {}, callback = null ) {
-	sass.render({
-		file: options.input,
-		outFile: options.output,
-		sourcemaps: options.sourcemaps,
-		outputStyle: options.style
-	}, function( error, result ) {
-		if ( ! error ) {
-			fs.writeFile( options.output, result.css, function ( err ) {
-				if ( ! err ) {
-					return true;
-				}
-
-				return { error: 'file_write_fail' };
-			});
-		}
-
-		return { error: 'file_compile_fail' };
-	});
 }
 
 function handleStderr( data ) {
