@@ -10,7 +10,7 @@ global.config = new Store({
 
 global.ui = require('./utils/globalUI');
 
-global.compiler = require('../js/compiler/interface');
+global.compiler = require('./compiler/interface');
 
 global.compilerTasks = [];
 

@@ -153,6 +153,15 @@ function getFileConfig( base, fileConfig ) {
 function runTask( taskName, options = {}, callback = null ) {
 	console.log( options );
 
+	let modulesPath = path.resolve( app.getAppPath(), 'app', 'node_modules' );
+	fs.access( modulesPath, fs.constants.F_OK, function( err ) {
+		if ( err ) {
+			modulesPath = path.resolve( app.getAppPath(), 'node_modules' );
+		}
+	});
+
+	console.log( modulesPath );
+
 	// Get imported files.
 	let watchFiles = getDependencyArray( dependencyTree({
 		filename: options.input,
@@ -175,7 +184,7 @@ function runTask( taskName, options = {}, callback = null ) {
 			filename: options.filename
 		},
 		resolveLoader: {
-			modules: [ path.resolve( app.getAppPath(), 'app', 'node_modules' ) ]
+			modules: [ modulesPath ]
 		}
 	};
 
@@ -204,15 +213,17 @@ function runTask( taskName, options = {}, callback = null ) {
 	webpack( config, ( err, stats ) => {
 		console.log( err );
 		console.log( stats );
+
 		if ( err || stats.hasErrors() ) {
-			// Handle errors here
+			build = false;
+			console.log( stats.compilation.errors );
+		} else {
+			build = true;
 		}
 
 		if ( callback ) {
 			callback();
 		}
-
-		build = true;
 	} );
 
 	if ( build ) {
