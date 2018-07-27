@@ -550,8 +550,11 @@ input[type="submit"] {
       border-bottom-width: 0; }
 
 ::-webkit-scrollbar {
-  background-color: #fff;
-  width: 4px; }
+  background-color: #fff; }
+  ::-webkit-scrollbar:vertical {
+    width: 4px; }
+  ::-webkit-scrollbar:horizontal {
+    height: 4px; }
 
 ::-webkit-scrollbar-thumb:window-inactive,
 ::-webkit-scrollbar-thumb {
@@ -828,7 +831,7 @@ body,
     color: #5d9a0b; }
   #logs li .details {
     overflow: auto;
-    margin-top: 10px; }
+    padding: 10px 0; }
     #logs li .details pre {
       width: 100%;
       display: table;

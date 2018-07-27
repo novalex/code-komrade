@@ -1,6 +1,13 @@
 ::-webkit-scrollbar {     
 	background-color: $color__bg;
-	width: 4px;
+
+	&:vertical {
+		width: 4px;
+	}
+
+	&:horizontal {
+		height: 4px;
+	}
 }
 
 ::-webkit-scrollbar-thumb:window-inactive,

@@ -11,14 +11,11 @@ const path = require('path');
 const psTree = require('ps-tree');
 const dependencyTree = require('dependency-tree');
 
-const webpack = require('webpack');
-const CssExtract = require('mini-css-extract-plugin');
-
 const sass = require('node-sass');
+const webpack = require('webpack');
+const formatMessages = require('./messages');
 
-const stripIndent = require('strip-indent');
-
-const { slash, fileAbsolutePath, fileRelativePath } = require('../utils/pathHelpers');
+const { fileAbsolutePath } = require('../utils/pathHelpers');
 const { getDependencyArray } = require('../utils/utils');
 
 function killTasks() {
@@ -153,14 +150,10 @@ function getFileConfig( base, fileConfig ) {
 function runTask( taskName, options = {}, callback = null ) {
 	console.log( options );
 
-	let modulesPath = path.resolve( app.getAppPath(), 'app', 'node_modules' );
-	fs.access( modulesPath, fs.constants.F_OK, function( err ) {
-		if ( err ) {
-			modulesPath = path.resolve( app.getAppPath(), 'node_modules' );
-		}
-	});
-
-	console.log( modulesPath );
+	let modulesPath = path.resolve( app.getAppPath(), 'node_modules' );
+	if ( ! modulesPath.match('app') ) {
+		modulesPath = path.resolve( app.getAppPath(), 'app/node_modules' );
+	}
 
 	// Get imported files.
 	let watchFiles = getDependencyArray( dependencyTree({
@@ -170,176 +163,128 @@ function runTask( taskName, options = {}, callback = null ) {
 
 	let filename = options.filename || 'file';
 
-	let notify;
-	let build;
-
 	// Build task starting.
 	global.logger.log( 'info', `Compiling ${filename}...` );
 
-	let config = {
-		mode: 'development',
-		entry: options.input,
-		output: {
-			path: options.output,
-			filename: options.filename
-		},
-		resolveLoader: {
-			modules: [ modulesPath ]
-		}
-	};
-
 	if ( taskName === 'build-sass' ) {
-		config.module = {
-			rules: [{
-				test: /\.scss$/,
-				use: [{
-					loader: CssExtract.loader
-				}, {
-					loader: 'css-loader',
-					options: { sourceMap: options.sourcemaps }
-				}, {
-					loader: 'sass-loader',
-					options: { sourceMap: options.sourcemaps }
-				}]
-			}]
-		};
-		config.plugins = [
-			new CssExtract({
-				filename: options.filename
-			})
-		];
-	}
+		let outFile = path.resolve( options.output, options.filename );
 
-	webpack( config, ( err, stats ) => {
-		console.log( err );
-		console.log( stats );
+		sass.render( {
+			file: options.input,
+			outFile: outFile,
+			outputStyle: options.style,
+			sourceMap: options.sourcemaps
+		}, function( error, result ) {
+			if ( error ) {
+				// Compilation error(s).
+				handleCompileError( filename, error );
 
-		if ( err || stats.hasErrors() ) {
-			build = false;
-			console.log( stats.compilation.errors );
-		} else {
-			build = true;
-		}
+				if ( callback ) {
+					callback();
+				}
+			} else {
+				// No errors during the compilation, write this result on the disk
+				fs.writeFile( outFile, result.css, function( err ) {
+					if ( err ) {
+						// Compilation error(s).
+						handleCompileError( filename, err );
+					} else {
+						// Compilation successful.
+						handleCompileSuccess( filename );
+					}
 
-		if ( callback ) {
-			callback();
-		}
-	} );
-
-	if ( build ) {
-		// Build task successful.
-		let notifyText = `Finished compiling ${filename}.`;
-
-		notify = new Notification( 'Buildr', {
-			body: notifyText,
-			silent: true
-		} );
-
-		global.logger.log( 'success', notifyText );
-
-		return notify;
-	} else {
-		// Build task error.
-		notify = new Notification( 'Buildr', {
-			body: `Error when compiling ${filename}.`,
-			sound: 'Basso'
-		} );
-
-		return notify;
-	}
-}
-
-function handleStderr( data ) {
-	console.log( data );
-
-	let errObj = {};
-	let startCapture = false;
-
-	var lines = data.split( /(\r\n|[\n\v\f\r\x85\u2028\u2029])/ );
-
-	for ( var line of lines ) {
-		let trimmed = line.trim();
-
-		if ( ! trimmed.length ) {
-			continue;
-		}
-
-		if ( trimmed === 'Details:' ) {
-			startCapture = true;
-			continue;
-		}
-
-		if ( startCapture ) {
-			let errArr = trimmed.split( /:\s(.+)/ );
-			errObj[ errArr[0] ] = errArr[1];
-
-			if ( errArr[0] === 'formatted' ) {
-				startCapture = false;
+					if ( callback ) {
+						callback();
+					}
+				} );
 			}
-		}
-	};
+		} );
+	} else {
+		let config = {
+			mode: 'production',
+			entry: options.input,
+			output: {
+				path: options.output,
+				filename: options.filename
+			},
+			resolveLoader: {
+				modules: [ modulesPath ]
+			}
+		};
 
-	if ( Object.keys( errObj ).length ) {
-		console.error( errObj );
+		webpack( config, ( err, stats ) => {
+			if ( callback ) {
+				callback();
+			}
 
-		getErrLines( errObj.file, errObj.line, function( err, lines ) {
 			if ( err ) {
 				console.error( err );
+			}
+
+			const messages = formatMessages( stats );
+
+			if ( ! messages.errors.length && ! messages.warnings.length ) {
+				// Compilation successful.
+				handleCompileSuccess( filename );
+			}
+
+			if ( messages.errors.length ) {
+				// Compilation error(s).
+				handleCompileError( filename, messages.errors );
+
 				return;
 			}
 
-			let title = errObj.formatted.replace( /\.$/, '' ) +
-				'<code>' +
-					' in ' + slash( fileRelativePath( process.cwd(), errObj.file ) ) +
-					' on line ' + errObj.line +
-				'</code>';
-
-			let details = '<pre>' + lines + '</pre>';
-
-			global.logger.log( 'error', title, details );
+			if ( messages.warnings.length ) {
+				// Compilation warning(s).
+				handleCompileWarnings( filename, messages.warnings );
+			}
 		});
 	}
-
-	// return errObj;
 }
 
-function getErrLines( filename, line, callback ) {
-	line = Math.max( parseInt( line, 10 ) - 1 || 0, 0 );
+function handleCompileSuccess( filename ) {
+	let notifyText = `Finished compiling ${filename}.`;
 
-	fs.readFile( filename, function( err, data ) {
-		if ( err ) {
-			throw err;
-		}
+	global.logger.log( 'success', notifyText );
 
-		var lines = data.toString('utf-8').split('\n');
+	let notify = new Notification( 'Buildr', {
+		body: notifyText,
+		silent: true
+	} );
 
-		if ( +line > lines.length ) {
-			return '';
-		}
+	return notify;
+}
 
-		let lineArr = [];
-		let _lineArr = [];
-		let minLine = Math.max( line - 2, 0 );
-		let maxLine = Math.min( line + 2, lines.length );
+function handleCompileError( filename, errors ) {
+	console.error( errors );
 
-		for ( var i = minLine; i <= maxLine; i++ ) {
-			_lineArr[ i ] = lines[ i ];
-		}
+	if ( ! errors.length ) {
+		errors = [ errors ];
+	}
 
-		// Remove extraneous indentation.
-		let strippedLines = stripIndent( _lineArr.join('\n') ).split('\n');
+	let notifyText = ( errors.length > 1 ? 'Errors' : 'Error' ) + ` when compiling ${filename}`;
 
-		for ( var j = minLine; j <= maxLine; j++ ) {
-			lineArr.push(
-				'<div class="line' + ( line === j ? ' highlight' : '' ) + '">' +
-					'<span class="line-number">' + ( j + 1 ) + '</span>' +
-					'<span class="line-content">' + strippedLines[ j ] + '</span>' +
-				'</div>'
-			);
-		}
+	global.logger.log( 'error', notifyText + ':', '<pre>' + errors.join( '\r\n' ) + '</pre>' );
 
-		callback( null, lineArr.join('\n') );
-	});
+	let notify = new Notification( 'Buildr', {
+		body: notifyText,
+		sound: 'Basso'
+	} );
+
+	return notify;
+}
+
+function handleCompileWarnings( filename, warnings ) {
+	console.warn( warnings );
+
+	if ( ! warnings.length ) {
+		warnings = [ warnings ];
+	}
+
+	let notifyText = ( warnings.length > 1 ? 'Warnings' : 'Warning' ) + ` when compiling ${filename}`;
+
+	global.logger.log( 'warn', notifyText + ':', '<pre>' + warnings.join( '\r\n' ) + '</pre>' );
 }
 
 module.exports = {
