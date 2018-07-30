@@ -48,7 +48,7 @@ class FileOptions extends React.Component {
 			}
 		}
 
-		return false;
+		return null;
 	}
 
 	getConfig( property, defaultValue = null ) {
@@ -60,7 +60,7 @@ class FileOptions extends React.Component {
 
 		let stored = FileOptions.getFileFromConfig( this.props.base, this.props.file );
 
-		let config = ( stored !== false ) ? stored : defaults;
+		let config = ( stored !== null ) ? stored : defaults;
 
 		if ( property ) {
 			return ( config[ property ] ) ? config[ property ] : defaultValue;

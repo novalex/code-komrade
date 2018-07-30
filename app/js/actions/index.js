@@ -34,6 +34,13 @@ function removeProject( id ) {
 	};
 }
 
+function refreshActiveProject( project ) {
+	return {
+		type: 'REFRESH_ACTIVE_PROJECT',
+		payload: project
+	};
+}
+
 function setProjectState( state ) {
 	return {
 		type: 'SET_PROJECT_STATE',
@@ -64,5 +71,6 @@ module.exports = {
 	removeProject,
 	setProjectState,
 	receiveFiles,
-	setActiveFile
+	setActiveFile,
+	refreshActiveProject
 };

@@ -2,13 +2,7 @@
  * @file Projects reducer.
  */
 
-let initialProjects = [];
-
-if ( global.config.has('projects') ) {
-	initialProjects = global.config.get('projects');
-}
-
-const projects = ( projects = initialProjects, action ) => {
+const projects = ( projects = [], action ) => {
 	switch ( action.type ) {
 		case 'ADD_PROJECT':
 			return [
@@ -17,28 +11,20 @@ const projects = ( projects = initialProjects, action ) => {
 			];
 		case 'REMOVE_PROJECT':
 			return projects.filter( ( project, index ) => index !== action.id );
+		case 'REFRESH_ACTIVE_PROJECT':
+			return projects.map( function( project, index ) {
+				if ( index === parseInt( action.payload.id, 10 ) ) {
+					return action.payload;
+				} else {
+					return project;
+				}
+			});
 		default:
 			return projects;
 	}
 };
 
-let initialActive = {
-	id: null,
-	name: '',
-	path: '',
-	paused: false
-};
-
-if ( initialProjects.length && global.config.has('active-project') ) {
-	let activeIndex = global.config.get('active-project');
-
-	if ( initialProjects[ activeIndex ] ) {
-		initialActive = initialProjects[ activeIndex ];
-		initialActive.id = activeIndex;
-	}
-}
-
-const activeProject = ( active = initialActive, action ) => {
+const activeProject = ( active = {}, action ) => {
 	switch ( action.type ) {
 		case 'CHANGE_PROJECT':
 			return action.payload;

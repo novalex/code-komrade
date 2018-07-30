@@ -11,6 +11,31 @@ function sleep(milliseconds) {
 	}
 }
 
+function getInitialState() {
+	let state = {
+		view: 'files',
+		projects: [],
+		activeProject: 0,
+		activeProjectFiles: {},
+		activeFile: null
+	};
+
+	if ( global.config.has( 'projects' ) ) {
+		state.projects = global.config.get( 'projects' );
+	}
+
+	if ( state.projects.length && global.config.has( 'active-project' ) ) {
+		let activeIndex = global.config.get( 'active-project' );
+
+		if ( state.projects[ activeIndex ] ) {
+			state.activeProject = state.projects[ activeIndex ];
+			state.activeProject.id = activeIndex;
+		}
+	}
+
+	return state;
+}
+
 function setProjectConfig( property, value ) {
 	let projects = global.config.get('projects');
 	let activeIndex = global.config.get('active-project');
@@ -40,6 +65,7 @@ function getDependencyArray( dependencyTree ) {
 
 module.exports = {
 	sleep,
+	getInitialState,
 	setProjectConfig,
 	getDependencyArray
 };

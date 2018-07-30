@@ -24,15 +24,10 @@ const { createStore } = require('redux');
 
 const rootReducer = require('./reducers');
 
-// let initialState = {
-// 	view: 'files',
-// 	projects: {},
-// 	activeProject: 0,
-// 	activeProjectFiles: {},
-// 	activeFile: null
-// };
+const { getInitialState } = require('./utils/utils');
+const initialState = getInitialState();
 
-const store = createStore( rootReducer ); // , initialState );
+const store = createStore( rootReducer, initialState );
 
 global.store = store;
 

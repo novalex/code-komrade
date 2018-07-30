@@ -118,10 +118,10 @@ class Projects extends React.Component {
 			paused: true
 		};
 
-		if ( this.props.projects[ id ] ) {
-			active = this.props.projects[ id ];
-		} else if ( project ) {
+		if ( project ) {
 			active = project;
+		} else if ( this.props.projects[id] ) {
+			active = this.props.projects[id];
 		}
 
 		// Update config.

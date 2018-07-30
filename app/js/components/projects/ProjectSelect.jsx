@@ -6,7 +6,7 @@ const React = require('react');
 
 const { connect } = require('react-redux');
 
-const { setProjectState } = require('../../actions');
+const { setProjectState, refreshActiveProject } = require('../../actions');
 
 const { setProjectConfig } = require('../../utils/utils');
 
@@ -33,6 +33,11 @@ class ProjectSelect extends React.Component {
 		let paused = ! this.props.active.paused || false;
 
 		this.props.setProjectState({ paused: paused });
+
+		this.props.refreshActiveProject({
+			...this.props.active,
+			paused: paused
+		});
 
 		setProjectConfig( 'paused', paused );
 	}
@@ -110,7 +115,8 @@ const mapStateToProps = ( state ) => ({
 });
 
 const mapDispatchToProps = ( dispatch ) => ({
-	setProjectState: state => dispatch( setProjectState( state ) )
+	setProjectState: state => dispatch( setProjectState( state ) ),
+	refreshActiveProject: project => dispatch( refreshActiveProject( project ) )
 });
 
 module.exports = connect( mapStateToProps, mapDispatchToProps )( ProjectSelect );
