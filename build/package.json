@@ -2,7 +2,7 @@
   "name": "buildr",
   "version": "0.1.0",
   "description": "GUI build and compile system.",
-  "main": "build/index.js",
+  "main": "index.js",
   "repository": "",
   "keywords": [],
   "author": "Alex Nitu",

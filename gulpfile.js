@@ -19,6 +19,7 @@ const replace = require('gulp-replace')
 const electron = require('electron-connect').server.create()
 // const zip = require('gulp-vinyl-zip')
 const del = require('del')
+const path = require('path')
 
 // const packageJSON = require('./package.json')
 // const appVersion = packageJSON.version
@@ -81,8 +82,10 @@ gulp.task( 'build-client-js', ( done ) => {
 				commondir: false,
 				builtins: false,
 				bundleExternal: false,
-				debug: true
+				debug: true,
+				basedir: path.resolve( '.' )
 			} )
+				.plugin( './vendor/browserify-sourcemap-root-transform' )
 				.transform( 'babelify' )
 				.bundle()
 				.pipe( source( entry ) )

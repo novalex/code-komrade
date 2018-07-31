@@ -1,0 +1,62 @@
+{
+  "_from": "browserify-sourcemap-root-transform",
+  "_id": "browserify-sourcemap-root-transform@0.1.2",
+  "_inBundle": false,
+  "_integrity": "sha1-ADoKUE1O1OdXFE3IX8txgQaXLog=",
+  "_location": "/browserify-sourcemap-root-transform",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "browserify-sourcemap-root-transform",
+    "name": "browserify-sourcemap-root-transform",
+    "escapedName": "browserify-sourcemap-root-transform",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/browserify-sourcemap-root-transform/-/browserify-sourcemap-root-transform-0.1.2.tgz",
+  "_shasum": "003a0a504d4ed4e757144dc85fcb718106972e88",
+  "_spec": "browserify-sourcemap-root-transform",
+  "_where": "E:\\Apps\\Buildr",
+  "author": {
+    "name": "BlackBerry Limited",
+    "email": "npmjs@blackberry.com",
+    "url": "http://www.blackberry.com"
+  },
+  "bugs": {
+    "url": "https://github.com/blackberry/browserify-sourcemap-root-transform/issues"
+  },
+  "bundleDependencies": false,
+  "contributors": [
+    {
+      "name": "Isaac Gordezky",
+      "email": "igordezky@blackberry.com"
+    }
+  ],
+  "deprecated": false,
+  "description": "Browserify plugin to replace the basedir in sourcemap paths in the output bundle",
+  "homepage": "https://github.com/blackberry/browserify-sourcemap-root-transform#readme",
+  "keywords": [
+    "browserify",
+    "browserify-plugin",
+    "sourcemap",
+    "soruce-map",
+    "source map"
+  ],
+  "license": "Apache Version 2.0",
+  "name": "browserify-sourcemap-root-transform",
+  "peerDependencies": {
+    "browserify": "^5.9.11",
+    "through": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blackberry/browserify-sourcemap-root-transform.git"
+  },
+  "version": "0.1.2"
+}

@@ -61,7 +61,7 @@ app.on( 'ready', function() {
 	createWindow();
 
 	// Debugging.
-	mainWindow.webContents.openDevTools();
+	// mainWindow.webContents.openDevTools();
 
 	// mainWindow.webContents.on( 'dom-ready', function() {
 	// });
