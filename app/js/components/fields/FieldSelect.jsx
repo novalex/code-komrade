@@ -12,29 +12,15 @@ class FieldSelect extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		this.state = {
-			selected: this.props.value
-		}
-
 		this.onChange = this.onChange.bind( this );
-	}
-
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		let selected = ( nextProps.value === null ) ? false : nextProps.value;
-
-		return { selected };
 	}
 
 	onChange( event ) {
 		event.persist();
 
-		this.setState( function( prevState ) {
-			return { selected: event.target.value };
-		}, function() {
-			if ( this.props.onChange ) {
-				this.props.onChange( event, this.state.selected );
-			}
-		});
+		if ( this.props.onChange ) {
+			this.props.onChange( this.props.name, event.target.value );
+		}
 	}
 
 	getOptions() {
@@ -57,12 +43,12 @@ class FieldSelect extends React.Component {
 				<label
 					htmlFor={ 'field_' + this.props.name }
 				>
-					{ this.state.selected ? this.props.options[ this.state.selected ] : '' }
+					{ this.props.value ? this.props.options[ this.props.value ] : '' }
 				</label>
 				<select
 					name={ this.props.name }
 					onChange={ this.onChange }
-					value={ this.state.selected }
+					value={ this.props.value }
 					disabled={ this.props.disabled }
 					id={ 'field_' + this.props.name }
 				>

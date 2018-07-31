@@ -16,17 +16,7 @@ class FieldSaveFile extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		this.state = {
-			path: this.props.value
-		}
-
 		this.onClick = this.onClick.bind( this );
-	}
-
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		let path = ( nextProps.value === null ) ? '' : nextProps.value;
-
-		return { path };
 	}
 
 	onClick( event ) {
@@ -39,10 +29,10 @@ class FieldSaveFile extends React.Component {
 			fileSaveOptions.title = this.props.dialogTitle;
 		}
 
-		if ( ! this.state.path && this.props.sourceFile ) {
+		if ( ! this.props.value && this.props.sourceFile ) {
 			fileSaveOptions.defaultPath = this.props.sourceFile.path;
-		} else if ( this.state.path && this.props.sourceBase ) {
-			fileSaveOptions.defaultPath = fileAbsolutePath( this.props.sourceBase, this.state.path );
+		} else if ( this.props.value && this.props.sourceBase ) {
+			fileSaveOptions.defaultPath = fileAbsolutePath( this.props.sourceBase, this.props.value );
 		}
 
 		if ( this.props.dialogFilters ) {
@@ -58,11 +48,9 @@ class FieldSaveFile extends React.Component {
 				savePath = slash( fileRelativePath( this.props.sourceBase, filename ) );
 			}
 
-			this.setState({ path: savePath }, function() {
-				if ( this.props.onChange ) {
-					this.props.onChange( event, savePath );
-				}
-			});
+			if ( this.props.onChange ) {
+				this.props.onChange( this.props.name, savePath );
+			}
 		}
 	}
 
@@ -73,10 +61,10 @@ class FieldSaveFile extends React.Component {
 					type='hidden'
 					name={ this.props.name }
 					id={ 'field_' + this.props.name }
-					value={ this.state.path }
+					value={ this.props.value }
 					readOnly='true'
 				/>
-				<small onClick={ this.onClick }>{ this.state.path }</small>
+				<small onClick={ this.onClick }>{ this.props.value }</small>
 			</Field>
 		);
 	}

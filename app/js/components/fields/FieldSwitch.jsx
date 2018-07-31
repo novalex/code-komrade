@@ -12,29 +12,15 @@ class FieldSwitch extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		this.state = {
-			checked: this.props.value
-		}
-
 		this.onChange = this.onChange.bind( this );
-	}
-
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		let checked = ( nextProps.value === null ) ? false : nextProps.value;
-
-		return { checked };
 	}
 
 	onChange( event ) {
 		event.persist();
 
-		this.setState( function( prevState ) {
-			return { checked: ! prevState.checked };
-		}, function() {
-			if ( this.props.onChange ) {
-				this.props.onChange( event, this.state.checked );
-			}
-		});
+		if ( this.props.onChange ) {
+			this.props.onChange( this.props.name, ! this.props.value );
+		}
 	}
 
 	render() {
@@ -44,7 +30,7 @@ class FieldSwitch extends React.Component {
 					type='checkbox'
 					name={ this.props.name }
 					onChange={ this.onChange }
-					checked={ this.state.checked }
+					checked={ this.props.value }
 					disabled={ this.props.disabled }
 					id={ 'field_' + this.props.name }
 				/>

@@ -16,7 +16,6 @@ class FileOptions extends React.Component {
 
 		this.handleChange = this.handleChange.bind( this );
 		this.handleCompile = this.handleCompile.bind( this );
-		this.setOutputPath = this.setOutputPath.bind( this );
 	}
 
 	static getDerivedStateFromProps( nextProps ) {
@@ -84,7 +83,7 @@ class FileOptions extends React.Component {
 			let fileConfig = {
 				path: filePath,
 				type: this.state.fileType,
-				output: fileRelativePath( this.props.base, this.defaultOutputPath() )
+				output: slash( fileRelativePath( this.props.base, this.defaultOutputPath() ) )
 			};
 
 			if ( typeof( value ) !== 'undefined' && value !== null ) {
@@ -111,26 +110,26 @@ class FileOptions extends React.Component {
 	}
 
 	setOption( option, value ) {
-		this.setState( function( prevState ) {
-			let options = prevState.options || {};
-			options[ option ] = value;
+		let options = this.state.options || {};
+		options[ option ] = value;
 
-			return { options };
-		}, function() {
-			this.setConfig( 'options', this.state.options );
-		});
+		this.setConfig( 'options', options );
+
+		this.setState({ options: options });
 	}
 
-	handleChange( event, value ) {
-		this.setOption( event.target.name, value );
+	handleChange( name, value ) {
+		if ( name === 'output' ) {
+			this.setConfig( 'output', value );
+
+			this.setState( this.state );
+		} else {
+			this.setOption( name, value );
+		}
 	}
 
 	defaultOutputPath() {
 		return fileOutputPath( this.props.file, this.outputSuffix, this.outputExtension );
-	}
-
-	setOutputPath( event, path ) {
-		this.setConfig( 'output', path );
 	}
 
 	getOutputPath( type = 'relative' ) {
@@ -159,7 +158,7 @@ class FileOptions extends React.Component {
 			this.props.base,
 			this.getConfig(),
 			this.state.buildTaskName,
-			function( code ) {
+			function() {
 				this.setState({ loading: false });
 			}.bind( this )
 		);

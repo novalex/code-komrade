@@ -34,7 +34,7 @@ class FileOptionsScript extends FileOptions {
 					<FieldSaveFile
 						name='output'
 						label='Output Path'
-						onChange={ this.setOutputPath }
+						onChange={ this.handleChange }
 						value={ this.getOutputPath( 'display' ) }
 						sourceFile={ this.props.file }
 						sourceBase={ this.props.base }
