@@ -2,9 +2,7 @@
  * @file Main application controller.
  */
 
-const electron = require('electron');
-
-const { app, dialog, BrowserWindow } = electron;
+const { app, dialog, BrowserWindow } = require('electron');
 
 const windowStateKeeper = require('electron-window-state');
 
@@ -51,8 +49,9 @@ function createWindow() {
 		dialog.showMessageBox( options, function( index ) {
 			if ( index === 0 ) {
 				app.relaunch();
+			} else if ( index === 1 ) {
+				app.exit( 0 );
 			}
-			app.exit( 0 );
 		});
 	});
 }

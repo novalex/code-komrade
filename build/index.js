@@ -4,12 +4,10 @@
  * @file Main application controller.
  */
 
-var electron = require('electron');
-
-var app = electron.app,
-    dialog = electron.dialog,
-    BrowserWindow = electron.BrowserWindow;
-
+var _require = require('electron'),
+    app = _require.app,
+    dialog = _require.dialog,
+    BrowserWindow = _require.BrowserWindow;
 
 var windowStateKeeper = require('electron-window-state');
 
@@ -56,8 +54,9 @@ function createWindow() {
 		dialog.showMessageBox(options, function (index) {
 			if (index === 0) {
 				app.relaunch();
+			} else if (index === 1) {
+				app.exit(0);
 			}
-			app.exit(0);
 		});
 	});
 }

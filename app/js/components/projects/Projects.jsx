@@ -51,6 +51,7 @@ class Projects extends React.Component {
 		this.changeProject = this.changeProject.bind( this );
 		this.removeProject = this.removeProject.bind( this );
 		this.refreshProject = this.refreshProject.bind( this );
+		this.changeProjectPath = this.changeProjectPath.bind( this );
 
 		this.initCompiler = this.initCompiler.bind( this );
 
@@ -139,24 +140,54 @@ class Projects extends React.Component {
 	}
 
 	// Remove the current project.
-	removeProject( event ) {
+	removeProject() {
+		let removeIndex = parseInt( this.props.active.id, 10 );
+
+		let projects = this.props.projects.filter( ( project, index ) => index !== removeIndex );
+
+		// Remove project from config.
+		global.config.set( 'projects', projects );
+
+		// Update state.
+		this.props.removeProject( removeIndex );
+
+		// Unset active project.
+		this.changeProject( null );
+	}
+
+	// Confirm project removal when clicking remove button.
+	removeProjectButton( event ) {
 		event.preventDefault();
 
 		let confirmRemove = window.confirm( `Are you sure you want to remove ${this.props.active.name}?` );
 
 		if ( confirmRemove ) {
-			let removeIndex = parseInt( this.props.active.id, 10 );
+			this.removeProject();
+		}
+	}
 
-			let projects = this.props.projects.filter( ( project, index ) => index !== removeIndex );
+	// Change active project's path.
+	changeProjectPath() {
+		let path = dialog.showOpenDialog( {
+			properties: ['openDirectory']
+		} );
 
-			// Remove project from config.
+		if ( path ) {
+			let projects = this.props.projects;
+			let projectIndex = projects.findIndex( project => project.path === this.props.active.path );
+
+			if ( projectIndex === -1 ) {
+				// Project not found.
+				return;
+			}
+
+			projects[ projectIndex ].path = path[0];
+
+			// Save new project to config.
 			global.config.set( 'projects', projects );
 
-			// Update state.
-			this.props.removeProject( removeIndex );
-
-			// Unset active project.
-			this.changeProject( null );
+			// Set new project as active.
+			this.changeProject( projectIndex );
 		}
 	}
 
@@ -211,16 +242,30 @@ class Projects extends React.Component {
 	initProject( path ) {
 		fs.access( path, fs.constants.W_OK, function( err ) {
 			if ( err ) {
-				// Chosen directory not readable or no path provided.
 				if ( path ) {
-					window.alert( `Could not read the ${path} directory.` );
+					// Chosen directory not readable.
+					const options = {
+						type: 'warning',
+						title: 'Project directory missing',
+						message: `Could not read the ${path} directory. It may have been moved or renamed.`,
+						buttons: [ 'Change Directory', 'Remove Project' ]
+					};
+
+					dialog.showMessageBox( options, function( index ) {
+						if ( index === 0 ) {
+							this.changeProjectPath();
+						} else if ( index === 1 ) {
+							this.removeProject();
+						}
+					}.bind( this ) );
+				} else {
+					// No project path provided.
+					global.projectConfig = null;
+
+					global.store.dispatch( receiveFiles( {} ) );
+
+					global.compiler.killTasks();
 				}
-
-				global.projectConfig = null;
-
-				global.store.dispatch( receiveFiles( {} ) );
-
-				global.compiler.killTasks();
 			} else {
 				// Directory is readable, get files and setup config.
 				this.getFiles( path );
@@ -232,7 +277,7 @@ class Projects extends React.Component {
 
 				this.initCompiler();
 			}
-		}.bind( this ));
+		}.bind( this ) );
 
 		global.logger = new Logger();
 	}
@@ -242,7 +287,7 @@ class Projects extends React.Component {
 			<ProjectSelect
 				newProject={ this.newProject }
 				changeProject={ this.changeProject }
-				removeProject={ this.removeProject }
+				removeProject={ this.removeProjectButton }
 				refreshProject={ this.refreshProject }
 			/>
 		);
