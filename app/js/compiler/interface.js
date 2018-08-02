@@ -12,6 +12,9 @@ const psTree = require('ps-tree');
 const dependencyTree = require('dependency-tree');
 
 const sass = require('node-sass');
+const autoprefixer = require('autoprefixer');
+const precss = require('precss');
+const postcss = require('postcss');
 const webpack = require('webpack');
 const formatMessages = require('./messages');
 
@@ -148,49 +151,65 @@ function getFileConfig( base, fileConfig ) {
 }
 
 function runTask( taskName, options = {}, callback = null ) {
-	console.log( options );
-
-	let modulesPath = path.resolve( app.getAppPath(), 'node_modules' );
-	if ( ! modulesPath.match('app') ) {
-		modulesPath = path.resolve( app.getAppPath(), 'app/node_modules' );
-	}
-
 	// Get imported files.
 	let watchFiles = getDependencyArray( dependencyTree({
 		filename: options.input,
 		directory: options.projectBase
 	}));
 
-	let filename = options.filename || 'file';
-
 	// Build task starting.
-	global.logger.log( 'info', `Compiling ${filename}...` );
+	global.logger.log( 'info', `Compiling ${options.filename}...` );
 
-	if ( taskName === 'build-sass' ) {
-		let outFile = path.resolve( options.output, options.filename );
+	switch ( taskName ) {
+		case 'build-sass':
+			handleSassCompile( options, callback );
+			break;
+		case 'build-css':
+			handleCssCompile( options, callback );
+			break;
+		case 'build-js':
+			handleJsCompile( options, callback );
+			break;
+		default:
+			console.error( `Unhandled task: ${taskName}` );
+			break;
+	}
+}
 
-		sass.render( {
-			file: options.input,
-			outFile: outFile,
-			outputStyle: options.style,
-			sourceMap: options.sourcemaps
-		}, function( error, result ) {
-			if ( error ) {
-				// Compilation error(s).
-				handleCompileError( filename, error );
+function handleSassCompile( options, callback = null ) {
+	options.outFile = path.resolve( options.output, options.filename );
 
-				if ( callback ) {
-					callback();
-				}
+	sass.render( {
+		file: options.input,
+		outFile: options.outFile,
+		outputStyle: options.style,
+		sourceMap: options.sourcemaps,
+		sourceMapEmbed: options.sourcemaps
+	}, function( error, result ) {
+		if ( error ) {
+			// Compilation error(s).
+			handleCompileError( options.filename, error );
+
+			if ( callback ) {
+				callback();
+			}
+		} else {
+			if ( options.autoprefixer ) {
+				let postCssOptions = {
+					from: options.input,
+					to: options.outFile,
+					map: options.sourcemaps
+				};
+				handlePostCssCompile( options, result.css, postCssOptions, callback );
 			} else {
 				// No errors during the compilation, write this result on the disk
-				fs.writeFile( outFile, result.css, function( err ) {
+				fs.writeFile( options.outFile, result.css, function( err ) {
 					if ( err ) {
 						// Compilation error(s).
-						handleCompileError( filename, err );
+						handleCompileError( options.filename, err );
 					} else {
 						// Compilation successful.
-						handleCompileSuccess( filename );
+						handleCompileSuccess( options.filename );
 					}
 
 					if ( callback ) {
@@ -198,49 +217,96 @@ function runTask( taskName, options = {}, callback = null ) {
 					}
 				} );
 			}
+		}
+	} );
+}
+
+function handleCssCompile( options, callback = null ) {
+	options.outFile = path.resolve( options.output, options.filename );
+
+	let postCssOptions = {
+		from: options.input,
+		to: options.outFile,
+		map: options.sourcemaps
+	};
+
+	fs.readFile( options.input, ( err, css ) => {
+		if ( err ) {
+			// Compilation error(s).
+			handleCompileError( options.filename, err );
+		} else {
+			handlePostCssCompile( options, css, postCssOptions, callback );
+		}
+	});
+}
+
+function handlePostCssCompile( options, css, postCssOptions, callback = null ) {
+	postcss( [ precss, autoprefixer ] )
+		.process( css, postCssOptions )
+		.then( postCssResult => {
+			// No errors during the compilation, write this result on the disk
+			fs.writeFile( options.outFile, postCssResult.css, function( err ) {
+				if ( err ) {
+					// Compilation error(s).
+					handleCompileError( options.filename, err );
+				} else {
+					// Compilation successful.
+					handleCompileSuccess( options.filename );
+				}
+
+				if ( callback ) {
+					callback();
+				}
+			} );
 		} );
-	} else {
-		let config = {
-			mode: 'production',
-			entry: options.input,
-			output: {
-				path: options.output,
-				filename: options.filename
-			},
-			resolveLoader: {
-				modules: [ modulesPath ]
-			}
-		};
+}
 
-		webpack( config, ( err, stats ) => {
-			if ( callback ) {
-				callback();
-			}
-
-			if ( err ) {
-				console.error( err );
-			}
-
-			const messages = formatMessages( stats );
-
-			if ( ! messages.errors.length && ! messages.warnings.length ) {
-				// Compilation successful.
-				handleCompileSuccess( filename );
-			}
-
-			if ( messages.errors.length ) {
-				// Compilation error(s).
-				handleCompileError( filename, messages.errors );
-
-				return;
-			}
-
-			if ( messages.warnings.length ) {
-				// Compilation warning(s).
-				handleCompileWarnings( filename, messages.warnings );
-			}
-		});
+function handleJsCompile( options, callback = null ) {
+	let modulesPath = path.resolve( app.getAppPath(), 'node_modules' );
+	if ( ! modulesPath.match( 'app' ) ) {
+		modulesPath = path.resolve( app.getAppPath(), 'app/node_modules' );
 	}
+
+	let config = {
+		mode: 'production',
+		entry: options.input,
+		output: {
+			path: options.output,
+			filename: options.filename
+		},
+		resolveLoader: {
+			modules: [ modulesPath ]
+		}
+	};
+
+	webpack( config, ( err, stats ) => {
+		if ( callback ) {
+			callback();
+		}
+
+		if ( err ) {
+			console.error( err );
+		}
+
+		const messages = formatMessages( stats );
+
+		if ( ! messages.errors.length && ! messages.warnings.length ) {
+			// Compilation successful.
+			handleCompileSuccess( options.filename );
+		}
+
+		if ( messages.errors.length ) {
+			// Compilation error(s).
+			handleCompileError( options.filename, messages.errors );
+
+			return;
+		}
+
+		if ( messages.warnings.length ) {
+			// Compilation warning(s).
+			handleCompileWarnings( options.filename, messages.warnings );
+		}
+	} );
 }
 
 function handleCompileSuccess( filename ) {
