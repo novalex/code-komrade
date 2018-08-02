@@ -4,27 +4,38 @@
 
 /* global Notification */
 
-const { app } = require('electron').remote;
+const { app } = require( 'electron' ).remote;
 
-const fs = require('fs');
-const path = require('path');
-const psTree = require('ps-tree');
-const dependencyTree = require('dependency-tree');
+const fs = require( 'fs' );
+const path = require( 'path' );
+const dependencyTree = require( 'dependency-tree' );
 
-const sass = require('node-sass');
-const autoprefixer = require('autoprefixer');
-const precss = require('precss');
-const postcss = require('postcss');
-const webpack = require('webpack');
-const formatMessages = require('./messages');
+const sass = require( 'node-sass' );
+const WatchSass = require( 'node-sass-watcher' );
+const autoprefixer = require( 'autoprefixer' );
+const precss = require( 'precss' );
+const postcss = require( 'postcss' );
+const webpack = require( 'webpack' );
+const formatMessages = require( './messages' );
 
-const { fileAbsolutePath } = require('../utils/pathHelpers');
-const { getDependencyArray } = require('../utils/utils');
+const { fileAbsolutePath } = require( '../utils/pathHelpers' );
+const { getDependencyArray } = require( '../utils/utils' );
 
 function killTasks() {
 	if ( global.compilerTasks.length ) {
-		for ( var task of global.compilerTasks ) {
-			terminateProcess( task );
+		for ( let i = 0; i < global.compilerTasks.length; i++ ) {
+			const task = global.compilerTasks[ i ];
+
+			if ( typeof task._events.update === 'function' ) {
+				// Close chokidar watch processes.
+				task.inputPathWatcher.close();
+				task.rootDirWatcher.close();
+
+				let filename = path.basename( task.inputPath );
+				global.logger.log( 'info', `Stopped watching ${filename}.` );
+			}
+
+			global.compilerTasks.splice( i, 1 );
 		}
 
 		return true;
@@ -32,23 +43,6 @@ function killTasks() {
 
 	// Nothing to kill :(
 	return null;
-}
-
-function terminateProcess( proc ) {
-	psTree( proc.pid, function( err, children ) {
-		if ( err ) {
-			console.error( err );
-		}
-
-		for ( var pid of [ proc.pid ].concat( children.map( child => child.PID ) ) ) {
-			try {
-				process.kill( pid );
-			} catch ( err ) {
-				// Fail silently lol YOLO
-				// console.error( err );
-			}
-		}
-	});
 }
 
 function initProject() {
@@ -157,22 +151,31 @@ function runTask( taskName, options = {}, callback = null ) {
 		directory: options.projectBase
 	}));
 
-	// Build task starting.
-	global.logger.log( 'info', `Compiling ${options.filename}...` );
+	let inputFilename = path.basename( options.input );
 
-	switch ( taskName ) {
-		case 'build-sass':
-			handleSassCompile( options, callback );
-			break;
-		case 'build-css':
-			handleCssCompile( options, callback );
-			break;
-		case 'build-js':
-			handleJsCompile( options, callback );
-			break;
-		default:
-			console.error( `Unhandled task: ${taskName}` );
-			break;
+	if ( taskName === 'watch' ) {
+		// Watch task starting.
+		global.logger.log( 'info', `Watching ${inputFilename}...` );
+
+		handleWatchTask( options, callback );
+	} else {
+		// Build task starting.
+		global.logger.log( 'info', `Compiling ${inputFilename}...` );
+
+		switch ( taskName ) {
+			case 'build-sass':
+				handleSassCompile( options, callback );
+				break;
+			case 'build-css':
+				handleCssCompile( options, callback );
+				break;
+			case 'build-js':
+				handleJsCompile( options, callback );
+				break;
+			default:
+				console.error( `Unhandled task: ${taskName}` );
+				break;
+		}
 	}
 }
 
@@ -188,7 +191,7 @@ function handleSassCompile( options, callback = null ) {
 	}, function( error, result ) {
 		if ( error ) {
 			// Compilation error(s).
-			handleCompileError( options.filename, error );
+			handleCompileError( options, error );
 
 			if ( callback ) {
 				callback();
@@ -206,10 +209,10 @@ function handleSassCompile( options, callback = null ) {
 				fs.writeFile( options.outFile, result.css, function( err ) {
 					if ( err ) {
 						// Compilation error(s).
-						handleCompileError( options.filename, err );
+						handleCompileError( options, err );
 					} else {
 						// Compilation successful.
-						handleCompileSuccess( options.filename );
+						handleCompileSuccess( options );
 					}
 
 					if ( callback ) {
@@ -222,7 +225,7 @@ function handleSassCompile( options, callback = null ) {
 }
 
 function handleCssCompile( options, callback = null ) {
-	options.outFile = path.resolve( options.output, options.filename );
+	options.outFile = path.resolve( options.output, options );
 
 	let postCssOptions = {
 		from: options.input,
@@ -233,7 +236,7 @@ function handleCssCompile( options, callback = null ) {
 	fs.readFile( options.input, ( err, css ) => {
 		if ( err ) {
 			// Compilation error(s).
-			handleCompileError( options.filename, err );
+			handleCompileError( options, err );
 		} else {
 			handlePostCssCompile( options, css, postCssOptions, callback );
 		}
@@ -248,10 +251,10 @@ function handlePostCssCompile( options, css, postCssOptions, callback = null ) {
 			fs.writeFile( options.outFile, postCssResult.css, function( err ) {
 				if ( err ) {
 					// Compilation error(s).
-					handleCompileError( options.filename, err );
+					handleCompileError( options, err );
 				} else {
 					// Compilation successful.
-					handleCompileSuccess( options.filename );
+					handleCompileSuccess( options );
 				}
 
 				if ( callback ) {
@@ -292,24 +295,37 @@ function handleJsCompile( options, callback = null ) {
 
 		if ( ! messages.errors.length && ! messages.warnings.length ) {
 			// Compilation successful.
-			handleCompileSuccess( options.filename );
+			handleCompileSuccess( options );
 		}
 
 		if ( messages.errors.length ) {
 			// Compilation error(s).
-			handleCompileError( options.filename, messages.errors );
+			handleCompileError( options, messages.errors );
 
 			return;
 		}
 
 		if ( messages.warnings.length ) {
 			// Compilation warning(s).
-			handleCompileWarnings( options.filename, messages.warnings );
+			handleCompileWarnings( options, messages.warnings );
 		}
 	} );
 }
 
-function handleCompileSuccess( filename ) {
+function handleWatchTask( options ) {
+	let watcherOptions = {
+		verbosity: 1
+	};
+	let watcher = new WatchSass( options.input, watcherOptions );
+	// watcher.on( 'init', function() { handleSassCompile( options ) });
+	watcher.on( 'update', function() { handleSassCompile( options ) });
+	watcher.run();
+	global.compilerTasks.push( watcher );
+}
+
+function handleCompileSuccess( options ) {
+	let filename = path.basename( options.input );
+
 	let notifyText = `Finished compiling ${filename}.`;
 
 	global.logger.log( 'success', notifyText );
@@ -322,12 +338,14 @@ function handleCompileSuccess( filename ) {
 	return notify;
 }
 
-function handleCompileError( filename, errors ) {
+function handleCompileError( options, errors ) {
 	console.error( errors );
 
 	if ( ! errors.length ) {
 		errors = [ errors ];
 	}
+
+	let filename = path.basename( options.input );
 
 	let notifyText = ( errors.length > 1 ? 'Errors' : 'Error' ) + ` when compiling ${filename}`;
 
@@ -341,12 +359,14 @@ function handleCompileError( filename, errors ) {
 	return notify;
 }
 
-function handleCompileWarnings( filename, warnings ) {
+function handleCompileWarnings( options, warnings ) {
 	console.warn( warnings );
 
 	if ( ! warnings.length ) {
 		warnings = [ warnings ];
 	}
+
+	let filename = path.basename( options.input );
 
 	let notifyText = ( warnings.length > 1 ? 'Warnings' : 'Warning' ) + ` when compiling ${filename}`;
 
@@ -359,6 +379,5 @@ module.exports = {
 	killTasks,
 	processFile,
 	getFileConfig,
-	getFileOptions,
-	terminateProcess
+	getFileOptions
 }

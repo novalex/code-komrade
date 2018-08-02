@@ -19,8 +19,14 @@ class Logs extends React.Component {
 		};
 
 		this.refresh = this.refresh.bind( this );
+	}
 
+	componentDidMount() {
 		document.addEventListener( 'bd/refresh/logs', this.refresh );
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener( 'bd/refresh/logs', this.refresh );
 	}
 
 	refresh() {

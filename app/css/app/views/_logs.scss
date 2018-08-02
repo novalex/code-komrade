@@ -21,7 +21,8 @@
 
 			// Timestamp.
 			small {
-				width: 86px;
+				width: 92px;
+				display: inline-block;
 				padding: 2px $spacing__content-s 2px 0;
 				opacity: 0.75;
 				user-select: none;
@@ -29,14 +30,16 @@
 		}
 
 		&.type-error {
-			user-select: initial;
-
 			.title {
-				cursor: text;
-
 				small {
 					color: $color__red;
 				}
+			}
+
+			.title-text,
+			.details {
+				cursor: text;
+				user-select: text;
 			}
 		}
 

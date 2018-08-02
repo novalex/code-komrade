@@ -817,16 +817,17 @@ body,
       margin-top: 10px;
       opacity: 0.75; }
     #logs li .title small {
-      width: 86px;
+      width: 92px;
+      display: inline-block;
       padding: 2px 10px 2px 0;
       opacity: 0.75;
       user-select: none; }
-  #logs li.type-error {
-    user-select: initial; }
-    #logs li.type-error .title {
-      cursor: text; }
-      #logs li.type-error .title small {
-        color: #dc3130; }
+  #logs li.type-error .title small {
+    color: #dc3130; }
+  #logs li.type-error .title-text,
+  #logs li.type-error .details {
+    cursor: text;
+    user-select: text; }
   #logs li.type-success .title small {
     color: #5d9a0b; }
   #logs li .details {

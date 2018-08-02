@@ -18,6 +18,16 @@ class FileOptions extends React.Component {
 		this.handleCompile = this.handleCompile.bind( this );
 	}
 
+	componentDidMount() {
+		this.handleCompileCallback = function() {
+			this.setState( { loading: false } );
+		}.bind( this );
+	}
+
+	componentWillUnmount() {
+		this.handleCompileCallback = null;
+	}
+
 	static getDerivedStateFromProps( nextProps ) {
 		let compileOptions = global.compiler.getFileOptions( nextProps.file );
 
@@ -158,9 +168,7 @@ class FileOptions extends React.Component {
 			this.props.base,
 			this.getConfig(),
 			this.state.buildTaskName,
-			function() {
-				this.setState({ loading: false });
-			}.bind( this )
+			this.handleCompileCallback
 		);
 	}
 
