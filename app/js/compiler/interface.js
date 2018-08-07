@@ -8,7 +8,7 @@ const { app } = require( 'electron' ).remote;
 
 const fs = require( 'fs' );
 const path = require( 'path' );
-const dependencyTree = require( 'dependency-tree' );
+// const dependencyTree = require( 'dependency-tree' );
 
 const sass = require( 'node-sass' );
 const WatchSass = require( 'node-sass-watcher' );
@@ -16,33 +16,43 @@ const autoprefixer = require( 'autoprefixer' );
 const precss = require( 'precss' );
 const postcss = require( 'postcss' );
 const webpack = require( 'webpack' );
+const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 const formatMessages = require( './messages' );
 
 const { fileAbsolutePath } = require( '../utils/pathHelpers' );
-const { getDependencyArray } = require( '../utils/utils' );
+// const { getDependencyArray } = require( '../utils/utils' );
 
 function killTasks() {
-	if ( global.compilerTasks.length ) {
-		for ( let i = 0; i < global.compilerTasks.length; i++ ) {
-			const task = global.compilerTasks[ i ];
-
-			if ( typeof task._events.update === 'function' ) {
-				// Close chokidar watch processes.
-				task.inputPathWatcher.close();
-				task.rootDirWatcher.close();
-
-				let filename = path.basename( task.inputPath );
-				global.logger.log( 'info', `Stopped watching ${filename}.` );
-			}
-
-			global.compilerTasks.splice( i, 1 );
-		}
-
-		return true;
+	if ( global.compilerTasks.length === 0 ) {
+		// Nothing to kill :(
+		return null;
 	}
 
-	// Nothing to kill :(
-	return null;
+	const tasks = global.compilerTasks;
+
+	for ( let i = 0; i < tasks.length; i++ ) {
+		let task = tasks[ i ];
+		let filename;
+
+		if ( typeof task._events === 'object' && typeof task._events.update === 'function' ) {
+			filename = path.basename( task.inputPath );
+			// Close chokidar watch processes.
+			task.inputPathWatcher.close();
+			task.rootDirWatcher.close();
+		} else {
+			filename = path.basename( task.compiler.options.entry );
+			// Close webpack watch process.
+			task.close();
+		}
+
+		global.logger.log( 'info', `Stopped watching ${filename}.` );
+
+		tasks.splice( i, 1 );
+	}
+
+	global.compilerTasks = tasks;
+
+	return true;
 }
 
 function initProject() {
@@ -123,8 +133,7 @@ function getFileConfig( base, fileConfig ) {
 		input: filePath,
 		filename: path.basename( outputPath ),
 		output: path.parse( outputPath ).dir,
-		projectBase: base,
-		projectConfig: global.projectConfig.path
+		projectBase: base
 	};
 
 	if ( fileConfig.options ) {
@@ -145,11 +154,13 @@ function getFileConfig( base, fileConfig ) {
 }
 
 function runTask( taskName, options = {}, callback = null ) {
+	console.log('​runTask -> options', options);
+
 	// Get imported files.
-	let watchFiles = getDependencyArray( dependencyTree({
-		filename: options.input,
-		directory: options.projectBase
-	}));
+	// let watchFiles = getDependencyArray( dependencyTree({
+	// 	filename: options.input,
+	// 	directory: options.projectBase
+	// }));
 
 	let inputFilename = path.basename( options.input );
 
@@ -206,10 +217,10 @@ function handleSassCompile( options, callback = null ) {
 				handlePostCssCompile( options, result.css, postCssOptions, callback );
 			} else {
 				// No errors during the compilation, write this result on the disk
-				fs.writeFile( options.outFile, result.css, function( err ) {
-					if ( err ) {
+				fs.writeFile( options.outFile, result.css, function( error ) {
+					if ( error ) {
 						// Compilation error(s).
-						handleCompileError( options, err );
+						handleCompileError( options, error );
 					} else {
 						// Compilation successful.
 						handleCompileSuccess( options );
@@ -233,10 +244,10 @@ function handleCssCompile( options, callback = null ) {
 		map: options.sourcemaps
 	};
 
-	fs.readFile( options.input, ( err, css ) => {
-		if ( err ) {
+	fs.readFile( options.input, ( error, css ) => {
+		if ( error ) {
 			// Compilation error(s).
-			handleCompileError( options, err );
+			handleCompileError( options, error );
 		} else {
 			handlePostCssCompile( options, css, postCssOptions, callback );
 		}
@@ -248,10 +259,10 @@ function handlePostCssCompile( options, css, postCssOptions, callback = null ) {
 		.process( css, postCssOptions )
 		.then( postCssResult => {
 			// No errors during the compilation, write this result on the disk
-			fs.writeFile( options.outFile, postCssResult.css, function( err ) {
-				if ( err ) {
+			fs.writeFile( options.outFile, postCssResult.css, function( error ) {
+				if ( error ) {
 					// Compilation error(s).
-					handleCompileError( options, err );
+					handleCompileError( options, error );
 				} else {
 					// Compilation successful.
 					handleCompileSuccess( options );
@@ -271,29 +282,61 @@ function handleJsCompile( options, callback = null ) {
 	}
 
 	let config = {
-		mode: 'production',
+		mode: 'development',
 		entry: options.input,
 		output: {
 			path: options.output,
 			filename: options.filename
+		},
+		module: {
+			rules: [ {
+				test: /\.js$/,
+				exclude: /(node_modules|bower_components)/
+			} ]
 		},
 		resolveLoader: {
 			modules: [ modulesPath ]
 		}
 	};
 
-	webpack( config, ( err, stats ) => {
+	if ( options.babel ) {
+		config.module.rules[ 0 ].use = {
+			loader: 'babel-loader',
+			options: {
+				presets: [ require( 'babel-preset-env' ) ],
+				plugins: [ require( 'babel-plugin-transform-object-rest-spread' ) ]
+			}
+		};
+	}
+
+	if ( options.compress ) {
+		config.optimization = {
+			minimizer: [
+				new UglifyJsPlugin()
+			]
+		};
+	}
+
+	const compiler = webpack( config );
+
+	if ( options.getInstance ) {
+		return compiler;
+	}
+
+	compiler.run( ( error, stats ) => {
 		if ( callback ) {
 			callback();
 		}
 
-		if ( err ) {
-			console.error( err );
+		if ( error ) {
+			console.error( error );
 		}
+
+		console.log( stats );
 
 		const messages = formatMessages( stats );
 
-		if ( ! messages.errors.length && ! messages.warnings.length ) {
+		if ( ! messages.errors.length && !messages.warnings.length ) {
 			// Compilation successful.
 			handleCompileSuccess( options );
 		}
@@ -301,26 +344,43 @@ function handleJsCompile( options, callback = null ) {
 		if ( messages.errors.length ) {
 			// Compilation error(s).
 			handleCompileError( options, messages.errors );
-
-			return;
 		}
 
 		if ( messages.warnings.length ) {
 			// Compilation warning(s).
 			handleCompileWarnings( options, messages.warnings );
 		}
-	} );
+	});
 }
 
 function handleWatchTask( options ) {
-	let watcherOptions = {
-		verbosity: 1
-	};
-	let watcher = new WatchSass( options.input, watcherOptions );
-	// watcher.on( 'init', function() { handleSassCompile( options ) });
-	watcher.on( 'update', function() { handleSassCompile( options ) });
-	watcher.run();
-	global.compilerTasks.push( watcher );
+	if ( options.watchTask === 'build-sass' ) {
+		let watcherOptions = {
+			verbosity: 1
+		};
+		let watcher = new WatchSass( options.input, watcherOptions );
+		// watcher.on( 'init', function() { handleSassCompile( options ) });
+		watcher.on( 'update', function() { handleSassCompile( options ) } );
+		watcher.run();
+
+		global.compilerTasks.push( watcher );
+	} else if ( options.watchTask === 'build-js' ) {
+		options.getInstance = true;
+		let compiler = handleJsCompile( options );
+		let watcher = compiler.watch({
+			aggregateTimeout: 300
+		}, ( error, stats ) => {
+			if ( error ) {
+				console.error( error );
+			}
+
+			console.log( stats );
+		});
+
+		// watcher.invalidate();
+
+		global.compilerTasks.push( watcher );
+	}
 }
 
 function handleCompileSuccess( options ) {

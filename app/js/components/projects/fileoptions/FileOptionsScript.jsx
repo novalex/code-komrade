@@ -53,13 +53,13 @@ class FileOptionsScript extends FileOptions {
 
 					<hr />
 
-					<FieldSwitch
+					{/* <FieldSwitch
 						name='bundle'
 						label='Bundle'
 						labelPos='left'
 						onChange={ this.handleChange }
 						value={ this.getOption( 'bundle', false ) }
-					/>
+					/> */}
 
 					<FieldSwitch
 						name='babel'
