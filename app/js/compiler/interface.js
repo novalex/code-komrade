@@ -282,8 +282,9 @@ function handleJsCompile( options, callback = null ) {
 	}
 
 	let config = {
-		mode: 'development',
+		mode: 'none',
 		entry: options.input,
+		cache: false,
 		output: {
 			path: options.output,
 			filename: options.filename
@@ -296,7 +297,11 @@ function handleJsCompile( options, callback = null ) {
 		},
 		resolveLoader: {
 			modules: [ modulesPath ]
-		}
+		},
+		optimization: {
+			nodeEnv: 'development'
+		},
+		devtool: ( options.sourcemaps ) ? 'inline-source-map' : false,
 	};
 
 	if ( options.babel ) {
@@ -310,11 +315,28 @@ function handleJsCompile( options, callback = null ) {
 	}
 
 	if ( options.compress ) {
-		config.optimization = {
-			minimizer: [
-				new UglifyJsPlugin()
-			]
+		let UglifyJsPluginOptions = {
+			parallel: true,
+			sourceMap: options.sourcemaps,
+			uglifyOptions: {
+				compress: true,
+				minify( file, sourceMap ) {
+					const uglifyJsOptions = {};
+
+					if ( sourceMap ) {
+						uglifyJsOptions.sourceMap = {
+							content: sourceMap
+						};
+					}
+
+					return require( 'uglify-js' ).minify( file, uglifyJsOptions );
+				}
+			}
 		};
+
+		config.optimization.minimizer = [
+			new UglifyJsPlugin( UglifyJsPluginOptions )
+		];
 	}
 
 	const compiler = webpack( config );
