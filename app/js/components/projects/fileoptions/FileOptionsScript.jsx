@@ -70,11 +70,11 @@ class FileOptionsScript extends FileOptions {
 					/>
 
 					<FieldSwitch
-						name='compress'
-						label='Compress'
+						name='uglify'
+						label='Uglify'
 						labelPos='left'
 						onChange={ this.handleChange }
-						value={ this.getOption( 'compress', false ) }
+						value={ this.getOption( 'uglify', false ) }
 					/>
 
 					<FieldSwitch

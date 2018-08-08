@@ -45,7 +45,7 @@ function killTasks() {
 			task.close();
 		}
 
-		global.logger.log( 'info', `Stopped watching ${filename}.` );
+		// global.logger.log( 'info', `Stopped watching ${filename}.` );
 
 		tasks.splice( i, 1 );
 	}
@@ -166,7 +166,7 @@ function runTask( taskName, options = {}, callback = null ) {
 
 	if ( taskName === 'watch' ) {
 		// Watch task starting.
-		global.logger.log( 'info', `Watching ${inputFilename}...` );
+		// global.logger.log( 'info', `Watching ${inputFilename}...` );
 
 		handleWatchTask( options, callback );
 	} else {
@@ -298,10 +298,14 @@ function handleJsCompile( options, callback = null ) {
 		resolveLoader: {
 			modules: [ modulesPath ]
 		},
-		optimization: {
-			nodeEnv: 'development'
-		},
 		devtool: ( options.sourcemaps ) ? 'inline-source-map' : false,
+		plugins: [
+			new webpack.DefinePlugin( {
+				'process.env.NODE_ENV': JSON.stringify( 'production' )
+			} ),
+			new webpack.optimize.ModuleConcatenationPlugin(),
+			new webpack.NoEmitOnErrorsPlugin()
+		]
 	};
 
 	if ( options.babel ) {
@@ -314,29 +318,13 @@ function handleJsCompile( options, callback = null ) {
 		};
 	}
 
-	if ( options.compress ) {
-		let UglifyJsPluginOptions = {
-			parallel: true,
-			sourceMap: options.sourcemaps,
-			uglifyOptions: {
-				compress: true,
-				minify( file, sourceMap ) {
-					const uglifyJsOptions = {};
-
-					if ( sourceMap ) {
-						uglifyJsOptions.sourceMap = {
-							content: sourceMap
-						};
-					}
-
-					return require( 'uglify-js' ).minify( file, uglifyJsOptions );
-				}
-			}
+	if ( options.uglify ) {
+		let uglifyOptions = {
+			parallel: false,
+			sourceMap: options.sourcemaps
 		};
 
-		config.optimization.minimizer = [
-			new UglifyJsPlugin( UglifyJsPluginOptions )
-		];
+		config.plugins.push( new UglifyJsPlugin( uglifyOptions ) );
 	}
 
 	const compiler = webpack( config );
@@ -397,9 +385,26 @@ function handleWatchTask( options ) {
 			}
 
 			console.log( stats );
+
+			const messages = formatMessages( stats );
+
+			if ( ! messages.errors.length && !messages.warnings.length ) {
+				// Compilation successful.
+				handleCompileSuccess( options );
+			}
+
+			if ( messages.errors.length ) {
+				// Compilation error(s).
+				handleCompileError( options, messages.errors );
+			}
+
+			if ( messages.warnings.length ) {
+				// Compilation warning(s).
+				handleCompileWarnings( options, messages.warnings );
+			}
 		});
 
-		// watcher.invalidate();
+		watcher.invalidate();
 
 		global.compilerTasks.push( watcher );
 	}
