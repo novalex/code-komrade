@@ -255,7 +255,7 @@ function handleCssCompile( options, callback = null ) {
 }
 
 function handlePostCssCompile( options, css, postCssOptions, callback = null ) {
-	postcss( [ precss, autoprefixer ] )
+	postcss( [ precss, autoprefixer( { browsers: [ 'last 5 versions' ] } ) ] )
 		.process( css, postCssOptions )
 		.then( postCssResult => {
 			// No errors during the compilation, write this result on the disk
