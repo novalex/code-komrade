@@ -52,7 +52,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "scripts": {
-    "package-win": "electron-packager ./build --platform=win32 --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/win/logo.ico",
-    "package-mac": "electron-packager ./build --platform=darwin --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/mac/logo.icns"
+    "package-win": "electron-packager ./build Buildr --platform=win32 --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/win/logo.ico",
+    "package-mac": "electron-packager ./build Buildr --platform=darwin --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/mac/logo.icns"
   }
 }
