@@ -275,6 +275,14 @@ input[type="submit"] {
   border-radius: 4px;
   transition: background-color 0.2s, border-color 0.2s, opacity 0.2s;
   -webkit-appearance: none; }
+  button:hover, button:focus,
+  .button:hover,
+  .button:focus,
+  input[type="button"]:hover,
+  input[type="button"]:focus,
+  input[type="submit"]:hover,
+  input[type="submit"]:focus {
+    background-color: #222222; }
   button.outline,
   .button.outline,
   input[type="button"].outline,
@@ -326,6 +334,14 @@ input[type="submit"] {
     color: #fff;
     background-color: #dc3130;
     border-color: #ba201f; }
+    button.red:hover, button.red:focus,
+    .button.red:hover,
+    .button.red:focus,
+    input[type="button"].red:hover,
+    input[type="button"].red:focus,
+    input[type="submit"].red:hover,
+    input[type="submit"].red:focus {
+      background-color: #ba201f; }
     button.red.outline,
     .button.red.outline,
     input[type="button"].red.outline,
@@ -339,6 +355,14 @@ input[type="submit"] {
     color: #222;
     background-color: #5d9a0b;
     border-color: #406a08; }
+    button.green:hover, button.green:focus,
+    .button.green:hover,
+    .button.green:focus,
+    input[type="button"].green:hover,
+    input[type="button"].green:focus,
+    input[type="submit"].green:hover,
+    input[type="submit"].green:focus {
+      background-color: #406a08; }
     button.green.outline,
     .button.green.outline,
     input[type="button"].green.outline,
@@ -352,6 +376,14 @@ input[type="submit"] {
     color: #fff;
     background-color: #1d6ed6;
     border-color: #1757a9; }
+    button.blue:hover, button.blue:focus,
+    .button.blue:hover,
+    .button.blue:focus,
+    input[type="button"].blue:hover,
+    input[type="button"].blue:focus,
+    input[type="submit"].blue:hover,
+    input[type="submit"].blue:focus {
+      background-color: #1757a9; }
     button.blue.outline,
     .button.blue.outline,
     input[type="button"].blue.outline,
@@ -365,6 +397,14 @@ input[type="submit"] {
     color: #222;
     background-color: #d6851d;
     border-color: #a96917; }
+    button.orange:hover, button.orange:focus,
+    .button.orange:hover,
+    .button.orange:focus,
+    input[type="button"].orange:hover,
+    input[type="button"].orange:focus,
+    input[type="submit"].orange:hover,
+    input[type="submit"].orange:focus {
+      background-color: #a96917; }
     button.orange.outline,
     .button.orange.outline,
     input[type="button"].orange.outline,
@@ -378,6 +418,14 @@ input[type="submit"] {
     color: #fff;
     background-color: #1e1e1e;
     border-color: #050505; }
+    button.black:hover, button.black:focus,
+    .button.black:hover,
+    .button.black:focus,
+    input[type="button"].black:hover,
+    input[type="button"].black:focus,
+    input[type="submit"].black:hover,
+    input[type="submit"].black:focus {
+      background-color: #050505; }
     button.black.outline,
     .button.black.outline,
     input[type="button"].black.outline,
@@ -391,6 +439,14 @@ input[type="submit"] {
     color: #222;
     background-color: #fff;
     border-color: #e6e6e6; }
+    button.white:hover, button.white:focus,
+    .button.white:hover,
+    .button.white:focus,
+    input[type="button"].white:hover,
+    input[type="button"].white:focus,
+    input[type="submit"].white:hover,
+    input[type="submit"].white:focus {
+      background-color: #e6e6e6; }
     button.white.outline,
     .button.white.outline,
     input[type="button"].white.outline,
@@ -404,6 +460,14 @@ input[type="submit"] {
     color: #222;
     background-color: #f4f4f4;
     border-color: #dbdbdb; }
+    button.off-white:hover, button.off-white:focus,
+    .button.off-white:hover,
+    .button.off-white:focus,
+    input[type="button"].off-white:hover,
+    input[type="button"].off-white:focus,
+    input[type="submit"].off-white:hover,
+    input[type="submit"].off-white:focus {
+      background-color: #dbdbdb; }
     button.off-white.outline,
     .button.off-white.outline,
     input[type="button"].off-white.outline,
@@ -474,25 +538,25 @@ input[type="submit"] {
 
 #project-active {
   cursor: pointer;
-  height: 44px;
   user-select: none;
   position: relative; }
-  #project-active h1 {
-    font-weight: bold;
-    font-size: 1.1rem;
-    color: #555;
-    line-height: 26.4px; }
-  #project-active h2 {
-    font-size: 1rem;
-    font-weight: normal;
-    color: #777;
-    line-height: 17.6px; }
-  #project-active h1,
-  #project-active h2 {
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; }
+  #project-select.selected #project-active {
+    height: 44px; }
+    #project-select.selected #project-active h1,
+    #project-select.selected #project-active h2 {
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; }
+    #project-select.selected #project-active h1 {
+      font-size: 1.1rem;
+      color: #555;
+      line-height: 26.4px; }
+    #project-select.selected #project-active h2 {
+      font-size: 1rem;
+      font-weight: normal;
+      color: #777;
+      line-height: 17.6px; }
 
 #project-actions {
   position: absolute;
@@ -540,6 +604,7 @@ input[type="submit"] {
     height: 42px;
     line-height: 42px;
     color: #555;
+    text-align: left;
     padding: 0 10px;
     border-bottom: 1px solid #e6e6e6;
     background-color: #f4f4f4;
@@ -624,8 +689,13 @@ body,
     text-align: center;
     color: #777;
     transform: translate(-50%, -50%); }
-  .no-content h1:not(:last-child), .no-content h2:not(:last-child), .no-content h3:not(:last-child), .no-content h4:not(:last-child), .no-content h5:not(:last-child), .no-content h6:not(:last-child), .no-content p:not(:last-child) {
-    margin-bottom: 20px; }
+  .no-content h1, .no-content h2, .no-content h3, .no-content h4, .no-content h5, .no-content h6, .no-content p {
+    font-size: 1rem; }
+    .no-content h1:not(:last-child), .no-content h2:not(:last-child), .no-content h3:not(:last-child), .no-content h4:not(:last-child), .no-content h5:not(:last-child), .no-content h6:not(:last-child), .no-content p:not(:last-child) {
+      margin-bottom: 20px; }
+  .no-content h1 {
+    color: #555;
+    font-size: 1.1rem; }
 
 .welcome-screen,
 .project-select-screen {
