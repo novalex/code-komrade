@@ -2,7 +2,7 @@
  * @file Main application controller.
  */
 
-const { app, dialog, BrowserWindow } = require('electron');
+const { app, dialog, Menu, BrowserWindow } = require('electron');
 
 const windowStateKeeper = require('electron-window-state');
 
@@ -56,11 +56,77 @@ function createWindow() {
 	});
 }
 
+function createMenu() {
+	// Menu template.
+	const menuTemplate = [
+		{
+			label: 'View',
+			submenu: [
+				{ role: 'reload' },
+				{ role: 'forcereload' },
+				{ role: 'toggledevtools' },
+				{ type: 'separator' },
+				{ role: 'resetzoom' },
+				{ role: 'zoomin' },
+				{ role: 'zoomout' },
+				{ type: 'separator' },
+				{ role: 'togglefullscreen' }
+			]
+		},
+		{
+			role: 'window',
+			submenu: [
+				{ role: 'minimize' },
+				{ role: 'close' }
+			]
+		}
+		// {
+		// 	role: 'help',
+		// 	submenu: [
+		// 		{
+		// 			label: 'Learn More',
+		// 			click () { require('electron').shell.openExternal('https://electronjs.org') }
+		// 		}
+		// 	]
+		// }
+	];
+
+	if ( process.platform === 'darwin' ) {
+		menuTemplate.unshift({
+			label: app.getName(),
+			submenu: [
+				{ role: 'about' },
+				{ type: 'separator' },
+				// { role: 'services', submenu: [] },
+				{ type: 'separator' },
+				{ role: 'hide' },
+				{ role: 'hideothers' },
+				{ role: 'unhide' },
+				{ type: 'separator' },
+				{ role: 'quit' }
+			]
+		});
+
+		// Window menu.
+		menuTemplate[2].submenu = [
+			{ role: 'close' },
+			{ role: 'minimize' },
+			{ role: 'zoom' },
+			{ type: 'separator' },
+			{ role: 'front' }
+		];
+	}
+	const appMenu = Menu.buildFromTemplate( menuTemplate );
+	Menu.setApplicationMenu( appMenu );
+}
+
 app.on( 'ready', function() {
+	createMenu();
+
 	createWindow();
 
 	// Debugging.
-	mainWindow.webContents.openDevTools();
+	// mainWindow.webContents.openDevTools();
 
 	// mainWindow.webContents.on( 'dom-ready', function() {
 	// });
