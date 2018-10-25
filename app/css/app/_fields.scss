@@ -189,6 +189,11 @@ input[type="submit"] {
 	transition: background-color 0.2s, border-color 0.2s, opacity 0.2s;
 	-webkit-appearance: none;
 
+	&:hover,
+	&:focus {
+		background-color: darken( $default-color, 10 );
+	}
+
 	&.outline {
 		color: $default-color;
 		border-color: $default-color;
@@ -239,6 +244,11 @@ input[type="submit"] {
 			color: $text-color;
 			background-color: $color;
 			border-color: darken( $color, 10 );
+
+			&:hover,
+			&:focus {
+				background-color: darken( $color, 10 );
+			}
 
 			&.outline {
 				color: $color;
