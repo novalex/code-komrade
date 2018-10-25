@@ -1,4 +1,4 @@
-::-webkit-scrollbar {     
+::-webkit-scrollbar {
 	background-color: $color__bg;
 
 	&:vertical {
@@ -91,9 +91,16 @@ body,
 	}
 
 	h1, h2, h3, h4, h5, h6, p {
+		font-size: 1rem;
+
 		&:not(:last-child) {
 			margin-bottom: $spacing__content;
 		}
+	}
+
+	h1 {
+		color: $color__text;
+		font-size: 1.1rem;
 	}
 }
 

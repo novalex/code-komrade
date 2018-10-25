@@ -10,8 +10,8 @@ class Settings extends React.Component {
 	render() {
 		return (
 			<NoContent className='settings-screen'>
-				<h3>Settings</h3>
-				<p>Coming soon!</p>
+				<h1>Settings</h1>
+				<h2>Coming soon!</h2>
 			</NoContent>
 		);
 	}

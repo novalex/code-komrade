@@ -68,7 +68,7 @@ class ProjectSelect extends React.Component {
 
 		choices.push(
 			<div key='new' data-project='new' onClick={ this.selectProject }>
-				Add new project
+				+ Add new project
 			</div>
 		);
 
@@ -78,7 +78,7 @@ class ProjectSelect extends React.Component {
 	render() {
 		if ( ! this.props.active.name || ! this.props.active.path ) {
 			return (
-				<div id='project-select'>
+				<div id='project-select' className='empty'>
 					<div id='project-active' onClick={ this.toggleSelect }>
 						<h1>No Project Selected</h1>
 						<h2>Click here to select one...</h2>

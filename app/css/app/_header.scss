@@ -21,30 +21,32 @@ $actions-width: $action-size * 3;
 
 #project-active {
 	cursor: pointer;
-	height: $size__header;
 	user-select: none;
 	position: relative;
 
-	h1 {
-		font-weight: bold;
-		font-size: 1.1rem;
-		color: $color__text;
-		line-height: 3 / 5 * $size__header;
-	}
+	#project-select.selected & {
+		height: $size__header;
 
-	h2 {
-		font-size: 1rem;
-		font-weight: normal;
-		color: $color__text-light;
-		line-height: 2 / 5 * $size__header;
-	}
+		h1,
+		h2 {
+			margin: 0;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 
-	h1,
-	h2 {
-		margin: 0;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		h1 {
+			font-size: 1.1rem;
+			color: $color__text;
+			line-height: 3 / 5 * $size__header;
+		}
+
+		h2 {
+			font-size: 1rem;
+			font-weight: normal;
+			color: $color__text-light;
+			line-height: 2 / 5 * $size__header;
+		}
 	}
 }
 
@@ -110,6 +112,7 @@ $actions-width: $action-size * 3;
 		height: $size__list-item;
 		line-height: $size__list-item;
 		color: $color__text;
+		text-align: left;
 		padding: 0 $spacing__content-s;
 		border-bottom: 1px solid $color__border;
 		background-color: $color__bg-alt;

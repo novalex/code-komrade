@@ -65,8 +65,8 @@ class Logs extends React.Component {
 		if ( ! this.state.logs.length ) {
 			return (
 				<NoContent className='logs-screen empty'>
-					<h3>No logs yet.</h3>
-					<p>Go forth and compile!</p>
+					<h1>No logs yet.</h1>
+					<h2>Go forth and compile!</h2>
 				</NoContent>
 			);
 		}
