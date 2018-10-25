@@ -30,23 +30,24 @@ function killTasks() {
 
 	const tasks = global.compilerTasks;
 
-	for ( let i = 0; i < tasks.length; i++ ) {
+	for ( let i = tasks.length - 1; i >= 0; i-- ) {
 		let task = tasks[ i ];
 		let filename;
 
 		if ( typeof task._events === 'object' && typeof task._events.update === 'function' ) {
-			filename = path.basename( task.inputPath );
+			filename = task.inputPath;
 			// Close chokidar watch processes.
 			task.inputPathWatcher.close();
 			task.rootDirWatcher.close();
 		} else {
-			filename = path.basename( task.compiler.options.entry );
+			filename = task.compiler.options.entry;
 			// Close webpack watch process.
 			task.close();
 		}
 
-		// global.logger.log( 'info', `Stopped watching ${filename}.` );
+		console.warn( `Stopped watching "${filename}".` );
 
+		// Remove task from array.
 		tasks.splice( i, 1 );
 	}
 
@@ -154,20 +155,13 @@ function getFileConfig( base, fileConfig ) {
 }
 
 function runTask( taskName, options = {}, callback = null ) {
-	console.log('​runTask -> options', options);
-
-	// Get imported files.
-	// let watchFiles = getDependencyArray( dependencyTree({
-	// 	filename: options.input,
-	// 	directory: options.projectBase
-	// }));
+	console.group( 'Running task' );
+	console.log( `Running "${taskName}" with options:`, options );
+	console.groupEnd();
 
 	let inputFilename = path.basename( options.input );
 
 	if ( taskName === 'watch' ) {
-		// Watch task starting.
-		// global.logger.log( 'info', `Watching ${inputFilename}...` );
-
 		handleWatchTask( options, callback );
 	} else {
 		// Build task starting.
@@ -342,7 +336,9 @@ function handleJsCompile( options, callback = null ) {
 			console.error( error );
 		}
 
+		console.group( 'Webpack' );
 		console.log( stats );
+		console.groupEnd();
 
 		const messages = formatMessages( stats );
 
@@ -375,6 +371,7 @@ function handleWatchTask( options ) {
 
 		global.compilerTasks.push( watcher );
 	} else if ( options.watchTask === 'build-js' ) {
+		console.warn( `Start watching "${options.input}"...` );
 		options.getInstance = true;
 		let compiler = handleJsCompile( options );
 		let watcher = compiler.watch({
@@ -384,7 +381,9 @@ function handleWatchTask( options ) {
 				console.error( error );
 			}
 
+			console.group( 'Webpack' );
 			console.log( stats );
+			console.groupEnd();
 
 			const messages = formatMessages( stats );
 
