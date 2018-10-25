@@ -52,6 +52,7 @@ class Projects extends React.Component {
 		this.removeProject = this.removeProject.bind( this );
 		this.refreshProject = this.refreshProject.bind( this );
 		this.changeProjectPath = this.changeProjectPath.bind( this );
+		this.removeProjectButton = this.removeProjectButton.bind( this );
 
 		this.initCompiler = this.initCompiler.bind( this );
 
