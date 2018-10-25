@@ -62,7 +62,7 @@ class FieldSaveFile extends React.Component {
 					name={ this.props.name }
 					id={ 'field_' + this.props.name }
 					value={ this.props.value }
-					readOnly='true'
+					readOnly
 				/>
 				<small onClick={ this.onClick }>{ this.props.value }</small>
 			</Field>
