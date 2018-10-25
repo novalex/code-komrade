@@ -1,10 +1,25 @@
 'use strict'
 
-/*
-Update the `gulp package-osx`, `gulp package-windows`, and `gulp package-linux` tasks.
-You can find documentation for the electronPackager() function at the github repo joaomoreno/gulp-atom-electron.
-There are a few basic branding things you can do there.
-*/
+/**
+ * Tasks
+ *
+ * build-clean
+ * symlink-deps
+ * build-client-js
+ * build-client-css
+ * build-client-html
+ * build-client-html-production
+ * build-client-res
+ * build-client
+ * build-client-production
+ * build-server
+ * build
+ * build-production
+ * watch-client
+ * watch-server
+ * watch
+ * serve
+ */
 
 const gulp = require('gulp')
 const source = require('vinyl-source-stream')
