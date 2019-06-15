@@ -17,6 +17,12 @@ const Settings = require('./projects/Settings');
 const Projects = require('./projects/Projects');
 
 class App extends React.Component {
+
+	/**
+	 * Constrcutor.
+	 *
+	 * @param {Object} props
+	 */
 	constructor( props ) {
 		super( props );
 
@@ -27,10 +33,15 @@ class App extends React.Component {
 		};
 	}
 
+	/**
+	 * Render overlay for logs and settings.
+	 */
 	renderOverlay() {
-		global.ui.overlay( this.props.view !== 'files' );
+		const show = this.props.view !== 'files';
 
-		if ( this.props.view === 'files' ) {
+		global.ui.overlay( show );
+
+		if ( ! show ) {
 			return '';
 		} else {
 			let content;
@@ -49,6 +60,9 @@ class App extends React.Component {
 		}
 	}
 
+	/**
+	 * Render.
+	 */
 	render() {
 		return (
 			<div id='app'>

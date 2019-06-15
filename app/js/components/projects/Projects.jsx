@@ -2,37 +2,45 @@
  * @file Component for the projects view.
  */
 
-const fs = require('fs');
+const fs = require( 'fs' );
 
-const fspath = require('path');
+const fspath = require( 'path' );
 
-const _debounce = require('lodash/debounce');
+const _debounce = require( 'lodash/debounce' );
 
-const { dialog } = require('electron').remote;
+const { dialog } = require( 'electron' ).remote;
 
-const React = require('react');
+const React = require( 'react' );
 
-const { connect } = require('react-redux');
+const { connect } = require( 'react-redux' );
 
-const Store = require('electron-store');
+const autoBind = require( 'auto-bind' );
 
-const NoContent = require('../NoContent');
+const Store = require( 'electron-store' );
 
-const Notice = require('../ui/Notice');
+const NoContent = require( '../NoContent' );
 
-const ProjectSelect = require('./ProjectSelect');
+const Notice = require( '../ui/Notice' );
 
-const FileList = require('./filelist/FileList');
+const ProjectSelect = require( './ProjectSelect' );
 
-const Panel = require('./Panel');
+const FileList = require( './filelist/FileList' );
 
-const directoryTree = require('../../utils/directoryTree');
+const Panel = require( './Panel' );
 
-const Logger = require('../../utils/Logger');
+const directoryTree = require( '../../utils/directoryTree' );
 
-const { addProject, removeProject, changeProject, receiveFiles, setActiveFile } = require('../../actions');
+const Logger = require( '../../utils/Logger' );
+
+const { addProject, removeProject, changeProject, receiveFiles, setActiveFile } = require( '../../actions' );
 
 class Projects extends React.Component {
+
+	/**
+	 * Constrcutor.
+	 *
+	 * @param {Object} props
+	 */
 	constructor( props ) {
 		super( props );
 
@@ -46,15 +54,7 @@ class Projects extends React.Component {
 			loading: false
 		};
 
-		this.newProject = this.newProject.bind( this );
-		this.initProject = this.initProject.bind( this );
-		this.changeProject = this.changeProject.bind( this );
-		this.removeProject = this.removeProject.bind( this );
-		this.refreshProject = this.refreshProject.bind( this );
-		this.changeProjectPath = this.changeProjectPath.bind( this );
-		this.removeProjectButton = this.removeProjectButton.bind( this );
-
-		this.initCompiler = this.initCompiler.bind( this );
+		autoBind( this );
 
 		document.addEventListener( 'bd/refresh/files', this.refreshProject );
 	}
@@ -75,12 +75,14 @@ class Projects extends React.Component {
 		}
 	}
 
-	// Add a new project.
+	/**
+	 * Add a new project.
+	 */
 	newProject() {
 		dialog.showOpenDialog(
 			global.mainWindow,
 			{
-				properties: [ 'openDirectory' ]
+				properties: ['openDirectory']
 			},
 			( path ) => {
 				if ( path ) {
@@ -112,7 +114,12 @@ class Projects extends React.Component {
 		);
 	}
 
-	// Change the active project.
+	/**
+	 * Change the active project.
+	 *
+	 * @param {number} id The ID of the project to switch to.
+	 * @param {null | Object}
+	 */
 	changeProject( id, project = null ) {
 		if ( id === this.props.active.id ) {
 			return;
@@ -134,17 +141,19 @@ class Projects extends React.Component {
 		global.config.set( 'active-project', id );
 
 		// Update state.
-		this.props.changeProject({
+		this.props.changeProject( {
 			...active,
 			id
-		});
+		} );
 		this.props.setActiveFile( null );
 
 		// Init.
 		this.initProject( active.path );
 	}
 
-	// Remove the current project.
+	/**
+	 * Remove the current project.
+	 */
 	removeProject() {
 		let removeIndex = parseInt( this.props.active.id, 10 );
 
@@ -160,18 +169,24 @@ class Projects extends React.Component {
 		this.changeProject( null );
 	}
 
-	// Confirm project removal when clicking remove button.
+	/**
+	 * Confirm project removal when clicking remove button.
+	 *
+	 * @param {Object} event
+	 */
 	removeProjectButton( event ) {
 		event.preventDefault();
 
-		let confirmRemove = window.confirm( `Are you sure you want to remove ${this.props.active.name}?` );
+		let confirmRemove = window.confirm( `Are you sure you want to remove "${this.props.active.name}" from your active projects?` );
 
 		if ( confirmRemove ) {
 			this.removeProject();
 		}
 	}
 
-	// Change active project's path.
+	/**
+	 * Change active project's path.
+	 */
 	changeProjectPath() {
 		let path = dialog.showOpenDialog( {
 			properties: ['openDirectory']
@@ -186,7 +201,7 @@ class Projects extends React.Component {
 				return;
 			}
 
-			projects[ projectIndex ].path = path[0];
+			projects[projectIndex].path = path[0];
 
 			// Save new project to config.
 			global.config.set( 'projects', projects );
@@ -196,54 +211,95 @@ class Projects extends React.Component {
 		}
 	}
 
-	// Start the background compiler tasks.
+	/**
+	 * Start the background compiler tasks.
+	 */
 	initCompiler() {
-		if ( ! this.props.active.paused ) {
+		if ( !this.props.active.paused ) {
 			global.compiler.initProject();
 		} else {
 			global.compiler.killTasks();
 		}
 	}
 
-	// Refresh the project files.
+	/**
+	 * Refresh the project files.
+	 */
 	refreshProject() {
 		this.getFiles( this.props.active.path );
 	}
 
-	// Create or fetch the project config file.
-	setProjectConfigFile( path ) {
-		global.projectConfig = new Store({
+	/**
+	 * Initialize the project config file.
+	 * Ands change listeners to trigger compilers when config changes.
+	 *
+	 * @param {string} path The project path.
+	 */
+	initProjectConfig( path ) {
+		// Read or create config file for project.
+		const config = new Store( {
 			name: 'code-komrade',
 			cwd: path
-		});
+		} );
 
 		// Listen for changes to the project's file options and trigger the compiler init.
-		global.projectConfig.onDidChange( 'files', _debounce( this.initCompiler, 100 ) );
+		config.onDidChange( 'files', _debounce( this.initCompiler, 100 ) );
+
+		// Assign the config to global scope.
+		global.projectConfig = config;
 	}
 
-	// Read the files in the project directory.
+	/**
+	 * Read the files in the project directory.
+	 *
+	 * @param {string} path The project path.
+	 */
 	getFiles( path ) {
-		this.setState({ loading: true });
+		this.setState( { loading: true } );
 
 		global.ui.loading();
 
-		let exclude = new RegExp( this.state.ignored.join('|'), 'i' );
+		let ignored = this.state.ignored.slice( 0 );
+
+		// Add compiled files to ignore list.
+		if ( global.projectConfig ) {
+			const projectFiles = global.projectConfig.get( 'files' );
+
+			if ( projectFiles ) {
+				projectFiles.forEach( file => {
+					let path = file.output;
+
+					ignored.push( path );
+				} );
+			}
+		}
+
+		// Escape Regex characters.
+		ignored.map( function( string ) {
+			return string.replace( /[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&' );
+		} );
+
+		const exclude = new RegExp( ignored.join( '|' ), 'i' );
 
 		directoryTree( path, {
 			// depth: 2,
 			exclude
-		}).then( function( files ) {
-			this.setState({
+		} ).then( function( files ) {
+			this.setState( {
 				loading: false
 			}, function() {
 				global.store.dispatch( receiveFiles( files ) );
-			});
+			} );
 
 			global.ui.loading( false );
-		}.bind( this ));
+		}.bind( this ) );
 	}
 
-	// Initialize project.
+	/**
+	 * Initialize a project.
+	 *
+	 * @param {string} path The project path.
+	 */
 	initProject( path ) {
 		fs.access( path, fs.constants.W_OK, function( err ) {
 			if ( err ) {
@@ -253,7 +309,7 @@ class Projects extends React.Component {
 						type: 'warning',
 						title: 'Project directory missing',
 						message: `Could not read the ${path} directory. It may have been moved or renamed.`,
-						buttons: [ 'Change Directory', 'Remove Project' ]
+						buttons: ['Change Directory', 'Remove Project']
 					};
 
 					dialog.showMessageBox( options, function( index ) {
@@ -275,7 +331,7 @@ class Projects extends React.Component {
 				// Directory is readable, get files and setup config.
 				this.getFiles( path );
 
-				this.setProjectConfigFile( path );
+				this.initProjectConfig( path );
 
 				// Change process cwd.
 				process.chdir( path );
@@ -287,17 +343,23 @@ class Projects extends React.Component {
 		global.logger = new Logger();
 	}
 
+	/**
+	 * Render project select and action buttons.
+	 */
 	renderProjectSelect() {
 		return (
 			<ProjectSelect
-				newProject={ this.newProject }
-				changeProject={ this.changeProject }
-				removeProject={ this.removeProjectButton }
-				refreshProject={ this.refreshProject }
+				newProject={this.newProject}
+				changeProject={this.changeProject}
+				removeProject={this.removeProjectButton}
+				refreshProject={this.refreshProject}
 			/>
 		);
 	}
 
+	/**
+	 * Render notices for project.
+	 */
 	renderNotices() {
 		let notices = [];
 
@@ -312,21 +374,24 @@ class Projects extends React.Component {
 		return notices;
 	}
 
+	/**
+	 * Render.
+	 */
 	render() {
-		if ( ! this.props.projects || this.props.projects.length === 0 ) {
+		if ( !this.props.projects || this.props.projects.length === 0 ) {
 			// No projects yet, show welcome screen.
 			return (
 				<NoContent className='welcome-screen'>
 					<h1>You don't have any projects yet.</h1>
 					<h2>Would you like to add one now?</h2>
-					<button className='large flat add-new-project' onClick={ this.newProject }>Add Project</button>
+					<button className='large flat add-new-project' onClick={this.newProject}>Add Project</button>
 				</NoContent>
 			);
-		} else if ( ! this.props.active.name || ! this.props.active.path ) {
+		} else if ( !this.props.active.name || !this.props.active.path ) {
 			// No project selected, show selector.
 			return (
 				<NoContent className='project-select-screen'>
-					{ this.renderProjectSelect() }
+					{this.renderProjectSelect()}
 				</NoContent>
 			);
 		}
@@ -334,16 +399,16 @@ class Projects extends React.Component {
 		return (
 			<div id='projects'>
 				<div id='header'>
-					{ this.renderProjectSelect() }
+					{this.renderProjectSelect()}
 				</div>
 
 				<div id='content'>
-					{ this.renderNotices() }
+					{this.renderNotices()}
 
 					<FileList
-						path={ this.props.active.path }
-						files={ this.props.files }
-						loading={ this.state.loading }
+						path={this.props.active.path}
+						files={this.props.files}
+						loading={this.state.loading}
 					/>
 				</div>
 
@@ -353,17 +418,17 @@ class Projects extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state ) => ({
+const mapStateToProps = ( state ) => ( {
 	projects: state.projects,
 	active: state.activeProject,
 	files: state.activeProjectFiles
-});
+} );
 
-const mapDispatchToProps = ( dispatch ) => ({
+const mapDispatchToProps = ( dispatch ) => ( {
 	addProject: project => dispatch( addProject( project ) ),
 	changeProject: id => dispatch( changeProject( id ) ),
 	removeProject: id => dispatch( removeProject( id ) ),
 	setActiveFile: file => dispatch( setActiveFile( file ) )
-});
+} );
 
 module.exports = connect( mapStateToProps, mapDispatchToProps )( Projects );

@@ -15,6 +15,12 @@ const FieldSaveFile = require('../../fields/FieldSaveFile');
 const NoContent = require('../../NoContent');
 
 class FileOptionsStyles extends FileOptions {
+
+	/**
+	 * Constrcutor.
+	 *
+	 * @param {Object} props
+	 */
 	constructor( props ) {
 		super( props );
 
@@ -25,15 +31,22 @@ class FileOptionsStyles extends FileOptions {
 		];
 	}
 
+	/**
+	 * Returns true if the current file is a partial.
+	 * Currently, it simply checks if the filename begins with an underscore.
+	 */
 	isPartial() {
 		return this.props.file.name.startsWith('_');
 	}
 
+	/**
+	 * Render.
+	 */
 	render() {
 		if ( this.isPartial() ) {
 			return (
 				<NoContent>
-					<p>This is a partial file,<br /> it cannot be compiled on its own.</p>
+					<p>This is a partial file,<br /> it cannot be compiled<br /> on its own.</p>
 				</NoContent>
 			);
 		}
