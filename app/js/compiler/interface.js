@@ -416,7 +416,7 @@ function handleCompileSuccess( options ) {
 
 	global.logger.log( 'success', notifyText );
 
-	let notify = new Notification( 'Buildr', {
+	let notify = new Notification( 'Code Komrade', {
 		body: notifyText,
 		silent: true
 	} );
@@ -437,7 +437,7 @@ function handleCompileError( options, errors ) {
 
 	global.logger.log( 'error', notifyText + ':', '<pre>' + errors.join( '\r\n' ) + '</pre>' );
 
-	let notify = new Notification( 'Buildr', {
+	let notify = new Notification( 'Code Komrade', {
 		body: notifyText,
 		sound: 'Basso'
 	} );

@@ -101,7 +101,9 @@ gulp.task( 'build-client-js', ( done ) => {
 				basedir: path.resolve( '.' )
 			} )
 				.plugin( './vendor/browserify-sourcemap-root-transform' )
-				.transform( 'babelify' )
+				.transform( 'babelify', {
+					presets: [ '@babel/preset-env', '@babel/preset-react' ]
+				} )
 				.bundle()
 				.pipe( source( entry ) )
 				.pipe( rename( {
@@ -201,7 +203,7 @@ gulp.task( 'build-server', ( done ) => {
 
 		let tasks = files.map( ( entry ) => {
 			return gulp.src( entry )
-				.pipe( babel( { presets: [ 'es2015' ] } ) )
+				.pipe( babel( { presets: [ '@babel/preset-env', '@babel/preset-react' ] } ) )
 				.pipe( gulp.dest( paths.dist.build ) )
 		} )
 

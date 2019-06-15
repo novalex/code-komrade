@@ -19,7 +19,8 @@
 // File options.
 #file-options {
 	height: 100%;
-	position: relative;
+	display: flex;
+	flex-flow: column;
 
 	.header {
 		text-align: center;
@@ -30,6 +31,9 @@
 	}
 
 	.body {
+		flex-grow: 1;
+		overflow: auto;
+
 		> p,
 		> .field {
 			margin-bottom: 0;
@@ -44,9 +48,6 @@
 	}
 
 	.footer {
-		position: absolute;
-		left: 0;
-		bottom: 0;
 		width: 100%;
 		padding-right: $spacing__content;
 

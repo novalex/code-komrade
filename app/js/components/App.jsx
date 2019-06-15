@@ -4,7 +4,7 @@
 
 const React = require('react');
 
-const { connect } = require('react-redux');
+const { connect } = require( 'react-redux' );
 
 const Overlay = require('./Overlay');
 

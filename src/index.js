@@ -2,9 +2,11 @@
  * @file Main application controller.
  */
 
-const { app, dialog, Menu, BrowserWindow } = require('electron');
+const { app, dialog, Menu, BrowserWindow, contentTracing } = require('electron');
 
 const windowStateKeeper = require('electron-window-state');
+
+const isRoot = require( 'is-root' );
 
 const path = require('path');
 const url = require('url');
@@ -13,8 +15,8 @@ var mainWindow = void 0;
 
 function createWindow() {
 	let mainWindowState = windowStateKeeper({
-		defaultWidth: 1200,
-		defaultHeight: 1080
+		defaultWidth: 800,
+		defaultHeight: 600
 	});
 
 	mainWindow = new BrowserWindow({
@@ -42,7 +44,7 @@ function createWindow() {
 		const options = {
 			type: 'warning',
 			title: 'Just Hangin\'',
-			message: 'Buildr has become unresponsive.',
+			message: 'Code Komrade has become unresponsive.',
 			buttons: [ 'Re-launch', 'Quit' ]
 		};
 
@@ -54,6 +56,11 @@ function createWindow() {
 			}
 		});
 	});
+
+	global.mainWindow = mainWindow;
+
+	// Debugging.
+	mainWindow.webContents.openDevTools();
 }
 
 function createMenu() {
@@ -121,19 +128,44 @@ function createMenu() {
 }
 
 app.on( 'ready', function() {
+	// Profiling
+	// const options = {
+	// 	categoryFilter: '*',
+	// 	traceOptions: 'record-until-full,enable-sampling'
+	// }
+
+	// contentTracing.startRecording( options, () => {
+	// 	console.log( 'Tracing started' )
+
+	// 	setTimeout( () => {
+	// 		contentTracing.stopRecording( '', ( path ) => {
+	// 			console.log( 'Tracing data recorded to ' + path )
+	// 		} )
+	// 	}, 5000 )
+	// } );
+
+	if ( isRoot ) {
+		// App launched with root access, no bueno.
+		// Known issues: dialog.showOpenDialog() causes app to crash on Ubuntu 18.10, possibly others.
+		const options = {
+			type: 'warning',
+			title: 'I AM ROOT?',
+			message: 'Code Komrade has been launched in root mode (e.g. with sudo), which is not recommended and can cause issues. \r\nPlease re-launch the app with normal privileges.',
+			buttons: ['Ok']
+		};
+
+		dialog.showMessageBox( options, function() {
+			// app.exit( 0 );
+		} );
+
+		// return;
+	}
+
+	// Init menu.
 	createMenu();
 
+	// Init main window.
 	createWindow();
-
-	// Debugging.
-	// mainWindow.webContents.openDevTools();
-
-	// mainWindow.webContents.on( 'dom-ready', function() {
-	// });
-
-	// let scaleFactor = electron.screen.getPrimaryDisplay();
-
-	// mainWindow.webContents.executeJavaScript(`console.log( ${ JSON.stringify(scaleFactor) } )`);
 });
 
 app.on( 'window-all-closed', function () {
@@ -148,4 +180,4 @@ app.on( 'activate', function () {
 	}
 });
 
-app.setAppUserModelId( 'Buildr' );
+app.setAppUserModelId( 'Code Komrade' );

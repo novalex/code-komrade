@@ -41,7 +41,7 @@ class Projects extends React.Component {
 				'.git',
 				'node_modules',
 				'.DS_Store',
-				'buildr-project.json'
+				'code-komrade.json'
 			],
 			loading: false
 		};
@@ -77,35 +77,39 @@ class Projects extends React.Component {
 
 	// Add a new project.
 	newProject() {
-		let path = dialog.showOpenDialog({
-			properties: [ 'openDirectory' ]
-		});
+		dialog.showOpenDialog(
+			global.mainWindow,
+			{
+				properties: [ 'openDirectory' ]
+			},
+			( path ) => {
+				if ( path ) {
+					let newProject = {
+						name: fspath.basename( path[0] ),
+						path: path[0],
+						paused: false
+					};
+					let newProjectIndex = this.props.projects.length;
 
-		if ( path ) {
-			let newProject = {
-				name: fspath.basename( path[0] ),
-				path: path[0],
-				paused: false
-			};
-			let newProjectIndex = this.props.projects.length;
+					if ( this.props.projects.findIndex( project => project.path === newProject.path ) !== -1 ) {
+						// Project already exists.
+						return;
+					}
 
-			if ( this.props.projects.findIndex( project => project.path === newProject.path ) !== -1 ) {
-				// Project already exists.
-				return;
+					// Save new project to config.
+					global.config.set( 'projects', [
+						...this.props.projects,
+						newProject
+					] );
+
+					// Update state.
+					this.props.addProject( newProject );
+
+					// Set new project as active.
+					this.changeProject( newProjectIndex, newProject );
+				}
 			}
-
-			// Save new project to config.
-			global.config.set( 'projects', [
-				...this.props.projects,
-				newProject
-			] );
-
-			// Update state.
-			this.props.addProject( newProject );
-
-			// Set new project as active.
-			this.changeProject( newProjectIndex, newProject );
-		}
+		);
 	}
 
 	// Change the active project.
@@ -209,7 +213,7 @@ class Projects extends React.Component {
 	// Create or fetch the project config file.
 	setProjectConfigFile( path ) {
 		global.projectConfig = new Store({
-			name: 'buildr-project',
+			name: 'code-komrade',
 			cwd: path
 		});
 

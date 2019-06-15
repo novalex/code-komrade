@@ -758,23 +758,24 @@ body,
 
 #file-options {
   height: 100%;
-  position: relative; }
+  display: flex;
+  flex-flow: column; }
   #file-options .header {
     text-align: center; }
     #file-options .header strong {
       cursor: default; }
-  #file-options .body > p,
-  #file-options .body > .field {
-    margin-bottom: 0; }
-  #file-options .body hr {
-    margin: 0;
-    border-style: solid;
-    border-color: #e6e6e6;
-    border-bottom-width: 0; }
+  #file-options .body {
+    flex-grow: 1;
+    overflow: auto; }
+    #file-options .body > p,
+    #file-options .body > .field {
+      margin-bottom: 0; }
+    #file-options .body hr {
+      margin: 0;
+      border-style: solid;
+      border-color: #e6e6e6;
+      border-bottom-width: 0; }
   #file-options .footer {
-    position: absolute;
-    left: 0;
-    bottom: 0;
     width: 100%;
     padding-right: 20px; }
     #file-options .footer button {

@@ -5,7 +5,7 @@
 const Store = require('electron-store');
 
 global.config = new Store({
-	name: 'buildr-config'
+	name: 'config'
 });
 
 global.ui = require('./utils/globalUI');
