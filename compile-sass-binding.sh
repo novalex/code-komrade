@@ -8,7 +8,7 @@ PLATFORM=$(node -e "console.log(process.platform)")
 cd app/node_modules/node-sass/
 
 # Build for Electron for current version
-node-gyp rebuild --target=$TARGET --arch=$ARCH --dist-url=https://atom.io/download/electron
+../node-gyp/bin/node-gyp.js rebuild --target=$TARGET --arch=$ARCH --dist-url=https://atom.io/download/electron
 
 # Create vendor directory
 VENDOR="vendor/$PLATFORM-$ARCH-69"

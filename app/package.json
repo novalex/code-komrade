@@ -1,11 +1,11 @@
 {
   "name": "code-komrade-internal",
   "version": "0.1.0",
-  "description": "Internal use modules.",
+  "description": "Internal use modules for the Code Komrade app.",
   "repository": "",
   "keywords": [],
-  "author": "Alex Nitu",
-  "license": "GPL-2.0+",
+  "author": "Alex I. Nitu",
+  "license": "MIT",
   "dependencies": {
     "autoprefixer": "^9.5.0",
     "babel": "^6.23.0",
