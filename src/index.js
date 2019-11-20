@@ -2,11 +2,9 @@
  * @file Main application controller.
  */
 
-const { app, dialog, Menu, BrowserWindow, contentTracing } = require('electron');
+const { app, dialog, Menu, BrowserWindow } = require('electron');
 
 const windowStateKeeper = require('electron-window-state');
-
-const isRoot = require( 'is-root' );
 
 const path = require('path');
 const url = require('url');
@@ -128,39 +126,6 @@ function createMenu() {
 }
 
 app.on( 'ready', function() {
-	// Profiling
-	// const options = {
-	// 	categoryFilter: '*',
-	// 	traceOptions: 'record-until-full,enable-sampling'
-	// }
-
-	// contentTracing.startRecording( options, () => {
-	// 	console.log( 'Tracing started' )
-
-	// 	setTimeout( () => {
-	// 		contentTracing.stopRecording( '', ( path ) => {
-	// 			console.log( 'Tracing data recorded to ' + path )
-	// 		} )
-	// 	}, 5000 )
-	// } );
-
-	if ( isRoot ) {
-		// App launched with root access, no bueno.
-		// Known issues: dialog.showOpenDialog() causes app to crash on Ubuntu 18.10, possibly others.
-		const options = {
-			type: 'warning',
-			title: 'I AM ROOT?',
-			message: 'Code Komrade has been launched in root mode (e.g. with sudo), which is not recommended and can cause issues. \r\nPlease re-launch the app with normal privileges.',
-			buttons: ['Ok']
-		};
-
-		dialog.showMessageBox( options, function() {
-			// app.exit( 0 );
-		} );
-
-		// return;
-	}
-
 	// Init menu.
 	createMenu();
 
