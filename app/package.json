@@ -7,6 +7,7 @@
   "author": "Alex I. Nitu",
   "license": "MIT",
   "dependencies": {
+    "auto-bind": "^2.0.0",
     "autoprefixer": "^9.5.0",
     "babel": "^6.23.0",
     "babel-core": "^6.26.3",

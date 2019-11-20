@@ -12,7 +12,6 @@
     "@babel/core": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
     "@babel/preset-react": "^7.0.0",
-    "auto-bind": "^2.0.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "babelify": "^10.0.0",
@@ -54,7 +53,7 @@
   },
   "scripts": {
     "start": "gulp serve",
-    "package-win": "cd app && gulp build-production && cd ../ && electron-packager ./build Code Komrade --platform=win32 --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/win/logo.ico",
-    "package-mac": "cd app && gulp build-production && cd ../ && electron-packager ./build Code Komrade --platform=darwin --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/mac/logo.icns"
+    "package-win": "gulp build-production && electron-packager ./build --platform=win32 --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/win/logo.ico",
+    "package-mac": "gulp build-production && electron-packager ./build --platform=darwin --arch=x64 --out=./release --overwrite --icon=./build/res/img/logo/mac/logo.icns"
   }
 }
