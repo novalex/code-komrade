@@ -78,6 +78,11 @@ gulp.task( 'symlink-deps', () => {
 	return gulp.src( './app/node_modules' ).pipe( gulp.symlink( paths.dist.build ) );
 } )
 
+// Copy dependencies.
+gulp.task( 'copy-deps', () => {
+	return gulp.src( './app/node_modules/**/*', { dot: true } ).pipe( gulp.dest( paths.dist.build + '/node_modules', { overwrite: false } ) );
+} )
+
 gulp.task( 'build-client-js', ( done ) => {
 	glob( paths.client.js, ( err, files ) => {
 		if ( err ) {
@@ -225,7 +230,7 @@ gulp.task( 'build',
 gulp.task( 'build-production',
 	gulp.series(
 		'build-clean',
-		'symlink-deps',
+		'copy-deps',
 		gulp.parallel(
 			'build-client-production',
 			'build-server'
