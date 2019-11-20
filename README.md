@@ -23,12 +23,10 @@ What's more, the app will save your configuration as a JSON file in the project 
 ## Installation
 1. Clone repository.
 2. Make sure you're using version 11 of Node.js (e.g. v11.15.0). You can use [nvm](https://github.com/nvm-sh/nvm) to switch between versions. This is required due to compatibility issues between node-sass and Electron ([more info](https://github.com/sass/node-sass/issues/2054)).
-3. Run `npm install`.
-4. Go into the "app" directory and run `npm install` again.
-5. Run `npm run start` or `gulp serve` in the root directory to start the app in development mode with hot-reloading.  
+3. Run `npm install` in the root directory as well as under `app`.
+4. Run `npm run start` or `gulp serve` in the root directory to start the app in development mode with hot-reloading.  
    *Note: If you get the "Node Sass does not yet support your current environment" error in the console, run `./compile-sass-binding.sh` to compile the appropriate version of the node-sass binding file.*
-6. Run `gulp build` or `gulp build-production` to build app files for development or production, respectively.
-7. Run `npm run package-win` or `npm run package-mac` to package the app for Windows or MacOS, respectively.
+5. Run `npm run package-win` or `npm run package-mac` to package the app for Windows or MacOS, respectively.
 
 ### Credits
 Huge thanks to:
