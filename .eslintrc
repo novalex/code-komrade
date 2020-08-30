@@ -12,6 +12,7 @@
 		} ],
 		"no-tabs": 0,
 		"semi": 0,
+		"comma-dangle": "off",
 		"space-before-function-paren": 0,
 		"space-in-parens": 0,
 		"key-spacing": 0,
