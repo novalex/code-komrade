@@ -1,4 +1,5 @@
 #header {
+	position: relative;
 	margin-bottom: $spacing__header;
 }
 
@@ -8,8 +9,6 @@ $action-size: $size__header;
 $actions-width: $action-size * 3;
 
 #project-select {
-	position: relative;
-
 	&.selected {
 		padding-right: $actions-width;
 	}

@@ -41,15 +41,18 @@ body,
 
 #sidebar,
 #content,
+#header,
 #panel {
-	opacity: 1;
-	transition: opacity 0.2s;
-
-	.unfocus & {
-		opacity: 0.4;
+	> * {
+		opacity: 1;
+		transition: opacity 0.2s;
 	}
 
-	.unfocus &,
+	.unfocus & > *:not(.unfocus-allowed) {
+		opacity: 0.4;
+		pointer-events: none;
+	}
+
 	.loading & {
 		pointer-events: none;
 	}

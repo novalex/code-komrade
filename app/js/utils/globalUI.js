@@ -2,8 +2,20 @@
  * @file Global helper functions for the app's UI.
  */
 
-function unfocus( toggle = true ) {
+function unfocus( toggle = true, allowSelector ) {
 	document.body.classList.toggle( 'unfocus', toggle );
+
+	const allowClass = 'unfocus-allowed';
+
+	document.querySelectorAll( `.${allowClass}` ).forEach( ( el ) => {
+		el.classList.remove( allowClass );
+	} );
+
+	if ( toggle && allowSelector && allowSelector.match( /^(#|\.).*$/ ) ) {
+		document.querySelectorAll( allowSelector ).forEach( ( el ) => {
+			el.classList.add( allowClass );
+		} );
+	}
 }
 
 function loading( toggle = true, args = {} ) {

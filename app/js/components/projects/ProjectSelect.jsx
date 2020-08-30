@@ -30,7 +30,7 @@ class ProjectSelect extends React.Component {
 	}
 
 	toggleSelect() {
-		global.ui.unfocus( !this.state.isOpen );
+		global.ui.unfocus( !this.state.isOpen, '#project-select' );
 
 		this.setState( { isOpen: !this.state.isOpen } );
 	}
@@ -91,18 +91,21 @@ class ProjectSelect extends React.Component {
 		}
 
 		return (
-			<div id='project-select' className='selected'>
-				<div id='project-active' onClick={this.toggleSelect}>
-					<h1>{this.props.active.name}</h1>
-					<h2>{this.props.active.path}</h2>
+			<>
+				<div id='project-select' className='selected'>
+					<div id='project-active' onClick={this.toggleSelect}>
+						<h1>{this.props.active.name}</h1>
+						<h2>{this.props.active.path}</h2>
+					</div>
+					{selectDropdown}
 				</div>
+
 				<div id='project-actions'>
 					<a href='#' className={'toggle' + ( this.props.active.paused ? ' paused' : ' active' )} onClick={this.toggleProject} />
 					<a href='#' className='refresh' onClick={this.props.refreshProject} />
 					<a href='#' className='remove' onClick={this.props.removeProject} />
 				</div>
-				{selectDropdown}
-			</div>
+			</>
 		);
 	}
 }
