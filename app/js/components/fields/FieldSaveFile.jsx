@@ -39,19 +39,21 @@ class FieldSaveFile extends React.Component {
 			fileSaveOptions.filters = this.props.dialogFilters;
 		}
 
-		let filename = dialog.showSaveDialog( fileSaveOptions );
+		dialog.showSaveDialog( fileSaveOptions ).then( ( res ) => {
+			if ( res.canceled || ! res.filePath ) {
+				return;
+			}
 
-		if ( filename ) {
-			let savePath = slash( filename );
+			let savePath = slash( res.filePath );
 
 			if ( this.props.sourceBase ) {
-				savePath = slash( fileRelativePath( this.props.sourceBase, filename ) );
+				savePath = slash( fileRelativePath( this.props.sourceBase, res.filePath ) );
 			}
 
 			if ( this.props.onChange ) {
 				this.props.onChange( this.props.name, savePath );
 			}
-		}
+		} );
 	}
 
 	render() {

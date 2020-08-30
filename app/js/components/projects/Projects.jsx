@@ -34,6 +34,8 @@ const Logger = require( '../../utils/Logger' );
 
 const { addProject, removeProject, changeProject, receiveFiles, setActiveFile } = require( '../../actions' );
 
+const mainWindow = require( 'electron' ).remote.getCurrentWindow();
+
 class Projects extends React.Component {
 
 	/**
@@ -80,38 +82,41 @@ class Projects extends React.Component {
 	 */
 	newProject() {
 		dialog.showOpenDialog(
-			global.mainWindow,
+			mainWindow,
 			{
 				properties: ['openDirectory']
-			},
-			( path ) => {
-				if ( path ) {
-					let newProject = {
-						name: fspath.basename( path[0] ),
-						path: path[0],
-						paused: false
-					};
-					let newProjectIndex = this.props.projects.length;
-
-					if ( this.props.projects.findIndex( project => project.path === newProject.path ) !== -1 ) {
-						// Project already exists.
-						return;
-					}
-
-					// Save new project to config.
-					global.config.set( 'projects', [
-						...this.props.projects,
-						newProject
-					] );
-
-					// Update state.
-					this.props.addProject( newProject );
-
-					// Set new project as active.
-					this.changeProject( newProjectIndex, newProject );
-				}
 			}
-		);
+		).then( ( res ) => {
+			const path = res.filePaths.pop() ?? null;
+
+			if ( res.canceled ) {
+				return;
+			}
+
+			let newProject = {
+				name: fspath.basename( path ),
+				path: path,
+				paused: false
+			};
+			let newProjectIndex = this.props.projects.length;
+
+			if ( this.props.projects.findIndex( project => project.path === newProject.path ) !== -1 ) {
+				// Project already exists.
+				return;
+			}
+
+			// Save new project to config.
+			global.config.set( 'projects', [
+				...this.props.projects,
+				newProject
+			] );
+
+			// Update state.
+			this.props.addProject( newProject );
+
+			// Set new project as active.
+			this.changeProject( newProjectIndex, newProject );
+		} );
 	}
 
 	/**
@@ -188,11 +193,16 @@ class Projects extends React.Component {
 	 * Change active project's path.
 	 */
 	changeProjectPath() {
-		let path = dialog.showOpenDialog( {
-			properties: ['openDirectory']
-		} );
+		dialog.showOpenDialog(
+			mainWindow,
+			{
+				properties: ['openDirectory']
+			}
+		).then( ( res ) => {
+			if ( res.canceled ) {
+				return;
+			}
 
-		if ( path ) {
 			let projects = this.props.projects;
 			let projectIndex = projects.findIndex( project => project.path === this.props.active.path );
 
@@ -201,14 +211,14 @@ class Projects extends React.Component {
 				return;
 			}
 
-			projects[projectIndex].path = path[0];
+			projects[projectIndex].path = res.filePaths.pop();
 
 			// Save new project to config.
 			global.config.set( 'projects', projects );
 
 			// Set new project as active.
 			this.changeProject( projectIndex );
-		}
+		} );
 	}
 
 	/**
@@ -312,7 +322,9 @@ class Projects extends React.Component {
 						buttons: ['Change Directory', 'Remove Project']
 					};
 
-					dialog.showMessageBox( options, function( index ) {
+					dialog.showMessageBox( mainWindow, options ).then( function( res ) {
+						const index = res.response;
+
 						if ( index === 0 ) {
 							this.changeProjectPath();
 						} else if ( index === 1 ) {

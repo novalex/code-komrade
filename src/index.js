@@ -59,10 +59,7 @@ function createWindow() {
 		});
 	});
 
-	global.mainWindow = mainWindow;
-
-	// Debugging.
-	mainWindow.webContents.openDevTools();
+	// mainWindow.webContents.openDevTools();
 }
 
 function createMenu() {
@@ -89,18 +86,10 @@ function createMenu() {
 				{ role: 'close' }
 			]
 		}
-		// {
-		// 	role: 'help',
-		// 	submenu: [
-		// 		{
-		// 			label: 'Learn More',
-		// 			click () { require('electron').shell.openExternal('https://electronjs.org') }
-		// 		}
-		// 	]
-		// }
 	];
 
 	if ( process.platform === 'darwin' ) {
+		// Add MacOS menu items.
 		menuTemplate.unshift({
 			label: app.getName(),
 			submenu: [
@@ -125,7 +114,9 @@ function createMenu() {
 			{ role: 'front' }
 		];
 	}
+
 	const appMenu = Menu.buildFromTemplate( menuTemplate );
+
 	Menu.setApplicationMenu( appMenu );
 }
 
