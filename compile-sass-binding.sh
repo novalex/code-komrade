@@ -11,7 +11,7 @@ cd app/node_modules/node-sass/
 ../node-gyp/bin/node-gyp.js rebuild --target=$TARGET --arch=$ARCH --dist-url=https://atom.io/download/electron
 
 # Create vendor directory
-VENDOR="vendor/$PLATFORM-$ARCH-69"
+VENDOR="vendor/$PLATFORM-$ARCH-82"
 mkdir -p $VENDOR
 cp build/Release/binding.node $VENDOR
 

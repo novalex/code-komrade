@@ -23,7 +23,11 @@ function createWindow() {
 		width: mainWindowState.width,
 		height: mainWindowState.height,
 		autoHideMenuBar: true,
-		icon: path.join( __dirname, 'res/img/logo/png/64x64.png' )
+		icon: path.join( __dirname, 'res/img/logo/png/64x64.png' ),
+		webPreferences: {
+			nodeIntegration: true,
+			enableRemoteModule: true,
+		},
 	});
 
 	mainWindowState.manage( mainWindow );
@@ -146,3 +150,5 @@ app.on( 'activate', function () {
 });
 
 app.setAppUserModelId( 'Code Komrade' );
+
+app.allowRendererProcessReuse = false;
