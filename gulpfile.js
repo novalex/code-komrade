@@ -260,7 +260,9 @@ gulp.task( 'watch-server', () => {
 gulp.task( 'watch', gulp.parallel( 'watch-client', 'watch-server' ) )
 
 gulp.task( 'serve', gulp.series( 'build', gulp.parallel( 'watch', () => {
-	electron.start( () => {
+	electron.start( [
+		'--remote-debugging-port=9222',
+	], () => {
 		gulp.watch( paths.dist.build + '/index.js', restart )
 		gulp.watch( [ paths.dist.build + '/js/*.js', paths.dist.build + '/css/app.css' ], reload )
 	})
